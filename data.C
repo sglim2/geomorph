@@ -215,3 +215,29 @@ bool Data::getStats()
     
     return 0; //success
 }
+
+////////////////////////////////////////
+// defineGrid
+bool Data::defineGrid()
+{
+   
+    grid.x = new double[ grid.nt+1 * grid.nt+1 * 10 ];
+    grid.y = new double[ grid.nt+1 * grid.nt+1 * 10 ];
+    grid.z = new double[ grid.nt+1 * grid.nt+1 * 10 ];
+    grid.V = new double[ grid.nt+1 * grid.nt+1 * 10 ];
+  
+    return 0; // success
+}
+
+////////////////////////////////////////
+// destroyGrid
+bool Data::destroyGrid()
+{
+   
+    delete [] grid.x;
+    delete [] grid.y;
+    delete [] grid.z;
+    delete [] grid.V;
+
+    return 0; // success
+}

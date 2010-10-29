@@ -4,6 +4,8 @@
  *
  * A grid conversion tool for popular geodynamics and seismic tomography data
  * 
+ * Exmaple:
+ * $ > ./geomorph --mt 256 --nt 16 --nd 10 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis
  */
 
 #include "main.H"
@@ -164,16 +166,16 @@ int main(int argc, char* argv[])
   // find best grid to match input data
 
   // generate grid 
-  data->grid.x = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
-  data->grid.y = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
-  data->grid.z = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
-  data->grid.V = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
+  data->defineGrid();
   
-  // test for terra-grid suitability
-
+  //convert to terra-grid
 
   // convert to output format
 
+
+
+  data->destroyGrid();
+  delete [] data;
 
  return 0;
 

@@ -40,8 +40,14 @@ public:
 
   bool  Read ();
   bool  mitpRead ();
+
+
   char* intypeConverter();
   char* outtypeConverter();
+
+  bool  defineGrid();
+  bool  destroyGrid();
+
   bool  getStats();
     
 };
