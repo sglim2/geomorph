@@ -12,6 +12,10 @@
 
 #include <fstream>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
 
 #include "grid.H"
 
@@ -26,6 +30,7 @@ public:
   int       outtype;
   long int  nval;
   double    *x,*y,*z,*V;
+  double    Vmean,Vmax,Vmin;
   Grid      grid;
 
 
@@ -33,8 +38,12 @@ public:
   Data ();
   Data (char *, int);
 
-  bool Read ();
-
+  bool  Read ();
+  bool  mitpRead ();
+  char* intypeConverter();
+  char* outtypeConverter();
+  bool  getStats();
+    
 };
 
 #endif

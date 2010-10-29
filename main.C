@@ -6,16 +6,8 @@
  * 
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "main.H"
 
-#include "grid.H"
-#include "data.H"
-
-// globals
-static char* programName = 0;
-static Data* data=0;
 
 ////////////////////////////////////////
 // return the basename of a path
@@ -133,8 +125,8 @@ bool gm_processCommandLine(int argc, char* argv[])
   }
 
   printf("\nInput Arguments:\n");
-  printf(" intype   %d \n", data->intype);
-  printf(" outtype  %d \n", data->outtype);
+  printf(" intype   %s(%d) \n", data->intypeConverter(), data->intype);
+  printf(" outtype  %s(%d) \n", data->outtypeConverter(), data->outtype);
   printf(" infile   %s \n", data->infile);
   printf(" outfile  %s \n", data->outfile);
   printf(" mt       %d \n", data->grid.mt); 
@@ -159,12 +151,23 @@ int main(int argc, char* argv[])
     exit(-1);
   }
 
-  
-
   // read input and convert to geomorph x,y,z,V structure
   if (data->Read()){
-    printf("Error reading input file");
+    printf("Error reading input file.");
   };
+
+  // get input stats
+  if (data->getStats()){
+    printf("Error computing Stats.");
+  }
+
+  // find best grid to match input data
+
+  // generate grid 
+  data->grid.x = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
+  data->grid.y = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
+  data->grid.z = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
+  data->grid.V = new double[ data->grid.nt+1 * data->grid.nt+1 * 10 ];
   
   // test for terra-grid suitability
 
