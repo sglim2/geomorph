@@ -23,5 +23,3 @@ const double CoreRadiusKM = 3400;
 // globals
 static char* programName = 0;
 static Data* data=0;
-
-

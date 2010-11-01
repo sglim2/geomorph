@@ -164,9 +164,19 @@ int main(int argc, char* argv[])
   }
 
   // find best grid to match input data
+  int my_mt= data->grid.findGrid(data->nval);
+  printf("best matching mt value = %d\n", my_mt);
+  if ( data->grid.mt != my_mt ) {
+      printf("Overriding any user-specified mt value.\nUsing mt=%d\n", my_mt);
+      data->grid.mt = my_mt; 
+  }
+
+  if (data->grid.genGrid()){
+    printf("Error computing TERRA stats.\n");
+  }
 
   // generate grid 
-  data->defineGrid();
+//  data->defineGrid();
   
   //convert to terra-grid
 
