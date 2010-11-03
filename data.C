@@ -45,7 +45,7 @@ bool Data::Read()
 	case UNDEF :
 	    printf("Error.Intyoue undefined");
 	    return 1; //fail
-	    break;
+//	    break;  // unreachable!!
 	case MVIS :
 	    // do something
 	    break;
@@ -54,11 +54,11 @@ bool Data::Read()
 	    break;
 	case MITP :
 	    return mitpRead();
-	    break;
+//	    break; // unreachable!!
 	default :
 	    printf("Error.Intyoue undefined");
 	    return 1; //fail
-	    break;
+//	    break;  // unreachable!!
     }
 
     return 0;    
@@ -121,10 +121,10 @@ bool Data::mitpRead()
 
   for ( int i = 0 ; i<nval ; i++ ){
       // Collect data
-      fscanf(fptr,"%s", &buf);       lat = atof (buf) * pi/180. ;
-      fscanf(fptr,"%s", &buf);       lng = (atof (buf) - 180.) * pi/180.  ;
-      fscanf(fptr,"%s", &buf);      dpth = (EarthRadKM - atof (buf)) / EarthRadKM ;
-      fscanf(fptr,"%s", &buf);         V[i] = atof (buf) ;
+      fscanf(fptr,"%s", &buf);  lat = atof (buf) * pi/180. ;
+      fscanf(fptr,"%s", &buf);  lng = (atof (buf) - 180.) * pi/180.  ;
+      fscanf(fptr,"%s", &buf);  dpth = (EarthRadKM - atof (buf)) / EarthRadKM;
+      fscanf(fptr,"%s", &buf);  V[i] = atof (buf) ;
 
       // Convert to xyz
       x[i] = - 1. * cos(lat) * cos(lng) ;

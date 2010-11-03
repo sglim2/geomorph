@@ -6,20 +6,25 @@ LIBS	=
 CXXINC	=
 INC	=
 DEFS	= 
-CFLAGS	= -g -Wno-deprecated
-LDFLAGS	= 
+CFLAGS	= -g -ansi -pedantic -Wall
+CFLAGS	= -g 
+FFLAGS	= -g -fdefault-real-8 
+LDFLAGS	= -lgfortran 
 
 CXX	= g++
 CC	= gcc
+FC	= gfortran
+
 RM	= rm -f
 
 .C.o: ; $(CXX) -c $(CFLAGS) $*.C
 .c.o: ; $(CC) -c $(CFLAGS) $*.c
+.f.o: ; $(FC) -c $(FFLAGS) $*.f
 
 all: $(EXEC)
 
 $(EXEC): $(OBJS) 
-	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS) $(LDFLAGS)
 
 .PHONY : clean
 clean:

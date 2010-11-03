@@ -21,6 +21,7 @@ public:
   int       npts;
   double    rmax,rmin;
   double    *x,*y,*z,*V; 
+  double    *xn;
 
 
   Grid();
@@ -29,5 +30,9 @@ public:
   bool genGrid();
   int findGrid(int);
 };
+
+extern"C" {
+    void grdgen_(double *, int *);
+}
 
 #endif
