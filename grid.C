@@ -106,45 +106,35 @@ bool Grid::genGrid()
 //    V = new double[npts];
 
     // mt =1 for test purposes only
-    mt = 1;
+    mt = 2;
     xn = new double[(mt+1)*(mt+1)*10*3];
 
     grdgen_(xn,&mt);
 
-    // x-values
     for ( int i=0 ; i<10 ; i++){
-	for ( int yi=0 ; yi<mt+1 ; yi++){
-		for ( int xi=0 ; xi<mt+1 ; xi++){
-//		    printf("12.6%g\t",xn[xi][yi][i][0]);
-		    printf("%12.6g\t",xn[0*10*(mt+1)*(mt+1) + i*10*(mt+1)*(mt+1) + yi*(mt+1) + xi]);
-		}
-//		printf("\n");
-	    }
+      printf("\nid %d\n",i);
+      for ( int yi=0 ; yi<mt+1 ; yi++){
+	for ( int xi=0 ; xi<mt+1 ; xi++){
+	  printf("%12.6g\t",xn[0*10*(mt+1)*(mt+1) + i*(mt+1)*(mt+1) + yi*(mt+1) + xi]);
+	}
+      }
+    }            
     printf("\n");
-    }
 
-    // y-values
-    for ( int i=0 ; i<10 ; i++){
+    printf("%d\n",2*10*(mt+1)*(mt+1) + 9*(mt+1)*(mt+1) + mt*(mt+1) + mt + 1);
+
+    printf("%d\n",(mt+1)*(mt+1)*10*3);
+
+    for ( int k=0 ; k<3 ; k++){
+      for ( int i=0 ; i<10 ; i++){
 	for ( int yi=0 ; yi<mt+1 ; yi++){
-		for ( int xi=0 ; xi<mt+1 ; xi++){
-		    printf("%12.6g\t",xn[1*10*(mt+1)*(mt+1) + i*10*(mt+1)*(mt+1) + yi*(mt+1) + xi]);
-		}
-//		printf("\n");
-	    }
-    printf("\n");
+	  for ( int xi=0 ; xi<mt+1 ; xi++){
+	    printf("%12.6g ",xn[k*10*(mt+1)*(mt+1) + i*(mt+1)*(mt+1) + yi*(mt+1) + xi]);
+	  }
+	}
+      }      
+      printf("\n");
     }
-
-    // z-values
-    for ( int i=0 ; i<10 ; i++){
-	for ( int yi=0 ; yi<mt+1 ; yi++){
-		for ( int xi=0 ; xi<mt+1 ; xi++){
-		    printf("%12.6g\t",xn[2*10*(mt+1)*(mt+1) + i*10*(mt+1)*(mt+1) + yi*(mt+1) + xi]);
-		}
-//		printf("\n");
-	    }
-    printf("\n");
-    }
-
 
     return 0;
 
