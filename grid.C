@@ -105,12 +105,16 @@ bool Grid::genGrid()
 //    z = new double[npts];
 //    V = new double[npts];
 
-    // mt =1 for test purposes only
+    // mt =1 (and subsequently npts) for test purposes only
     mt = 2;
+    npts  = (10*mt*mt + 2)*(mt/2 + 1);
+
+
     xn = new double[(mt+1)*(mt+1)*10*3];
 
     grdgen_(xn,&mt);
 
+/*
     for ( int i=0 ; i<10 ; i++){
       printf("\nid %d\n",i);
       for ( int yi=0 ; yi<mt+1 ; yi++){
@@ -124,7 +128,7 @@ bool Grid::genGrid()
     printf("%d\n",2*10*(mt+1)*(mt+1) + 9*(mt+1)*(mt+1) + mt*(mt+1) + mt + 1);
 
     printf("%d\n",(mt+1)*(mt+1)*10*3);
-
+*/
     for ( int k=0 ; k<3 ; k++){
       for ( int i=0 ; i<10 ; i++){
 	for ( int yi=0 ; yi<mt+1 ; yi++){
@@ -134,6 +138,11 @@ bool Grid::genGrid()
 	}
       }      
       printf("\n");
+    }
+
+
+    for ( int i=0 ; i < ( (mt+1)*(mt+1)*10*3 ) ; i++){
+	printf("%12.8g\n",xn[i]);
     }
 
     return 0;

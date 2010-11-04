@@ -30,23 +30,22 @@ c...  icosahedral triangles into nt equal parts.
 
 c...  Note: nt is input as mt
 
-c      real xn(nt+1,nt+1,10,3)
       integer, intent(inout) :: nt
-c      real, allocatable :: xn(:,:,:,:) 
       real, intent(inout) :: xn((nt+1),(nt+1),10,3)
 
       real     :: fifthpi, w, cosw, sinw, lvt, nn, phi
       integer  :: id, k, i1, i2, j1, j2, l, l2, m, sgn
  
       fifthpi = 0.4*asin(1.)
-       w       = 2.0*acos(1./(2.*sin(fifthpi)))
+c      fifthpi = pi/5.;
+      w       = 2.0*acos(1./(2.*sin(fifthpi)))
       cosw    = cos(w)
       sinw    = sin(w)
       lvt     = 1.45*log(real(nt))
       nn      = (nt+1)**2*10
 
-c      allocate ( xn(nt+1,nt+1,10,3)   )
- 
+ 900  format (I4,I4,I4,I4,F12.8)
+
       do id=1,10
  
          sgn = 1.
@@ -66,7 +65,8 @@ c      allocate ( xn(nt+1,nt+1,10,3)   )
          xn(nt+1,nt+1,id,2) =  sinw*sin(phi + fifthpi)
          xn(nt+1,nt+1,id,3) = -cosw*sgn
  
-c         do k=0,int(lvt+.05)-1
+c         do k=0,nint(lvt-1)
+c         do k=0,int(lvt-1)
          do k=0,lvt-1
  
             m  = 2**k
@@ -110,6 +110,14 @@ c...        diagonals of diamond--
  
       end do
 
-c      deallocate ( xn )
+      do k=1,3
+         do id=1,10
+            do j1=1,nt+1
+               do i1=1,nt+1
+                  write(6, 900) i1,j1,id,k,xn(i1,j1,id,k)
+               enddo
+            enddo
+         enddo
+      enddo
 
       end
