@@ -37,7 +37,6 @@ c...  Note: nt is input as mt
       integer  :: id, k, i1, i2, j1, j2, l, l2, m, sgn
  
       fifthpi = 0.4*asin(1.)
-c      fifthpi = pi/5.;
       w       = 2.0*acos(1./(2.*sin(fifthpi)))
       cosw    = cos(w)
       sinw    = sin(w)

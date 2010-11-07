@@ -155,8 +155,8 @@ int main(int argc, char* argv[])
 
   // read input and convert to geomorph x,y,z,V structure
   //  if (data->Read()){
-  //  printf("Error reading input file.");
-  //};
+  //    printf("Error reading input file.");
+  //  }
 
   // get input stats
   if (data->getStats()){
