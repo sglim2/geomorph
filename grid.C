@@ -206,11 +206,13 @@ bool Grid::grdgen(double * xn, int mt)
     
     for ( int i = 0 ; i < 12 ; i++ ){
 	for ( int ix = 0 ; ix < 3 ; ix++ ){
-//	    Ad[i][ix] += ....... to be finished
-	    }	
+	    for ( int iy = 0 ; iy < 3 ; iy++ ){
+		Ad[i][ix] += Ry[ix][iy]*A[i][iy];
+	    }
+	}	
     }
 
-
+/*
   for ( id=0 ; id<10 ; id++ ){
       
       if (id<5) {
@@ -226,9 +228,9 @@ bool Grid::grdgen(double * xn, int mt)
       }
 	  
 
-      
-
   }
+*/
+
 /*
   for ( id=0 ; id<10 ; id++ ){
 
