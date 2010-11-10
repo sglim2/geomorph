@@ -161,16 +161,75 @@ int Grid::findGrid(int npts)
 
 bool Grid::grdgen(double * xn, int mt)
 {
+    
+    double a,tau,rho,u,v,Beta;
+    double Ry[3][3], A[12][3], Ad[12][3]=0;
 
-  double fifthpi,w,phi,sinw,cosw,sgn;
-  int    id,nn,index;
+    a=1.;
+    tau=0.5*(sqrt(5)+1);
+    rho=tau-1;
+    u=a/(sqrt(1+pow(rho,2)));
+    v=rho*u;
+    
+    Beta= atan(v/u);
+    Ry[0][0] = cos(Beta);
+    Ry[0][1] = 0;
+    Ry[0][2] = -sin(Beta);
 
-  fifthpi = 0.4*asin(1.);
-  w       = 2.0*acos(1./(2.*sin(fifthpi)));
-  cosw    = cos(w);
-  sinw    = sin(w);
-  nn      = pow(mt+1,2)*10;
+    Ry[1][0] = 0;
+    Ry[1][1] = 1;
+    Ry[1][2] = 0;
 
+    Ry[2][0] = sin(Beta);
+    Ry[2][1] = 0;
+    Ry[2][2] = cos(Beta);
+
+    int    id,nn,index;
+  
+    // Set up the intial regular icosahedral grid
+    // Note: this grid needs to be rotated about y-axis in order to match the TERRA grid.
+    A[0][0] = v;  A[0][1] = 0; A[0][2] = u; 
+    A[1][0] = u;  A[1][1] = v; A[1][2] = 0; 
+    A[2][0] = 0;  A[2][1] = u; A[2][2] = v;   
+    A[3][0] =-v;  A[3][1] = 0; A[3][2] = u;  
+    A[4][0] = 0;  A[6][1] =-u; A[4][2] = v;  
+    A[5][0] = u;  A[5][1] =-v; A[5][2] = 0;
+    A[6][0] = v;  A[6][1] = 0; A[6][2] =-u; 
+    A[7][0] = 0;  A[7][1] = u; A[7][2] =-v;
+    A[8][0] =-u;  A[2][1] = v; A[8][2] = 0;
+    A[9][0] =-u;  A[9][1] =-v; A[9][2] = 0;
+    A[10][0]= 0;  A[10][1]=-u; A[10][2]=-v;  
+    A[11][0]=-v;  A[11][1]= 0; A[11][2]=-u;   
+
+    // Rotate the vertices by Ry
+    
+    
+    for ( int i = 0 ; i < 12 ; i++ ){
+	for ( int ix = 0 ; ix < 3 ; ix++ ){
+//	    Ad[i][ix] += ....... to be finished
+	    }	
+    }
+
+
+  for ( id=0 ; id<10 ; id++ ){
+      
+      if (id<5) {
+	  index = idx(0, id, 0, 0, 0);
+	  xn[index] = A[0][0]; index++;
+	  xn[index] = A[0][1]; index++;
+	  xn[index] = A[0][2];
+      }else{
+	  index = idx(0, id, 0, 0, 0);
+	  xn[index] = A[11][0]; index++;
+	  xn[index] = A[11][1]; index++;
+	  xn[index] = A[11][2];
+      }
+	  
+
+      
+
+  }
+/*
   for ( id=0 ; id<10 ; id++ ){
 
     id < 5 ? sgn = 1. : sgn = -1.;
@@ -207,7 +266,7 @@ bool Grid::grdgen(double * xn, int mt)
     xn[index] = -cosw*sgn;
  
   }
-
+*/
 
 }
 
