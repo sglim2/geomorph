@@ -76,7 +76,7 @@ int Grid::xnProc(int idx)
 // Array xn has structure:
 //    xn[nr+1][id][mt+1][mt+1][xyz]
 //
-int Grid::xnProc(int r, int id, int i1, int j1, int xyz)
+int Grid::xnProc(int r, int id, int j1, int i1, int xyz)
 {
   
   int xnproc=0;
@@ -101,7 +101,7 @@ int Grid::xnProc(int r, int id, int i1, int j1, int xyz)
 // Array xn has structure:
 //    xn[nr+1][id][mt+1][mt+1][xyz]
 //
-int Grid::idx(int r, int id, int i1, int j1, int xyz)
+int Grid::idx(int r, int id, int j1, int i1, int xyz)
 {
   int idmax  = 10;
   int nerror = 0;
@@ -116,11 +116,11 @@ int Grid::idx(int r, int id, int i1, int j1, int xyz)
   
   int   rbase = r  * idmax*(mt+1)*(mt+1)*3;
   int  idbase = id * (mt+1)*(mt+1)*3;
-  int   ibase = i1 * (mt+1)*3;
-  int   jbase = j1 * 3;
+  int   jbase = j1 * (mt+1)*3;
+  int   ibase = i1 * 3;
   int xyzbase = xyz;
   
-  idx = rbase + idbase + ibase + jbase + xyzbase;
+  idx = rbase + idbase + jbase + ibase + xyzbase;
 
 
   return idx;
@@ -163,7 +163,7 @@ bool Grid::grdgen(double * xn, int mt)
 {
     
     double a,tau,rho,u,v,Beta;
-    double Ry[3][3], A[12][3], Ad[12][3]=0;
+    double Ry[3][3], A[12][3], Ad[12][3];
 
     a=1.;
     tau=0.5*(sqrt(5)+1);
@@ -184,6 +184,12 @@ bool Grid::grdgen(double * xn, int mt)
     Ry[2][1] = 0;
     Ry[2][2] = cos(Beta);
 
+    for ( int i = 0 ; i < 12 ; i++ ){
+      Ad[i][0]=0;
+      Ad[i][1]=0;
+      Ad[i][2]=0;
+    }
+
     int    id,nn,index;
   
     // Set up the intial regular icosahedral grid
@@ -192,18 +198,16 @@ bool Grid::grdgen(double * xn, int mt)
     A[1][0] = u;  A[1][1] = v; A[1][2] = 0; 
     A[2][0] = 0;  A[2][1] = u; A[2][2] = v;   
     A[3][0] =-v;  A[3][1] = 0; A[3][2] = u;  
-    A[4][0] = 0;  A[6][1] =-u; A[4][2] = v;  
+    A[4][0] = 0;  A[4][1] =-u; A[4][2] = v;  
     A[5][0] = u;  A[5][1] =-v; A[5][2] = 0;
     A[6][0] = v;  A[6][1] = 0; A[6][2] =-u; 
     A[7][0] = 0;  A[7][1] = u; A[7][2] =-v;
-    A[8][0] =-u;  A[2][1] = v; A[8][2] = 0;
+    A[8][0] =-u;  A[8][1] = v; A[8][2] = 0;
     A[9][0] =-u;  A[9][1] =-v; A[9][2] = 0;
     A[10][0]= 0;  A[10][1]=-u; A[10][2]=-v;  
     A[11][0]=-v;  A[11][1]= 0; A[11][2]=-u;   
 
     // Rotate the vertices by Ry
-    
-    
     for ( int i = 0 ; i < 12 ; i++ ){
 	for ( int ix = 0 ; ix < 3 ; ix++ ){
 	    for ( int iy = 0 ; iy < 3 ; iy++ ){
@@ -211,25 +215,98 @@ bool Grid::grdgen(double * xn, int mt)
 	    }
 	}	
     }
+   
+      //  ........seems good
+    for ( int i = 0 ; i < 12 ; i++ ){
+      printf("%10.4g\t%10.4g\t%10.4g\n",A[i][0],A[i][1],A[i][2]);
+    }
+      printf("\n\n\n");
+    for ( int i = 0 ; i < 12 ; i++ ){
+      printf("%10.4g\t%10.4g\t%10.4g\n",Ad[i][0],Ad[i][1],Ad[i][2]);
+    }
 
-/*
+
   for ( id=0 ; id<10 ; id++ ){
       
+    // Northern Hemisphere
       if (id<5) {
-	  index = idx(0, id, 0, 0, 0);
-	  xn[index] = A[0][0]; index++;
-	  xn[index] = A[0][1]; index++;
-	  xn[index] = A[0][2];
-      }else{
-	  index = idx(0, id, 0, 0, 0);
-	  xn[index] = A[11][0]; index++;
-	  xn[index] = A[11][1]; index++;
-	  xn[index] = A[11][2];
-      }
+	// North Pole
+	index = idx(0, id, 0, 0, 0);
+	printf("index = %d\n",index);
+	xn[index] = Ad[0][0]; index++;
+	xn[index] = Ad[0][1]; index++;
+	xn[index] = Ad[0][2];
+	
+	// mt,0
+	index = idx(0, id, 0, mt, 0);
+	printf("index = %d\n",index);
+	xn[index] = Ad[id+1][0]; index++;
+	xn[index] = Ad[id+1][1]; index++;
+	xn[index] = Ad[id+1][2]; 
+	
+	// 0,mt
+	index = idx(0, id, mt, 0, 0);
+	if (id == 0) {
+	  printf("index = %d\n",index);
+	  xn[index] = Ad[id+5][0]; index++;
+	  xn[index] = Ad[id+5][1]; index++;
+	  xn[index] = Ad[id+5][2]; 
+	}else{
+	  printf("index = %d\n",index);
+	  xn[index] = Ad[id][0]; index++;
+	  xn[index] = Ad[id][1]; index++;
+	  xn[index] = Ad[id][2]; 
+	}
 	  
+	// mt,mt
+	index = idx(0, id, mt, mt, 0);
+	printf("index = %d\n",index);
+	xn[index] = Ad[id+6][0]; index++;
+	xn[index] = Ad[id+6][1]; index++;
+	xn[index] = Ad[id+6][2]; 
+
+	
+	// Southern Hemisphere
+      }else{
+	// South Pole
+	index = idx(0, id, 0, 0, 0);
+	xn[index] = Ad[11][0]; index++;
+	xn[index] = Ad[11][1]; index++;
+	xn[index] = Ad[11][2];
+
+
+	// 0,mt
+	index = idx(0, id, 0, mt, 0);
+	printf("index = %d\n",index);
+	xn[index] = Ad[id+1][0]; index++;
+	xn[index] = Ad[id+1][1]; index++;
+	xn[index] = Ad[id+1][2]; 
+	
+	// mt,0
+	index = idx(0, id, mt, 0, 0);
+	if (id == 9) {
+	  printf("index = %d\n",index);
+	  xn[index] = Ad[id-3][0]; index++;
+	  xn[index] = Ad[id-3][1]; index++;
+	  xn[index] = Ad[id-3][2]; 
+	}else{
+	  printf("index = %d\n",index);
+	  xn[index] = Ad[id+2][0]; index++;
+	  xn[index] = Ad[id+2][1]; index++;
+	  xn[index] = Ad[id+2][2]; 
+	}
+
+	// mt,mt
+	index = idx(0, id, mt, mt, 0);
+	printf("index = %d\n",index);
+	xn[index] = Ad[id-4][0]; index++;
+	xn[index] = Ad[id-4][1]; index++;
+	xn[index] = Ad[id-4][2]; 
+
+      }
 
   }
-*/
+
 
 /*
   for ( id=0 ; id<10 ; id++ ){
@@ -298,6 +375,7 @@ bool Grid::genGrid()
     // mt (and subsequently npts) for test purposes only
     mt = 1;
     npts  = (10*mt*mt + 2)*(mt/2 + 1);
+    nr = 1;
 
 
     //    xn = new double[(mt+1)*(mt+1)*10*3];
@@ -323,7 +401,7 @@ bool Grid::genGrid()
 
     printf("%d\n",(mt+1)*(mt+1)*10*3);
     */
-    
+ 
     int index=0;
     for ( int i=0 ; i<10 ; i++){
       for ( int xi=0 ; xi<mt+1 ; xi++){
@@ -335,14 +413,13 @@ bool Grid::genGrid()
 	  printf("\n");
 	}
       }      
-      printf("\n");
+      //      printf("\n");
     }
 
     
     for ( int i=0 ; i < ( 10*(mt+1)*(mt+1)*3 ) ; i++){
       printf("%d\t%12.8g\n",i,xn[i]);
     }
-    
 
     return 0;
 

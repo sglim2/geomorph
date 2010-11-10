@@ -50,6 +50,10 @@ for i=1:12
 	  Ad(i,:)=Ry*transpose(A(i,:));
 end
 
+A
+
+Ad
+
 scatter3(A(:,1),A(:,2),A(:,3))
 hold on
 scatter3(Ad(:,1),Ad(:,2),Ad(:,3),'filled')
