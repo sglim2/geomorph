@@ -38,6 +38,24 @@ Data::Data()
 ////////////////////////////////////////
 
 ////////////////////////////////////////
+// Data::findBoundary
+bool Data::findBoundary()
+{
+  double tmpcmb=0;
+  double tmpa=0;
+  cmb=1.E+20;
+  a=0.;
+
+  for (int in=0 ; in<nval ; in++){
+    tmpcmb = sqrt(x[in]*x[in] + y[in]*x[in] + z[in]*x[in] );
+    tmpa   = sqrt(x[in]*x[in] + y[in]*x[in] + z[in]*x[in] );
+    tmpcmb < cmb ? cmb = tmpcmb : cmb=cmb;
+    tmpa   > a   ? a   = tmpa   : a=a;
+  }
+    return 0;    
+}
+
+////////////////////////////////////////
 // Read
 bool Data::Read()
 {
@@ -203,12 +221,17 @@ bool Data::getStats()
     Vmin   = min;
     Vmean /= nval;
 
+    // find a and cmb
+    findBoundary();
+
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");
     printf("|  nvals      =  %12d                  |\n"        , nval);
     printf("|  V(mean)    =  %12.8g                  |\n"      , Vmean);
     printf("|  Vmin       =  %12.8g                  |\n"      , Vmin);
     printf("|  Vmax       =  %12.8g                  |\n"      , Vmax);
+    printf("|  a          =  %12.8g                  |\n"      , a);
+    printf("|  cmb        =  %12.8g                  |\n"      , cmb);
     printf("+----------------------------------------------+\n");
     
     

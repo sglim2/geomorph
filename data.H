@@ -33,8 +33,6 @@ public:
   double    Vmean,Vmax,Vmin;
   Grid      grid;
 
-
-
   Data ();
   Data (char *, int);
 
@@ -50,6 +48,7 @@ public:
 
   bool  getStats();
     
+  bool  findBoundary();
 };
 
 #endif

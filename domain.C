@@ -6,8 +6,8 @@
  */
 
 
+#include "main.H"
 #include "domain.H"
-
 
 /*
  * utilities
@@ -47,7 +47,7 @@ Domain::Domain(int _id, bool _northern)
 // 
 //
 Domain::Domain(int _id, bool _northern, int _mt, int _nr)
-    : id(), northern(), xn(), mt(), nr()
+  : id(), northern(), xn(), mt(), nr()
 {
     if (_id >= 10) {
 	printf("Domain::Domain fail");
@@ -129,7 +129,9 @@ bool Domain::grdgen()
 {
     
     int    nn,index;
-    double a,tau,rho,u,v,Beta,R;
+    double R,x0,y0,z0;
+
+    double a,tau,rho,u,v,Beta;
     double Ry[3][3], A[12][3], Ad[12][3];
 
     a=1.;
@@ -333,6 +335,23 @@ bool Domain::grdgen()
     
     // genrerate radial points
     
-    
+    for ( int ir = 1 ; ir < nr ; ir++){
+      index=idx(ir, 0, 0, 0);
+      for ( int i2 = 0 ; i2 < mt+1 ; i2++ ){
+	for ( int i1 = 0 ; i1 < mt+1 ; i1++ ){
+	  x0 = xn[idx(0,i2,i1,0)];
+	  y0 = xn[idx(0,i2,i1,1)];
+	  z0 = xn[idx(0,i2,i1,2)];
+	  
+	  xn[index] = x0 - x0*(a-cmb)*ir/nr;
+	  index++;
+	  xn[index] = y0 - y0*(a-cmb)*ir/nr;
+	  index++;
+	  xn[index] = z0 - z0*(a-cmb)*ir/nr;
+	  index++;
+
+	}
+      }
+    }
 
 }

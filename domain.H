@@ -23,7 +23,7 @@ public:
 
     Domain();
     Domain(int, bool);
-    Domain(int, bool, int, int);
+  Domain(int, bool, int, int);
 
     int  defineDomain(int, int, int);
     int  idx(int, int, int, int);

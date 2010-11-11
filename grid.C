@@ -208,7 +208,7 @@ bool Grid::genGrid()
     }
     */
 
-    
+    /*
     // print outer shell (i.e nr=0)
     dptr = domains;
     for ( int id = 0 ; id < idmax ; id++ ){
@@ -217,7 +217,25 @@ bool Grid::genGrid()
 	}
 	dptr++;
     }
+
+    // print outer shell (i.e nr=32)
+    dptr = domains;
+    for ( int id = 0 ; id < idmax ; id++ ){
+	for ( int i= 32*(mt+1)*(mt+1)*3 ; i < 32*(mt+1)*(mt+1)*3 + (mt+1)*(mt+1)*3 ; i+=3){
+	    printf("%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i+0],dptr->xn[i+1],dptr->xn[i+2]);
+	}
+	dptr++;
+    }
     
+    // print outer shell (i.e nr=64)
+    dptr = domains;
+    for ( int id = 0 ; id < idmax ; id++ ){
+	for ( int i= 64*(mt+1)*(mt+1)*3 ; i < 64*(mt+1)*(mt+1)*3 + (mt+1)*(mt+1)*3 ; i+=3){
+	    printf("%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i+0],dptr->xn[i+1],dptr->xn[i+2]);
+	}
+	dptr++;
+    }
+    */
 
     return 0;
 }
