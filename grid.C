@@ -17,9 +17,10 @@
 ////////////////////////////////////////
 
 Grid::Grid()
-    : mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
+    : domains(), mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
 {
   idmax = 10;
+  domains = new Domain[idmax];
 }
 
 
@@ -30,7 +31,7 @@ Grid::Grid()
 //  i.e # radial layers = nr+1
 //
 Grid::Grid(int _mt, int _nt, int _nd)
-  : mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
+  : domains(), mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
 {
   idmax = 10;
   mt=_mt;
@@ -40,6 +41,7 @@ Grid::Grid(int _mt, int _nt, int _nd)
   nr=mt/2;
   nproc=pow((mt/nt),2)*10/nd;
   
+  domains = new Domain[idmax];
 }
 
 ////////////////////////////////////////
@@ -80,9 +82,6 @@ int Grid::xnProc(int r, int id, int j1, int i1, int xyz)
   
   int xnproc=0;
   
-  
-
-
   return xnproc;
 
 }
@@ -159,148 +158,12 @@ int Grid::findGrid(int npts)
 }
 
 ////////////////////////////////////////
-// Grid::grdgen
+// Grid::genfind
 //
-//
-bool Grid::grdgen(double * xn, int mt)
-{
-    
-    double a,tau,rho,u,v,Beta;
-    double Ry[3][3], A[12][3], Ad[12][3];
-
-    a=1.;
-    tau=0.5*(sqrt(5)+1);
-    rho=tau-1;
-    u=a/(sqrt(1+pow(rho,2)));
-    v=rho*u;
-    
-    Beta= atan(v/u);
-    Ry[0][0] = cos(Beta);
-    Ry[0][1] = 0;
-    Ry[0][2] = -sin(Beta);
-
-    Ry[1][0] = 0;
-    Ry[1][1] = 1;
-    Ry[1][2] = 0;
-
-    Ry[2][0] = sin(Beta);
-    Ry[2][1] = 0;
-    Ry[2][2] = cos(Beta);
-
-    for ( int i = 0 ; i < 12 ; i++ ){
-      Ad[i][0]=0;
-      Ad[i][1]=0;
-      Ad[i][2]=0;
-    }
-
-    int    id,nn,index;
-  
-    // Set up the intial regular icosahedral grid
-    // Note: this grid needs to be rotated about y-axis in order to match the TERRA grid.
-    A[0][0] = v;  A[0][1] = 0; A[0][2] = u; 
-    A[1][0] = u;  A[1][1] = v; A[1][2] = 0; 
-    A[2][0] = 0;  A[2][1] = u; A[2][2] = v;   
-    A[3][0] =-v;  A[3][1] = 0; A[3][2] = u;  
-    A[4][0] = 0;  A[4][1] =-u; A[4][2] = v;  
-    A[5][0] = u;  A[5][1] =-v; A[5][2] = 0;
-    A[6][0] = v;  A[6][1] = 0; A[6][2] =-u; 
-    A[7][0] = 0;  A[7][1] = u; A[7][2] =-v;
-    A[8][0] =-u;  A[8][1] = v; A[8][2] = 0;
-    A[9][0] =-u;  A[9][1] =-v; A[9][2] = 0;
-    A[10][0]= 0;  A[10][1]=-u; A[10][2]=-v;  
-    A[11][0]=-v;  A[11][1]= 0; A[11][2]=-u;   
-
-    // Rotate the vertices by Ry
-    for ( int i = 0 ; i < 12 ; i++ ){
-	for ( int ix = 0 ; ix < 3 ; ix++ ){
-	    for ( int iy = 0 ; iy < 3 ; iy++ ){
-		Ad[i][ix] += Ry[ix][iy]*A[i][iy];
-	    }
-	}	
-    }
-   
-      //  ........seems good
-    for ( int i = 0 ; i < 12 ; i++ ){
-      printf("%10.4g\t%10.4g\t%10.4g\n",A[i][0],A[i][1],A[i][2]);
-    }
-      printf("\n\n\n");
-    for ( int i = 0 ; i < 12 ; i++ ){
-      printf("%10.4g\t%10.4g\t%10.4g\n",Ad[i][0],Ad[i][1],Ad[i][2]);
-    }
-
-  for ( id=0 ; id<10 ; id++ ){
-      // Vertex Points........
-    // Northern Hemisphere
-      if (id<5) {
-	// North Pole
-	index = idx(0, id, 0, 0, 0);
-	xn[index] = Ad[0][0]; index++;
-	xn[index] = Ad[0][1]; index++;
-	xn[index] = Ad[0][2];
-	// mt,0
-	index = idx(0, id, mt, 0, 0);
-	xn[index] = Ad[id+1][0]; index++;
-	xn[index] = Ad[id+1][1]; index++;
-	xn[index] = Ad[id+1][2]; 
-	// 0,mt
-	index = idx(0, id, 0, mt, 0);
-	if (id == 0) {
-	  xn[index] = Ad[id+5][0]; index++;
-	  xn[index] = Ad[id+5][1]; index++;
-	  xn[index] = Ad[id+5][2]; 
-	}else{
-	  xn[index] = Ad[id][0]; index++;
-	  xn[index] = Ad[id][1]; index++;
-	  xn[index] = Ad[id][2]; 
-	}
-	// mt,mt
-	index = idx(0, id, mt, mt, 0);
-	xn[index] = Ad[id+6][0]; index++;
-	xn[index] = Ad[id+6][1]; index++;
-	xn[index] = Ad[id+6][2]; 
-	
-	// Southern Hemisphere
-      }else{
-	// South Pole
-	index = idx(0, id, 0, 0, 0);
-	xn[index] = Ad[11][0]; index++;
-	xn[index] = Ad[11][1]; index++;
-	xn[index] = Ad[11][2];
-	// mt,0
-	index = idx(0, id, mt, 0, 0);
-	if (id == 9) {
-	  xn[index] = Ad[id-3][0]; index++;
-	  xn[index] = Ad[id-3][1]; index++;
-	  xn[index] = Ad[id-3][2]; 
-	}else{
-	  xn[index] = Ad[id+2][0]; index++;
-	  xn[index] = Ad[id+2][1]; index++;
-	  xn[index] = Ad[id+2][2]; 
-	}
-	// 0,mt
-	index = idx(0, id, 0, mt, 0);
-	xn[index] = Ad[id+1][0]; index++;
-	xn[index] = Ad[id+1][1]; index++;
-	xn[index] = Ad[id+1][2]; 
-	// mt,mt
-	index = idx(0, id, mt, mt, 0);
-	xn[index] = Ad[id-4][0]; index++;
-	xn[index] = Ad[id-4][1]; index++;
-	xn[index] = Ad[id-4][2]; 
-      }
-
-      // Edge Points.........
-
-
-
-  } // for id
-
-}
-
 bool Grid::genGrid()
 {
   
-
+    Domain * dptr;
     npts  = 10*(mt+1)*(mt+1)*(mt/2 + 1);
     nr    = mt/2+1;
     nproc = (mt/nt)*(mt/nt)*10/nd; 
@@ -315,65 +178,46 @@ bool Grid::genGrid()
     printf("|  nproc     =  %12d                  |\n"        , nproc);
     printf("+----------------------------------------------+\n");
     
-//    x = new double[npts];
-//    y = new double[npts];
-//    z = new double[npts];
-//    V = new double[npts];
-
     // mt (and subsequently npts) for test purposes only
-    mt = 1;
-    npts  = (10*mt*mt + 2)*(mt/2 + 1);
-    nr = 1;
+//    mt = 8;
+//    npts  = (10*mt*mt + 2)*(mt/2 + 1);
+//    nr = 1;
 
-
-    //    xn = new double[(mt+1)*(mt+1)*10*3];
-    xn = new double[nr*10*(mt+1)*(mt+1)*3];
-
-    //    printf("\nnproc_total = %d\n",nr*10*(mt+1)*(mt+1)*3);
-
-    //    grdgen_(xn,&mt);    // fortran
-    grdgen(&xn[0],mt);            // c++
-
-    /*
-    for ( int i=0 ; i<10 ; i++){
-      printf("\nid %d\n",i);
-      for ( int yi=0 ; yi<mt+1 ; yi++){
-	for ( int xi=0 ; xi<mt+1 ; xi++){
-	  printf("%12.6g\t",xn[0*10*(mt+1)*(mt+1) + i*(mt+1)*(mt+1) + yi*(mt+1) + xi]);
-	}
-      }
-    }            
-    printf("\n");
-
-    printf("%d\n",2*10*(mt+1)*(mt+1) + 9*(mt+1)*(mt+1) + mt*(mt+1) + mt + 1);
-
-    printf("%d\n",(mt+1)*(mt+1)*10*3);
-    */
- 
-    int index=0;
-    for ( int i=0 ; i<10 ; i++){
-      for ( int xi=0 ; xi<mt+1 ; xi++){
-	for ( int yi=0 ; yi<mt+1 ; yi++){
-	  for ( int k=0 ; k<3 ; k++){
-	    index = idx(0,i,xi,yi,k);
-	    printf("%12.6g ",xn[index]);
-	  }
-	  printf("\n");
-	}
-      }      
-      //      printf("\n");
+    // make sure all domains are set up correctly
+    dptr = domains;
+    for ( int id = 0 ; id < idmax ; id++ ){
+	dptr->defineDomain(id,nr,mt);
+	dptr++;
     }
+    
+    // generate grid points within each domain
+    dptr = domains;
+    for ( int id = 0 ; id < idmax ; id++ ){
+	dptr->grdgen(); 
+	dptr++;
+    }
+      
+    /*
+    dptr = domains;
+    for ( int id = 0 ; id < idmax ; id++ ){
+	printf("id = %d\n",id);
+	for ( int i=0 ; i <  nr*(mt+1)*(mt+1)*3  ; i++){
+	    printf("%d\t%12.8g\n",i,dptr->xn[i]);
+	}
+	dptr++;
+    }
+    */
 
     
-    for ( int i=0 ; i < ( 10*(mt+1)*(mt+1)*3 ) ; i++){
-      printf("%d\t%12.8g\n",i,xn[i]);
+    // print outer shell (i.e nr=0)
+    dptr = domains;
+    for ( int id = 0 ; id < idmax ; id++ ){
+	for ( int i=0 ; i < (mt+1)*(mt+1)*3 ; i+=3){
+	    printf("%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i+0],dptr->xn[i+1],dptr->xn[i+2]);
+	}
+	dptr++;
     }
-
-    int id=0;
-    for ( int i=id*(mt+1)*(mt+1)*3 ; i < ( id*(mt+1)*(mt+1)*3 + (mt+1)*(mt+1)*3 ) ; i++){
-      printf("%d\t%12.8g\n",i,xn[i]);
-    }
+    
 
     return 0;
-
 }

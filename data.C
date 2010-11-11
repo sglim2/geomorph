@@ -43,7 +43,7 @@ bool Data::Read()
 {
     switch (intype) {
 	case UNDEF :
-	    printf("Error.Intyoue undefined");
+	    printf("Error.Intype undefined");
 	    return 1; //fail
 //	    break;  // unreachable!!
 	case MVIS :
@@ -56,7 +56,7 @@ bool Data::Read()
 	    return mitpRead();
 //	    break; // unreachable!!
 	default :
-	    printf("Error.Intyoue undefined");
+	    printf("Error.Intype undefined");
 	    return 1; //fail
 //	    break;  // unreachable!!
     }
@@ -133,15 +133,14 @@ bool Data::mitpRead()
 
   }
 
-  
+/*  
   for ( int i = 0 ; i<20 ; i++ ){
       printf ("%12.8g\t%12.8g\t%12.8g\t%12.8g\n", x[i],y[i],z[i],V[i]);
   }
+*/
 
   fclose(fptr);
-
   return 0; //success
-
 }
 
 ////////////////////////////////////////
@@ -204,7 +203,7 @@ bool Data::getStats()
     Vmin   = min;
     Vmean /= nval;
 
-    printf("Some Stats....\n");
+    printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");
     printf("|  nvals      =  %12d                  |\n"        , nval);
     printf("|  V(mean)    =  %12.8g                  |\n"      , Vmean);

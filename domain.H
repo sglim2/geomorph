@@ -16,14 +16,16 @@
 class Domain {
 public:
 
-    int id,mt,nr;
+    int id,nr,mt;
     bool northern;
 
     double *xn;
 
+    Domain();
     Domain(int, bool);
     Domain(int, bool, int, int);
 
+    int  defineDomain(int, int, int);
     int  idx(int, int, int, int);
     bool grdgen();
 

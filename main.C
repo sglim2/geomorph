@@ -154,9 +154,9 @@ int main(int argc, char* argv[])
   }
 
   // read input and convert to geomorph x,y,z,V structure
-  //  if (data->Read()){
-  //    printf("Error reading input file.");
-  //  }
+  if (data->Read()){
+      printf("Error reading input file.");
+  }
 
   // get input stats
   if (data->getStats()){
@@ -174,9 +174,6 @@ int main(int argc, char* argv[])
   if (data->grid.genGrid()){
     printf("Error computing TERRA stats.\n");
   }
-
-  // generate grid 
-//  data->defineGrid();
   
   //convert to terra-grid
 

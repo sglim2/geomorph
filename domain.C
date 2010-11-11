@@ -18,6 +18,14 @@
 // construction/destruction
 ////////////////////////////////////////
 
+////////////////////////////////////////
+// Domain::Domain
+// 
+//
+Domain::Domain()
+    : id(), northern(), xn(), mt(), nr()
+{
+}
 
 ////////////////////////////////////////
 // Domain::Domain
@@ -33,8 +41,6 @@ Domain::Domain(int _id, bool _northern)
     id=_id;
     northern=_northern;
 }
-
-
 
 ////////////////////////////////////////
 // Domain::Domain
@@ -53,7 +59,6 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
     nr = _nr;
 
     xn = new double[nr*(mt+1)*(mt+1)*3];
-    
 }
 
 
@@ -66,6 +71,22 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
 ////////////////////////////////////////
 // methods
 ////////////////////////////////////////
+
+////////////////////////////////////////
+// Domain::defineDomain
+//
+//
+int Domain::defineDomain(int _id, int _nr, int _mt)
+{
+    
+    id = _id;
+    nr = _nr;
+    mt = _mt;
+    
+    id < 5 ? northern = true : northern = false;
+
+    xn = new double[nr*(mt+1)*(mt+1)*3];
+}
 
 ////////////////////////////////////////
 // Domain::idx
@@ -97,9 +118,7 @@ int Domain::idx(int r, int i2, int i1, int xyz)
   
   idx = rbase + i2base + i1base + xyzbase;
 
-
   return idx;
-
 }
 
 ////////////////////////////////////////
@@ -110,7 +129,7 @@ bool Domain::grdgen()
 {
     
     int    nn,index;
-    double a,tau,rho,u,v,Beta;
+    double a,tau,rho,u,v,Beta,R;
     double Ry[3][3], A[12][3], Ad[12][3];
 
     a=1.;
@@ -162,15 +181,6 @@ bool Domain::grdgen()
 	}	
     }
    
-      //  ........seems good
-    for ( int i = 0 ; i < 12 ; i++ ){
-      printf("%10.4g\t%10.4g\t%10.4g\n",A[i][0],A[i][1],A[i][2]);
-    }
-      printf("\n\n\n");
-    for ( int i = 0 ; i < 12 ; i++ ){
-      printf("%10.4g\t%10.4g\t%10.4g\n",Ad[i][0],Ad[i][1],Ad[i][2]);
-    }
-
     // Vertex Points........
     // Northern Hemisphere
     if (id<5) {
@@ -231,7 +241,98 @@ bool Domain::grdgen()
 	xn[index] = Ad[id-4][2]; 
     }
     
-      // Edge Points.........
-
+    // Edge Points......... (assumes unit radius)
+    // i2,i1=0
+    for ( int i2 = 1 ; i2 < mt ; i2++ ){
+	index=idx(0, i2, 0, 0);
+	xn[index+0] =   
+	    xn[idx(0, 0, 0, 0)] + i2*(xn[idx(0, mt, 0, 0)] - xn[idx(0, 0, 0, 0)])/mt;
+	xn[index+1] =   
+	    xn[idx(0, 0, 0, 1)] + i2*(xn[idx(0, mt, 0, 1)] - xn[idx(0, 0, 0, 1)])/mt;
+	xn[index+2] =   
+	    xn[idx(0, 0, 0, 2)] + i2*(xn[idx(0, mt, 0, 2)] - xn[idx(0, 0, 0, 2)])/mt;
+	
+	R = sqrt(pow(xn[index+0],2) +  
+	         pow(xn[index+1],2) +
+	         pow(xn[index+2],2) );
+	xn[index+0] = 1/R * xn[index+0];
+	xn[index+1] = 1/R * xn[index+1];
+	xn[index+2] = 1/R * xn[index+2];
+    }
+    // i1,i2=0
+    for ( int i1 = 1 ; i1 < mt ; i1++ ){
+	index=idx(0, 0, i1, 0);
+	xn[index+0] =   
+	    xn[idx(0, 0, 0, 0)] + i1*(xn[idx(0, 0, mt, 0)] - xn[idx(0, 0, 0, 0)])/mt;
+	xn[index+1] =   
+	    xn[idx(0, 0, 0, 1)] + i1*(xn[idx(0, 0, mt, 1)] - xn[idx(0, 0, 0, 1)])/mt;
+	xn[index+2] =   
+	    xn[idx(0, 0, 0, 2)] + i1*(xn[idx(0, 0, mt, 2)] - xn[idx(0, 0, 0, 2)])/mt;
+	
+	R = sqrt(pow(xn[index+0],2) +  
+	         pow(xn[index+1],2) +
+	         pow(xn[index+2],2) );
+	xn[index+0] = 1/R * xn[index+0];
+	xn[index+1] = 1/R * xn[index+1];
+	xn[index+2] = 1/R * xn[index+2];
+    }
+    // i2,i1=mt
+    for ( int i2 = 1 ; i2 < mt ; i2++ ){
+	index=idx(0, i2, mt, 0);
+	xn[index+0] =   
+	    xn[idx(0, 0, mt, 0)] + i2*(xn[idx(0, mt, mt, 0)] - xn[idx(0, 0, mt, 0)])/mt;
+	xn[index+1] =   
+	    xn[idx(0, 0, mt, 1)] + i2*(xn[idx(0, mt, mt, 1)] - xn[idx(0, 0, mt, 1)])/mt;
+	xn[index+2] =   
+	    xn[idx(0, 0, mt, 2)] + i2*(xn[idx(0, mt, mt, 2)] - xn[idx(0, 0, mt, 2)])/mt;
+	
+	R = sqrt(pow(xn[index+0],2) +  
+	         pow(xn[index+1],2) +
+	         pow(xn[index+2],2) );
+	xn[index+0] = 1/R * xn[index+0];
+	xn[index+1] = 1/R * xn[index+1];
+	xn[index+2] = 1/R * xn[index+2];
+    }
+    // i1,i2=mt
+    for ( int i1 = 1 ; i1 < mt ; i1++ ){
+	index=idx(0, mt, i1, 0);
+	xn[index+0] =   
+	    xn[idx(0, mt, 0, 0)] + i1*(xn[idx(0, mt, mt, 0)] - xn[idx(0, mt, 0, 0)])/mt;
+	xn[index+1] =   
+	    xn[idx(0, mt, 0, 1)] + i1*(xn[idx(0, mt, mt, 1)] - xn[idx(0, mt, 0, 1)])/mt;
+	xn[index+2] =   
+	    xn[idx(0, mt, 0, 2)] + i1*(xn[idx(0, mt, mt, 2)] - xn[idx(0, mt, 0, 2)])/mt;
+	
+	R = sqrt(pow(xn[index+0],2) +  
+	         pow(xn[index+1],2) +
+	         pow(xn[index+2],2) );
+	xn[index+0] = 1/R * xn[index+0];
+	xn[index+1] = 1/R * xn[index+1];
+	xn[index+2] = 1/R * xn[index+2];
+    }
+   
+    // Everywhere inbetween
+    for ( int i1 = 1 ; i1 < mt ; i1++ ){
+	for ( int i2 = 1 ; i2 < mt ; i2++ ){
+	index=idx(0, i2, i1, 0);
+	xn[index+0] =   
+	    xn[idx(0, i1, 0, 0)] + i2*(xn[idx(0, i1, mt, 0)] - xn[idx(0, i1, 0, 0)])/mt;  
+	xn[index+1] =   
+	    xn[idx(0, i1, 0, 1)] + i2*(xn[idx(0, i1, mt, 1)] - xn[idx(0, i1, 0, 1)])/mt;
+	xn[index+2] =   
+	    xn[idx(0, i1, 0, 2)] + i2*(xn[idx(0, i1, mt, 2)] - xn[idx(0, i1, 0, 2)])/mt;
+	
+	R = sqrt(pow(xn[index+0],2) +  
+	         pow(xn[index+1],2) +
+	         pow(xn[index+2],2) );
+	xn[index+0] = 1/R * xn[index+0];
+	xn[index+1] = 1/R * xn[index+1];
+	xn[index+2] = 1/R * xn[index+2];
+	}
+    }
+    
+    // genrerate radial points
+    
+    
 
 }
