@@ -16,7 +16,6 @@
 // construction/destruction
 ////////////////////////////////////////
 
-
 Grid::Grid()
     : mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
 {
@@ -101,26 +100,26 @@ int Grid::xnProc(int r, int id, int j1, int i1, int xyz)
 // Array xn has structure:
 //    xn[nr+1][id][mt+1][mt+1][xyz]
 //
-int Grid::idx(int r, int id, int j1, int i1, int xyz)
+int Grid::idx(int r, int id, int i2, int i1, int xyz)
 {
   int idmax  = 10;
   int nerror = 0;
 
   if (  r  > nr    || r     < 0 ) nerror=1; 
   if ( id  > idmax || idmax < 0 ) nerror=1;
-  if ( i1  > mt+1  || i1    < 0 ) nerror=1;
-  if ( j1  > mt+1  || j1    < 0 ) nerror=1;
+  if ( i1  > mt    || i1    < 0 ) nerror=1;
+  if ( i2  > mt    || i2    < 0 ) nerror=1;
   if ( xyz > 3     || xyz   < 0 ) nerror=1;
 
   int idx=0;
   
   int   rbase = r  * idmax*(mt+1)*(mt+1)*3;
   int  idbase = id * (mt+1)*(mt+1)*3;
-  int   jbase = j1 * (mt+1)*3;
-  int   ibase = i1 * 3;
+  int  i2base = i2 * (mt+1)*3;
+  int  i1base = i1 * 3;
   int xyzbase = xyz;
   
-  idx = rbase + idbase + jbase + ibase + xyzbase;
+  idx = rbase + idbase + i2base + i1base + xyzbase;
 
 
   return idx;
@@ -159,6 +158,10 @@ int Grid::findGrid(int npts)
     return _mt;
 }
 
+////////////////////////////////////////
+// Grid::grdgen
+//
+//
 bool Grid::grdgen(double * xn, int mt)
 {
     
@@ -225,46 +228,36 @@ bool Grid::grdgen(double * xn, int mt)
       printf("%10.4g\t%10.4g\t%10.4g\n",Ad[i][0],Ad[i][1],Ad[i][2]);
     }
 
-
   for ( id=0 ; id<10 ; id++ ){
-      
+      // Vertex Points........
     // Northern Hemisphere
       if (id<5) {
 	// North Pole
 	index = idx(0, id, 0, 0, 0);
-	printf("index = %d\n",index);
 	xn[index] = Ad[0][0]; index++;
 	xn[index] = Ad[0][1]; index++;
 	xn[index] = Ad[0][2];
-	
 	// mt,0
-	index = idx(0, id, 0, mt, 0);
-	printf("index = %d\n",index);
+	index = idx(0, id, mt, 0, 0);
 	xn[index] = Ad[id+1][0]; index++;
 	xn[index] = Ad[id+1][1]; index++;
 	xn[index] = Ad[id+1][2]; 
-	
 	// 0,mt
-	index = idx(0, id, mt, 0, 0);
+	index = idx(0, id, 0, mt, 0);
 	if (id == 0) {
-	  printf("index = %d\n",index);
 	  xn[index] = Ad[id+5][0]; index++;
 	  xn[index] = Ad[id+5][1]; index++;
 	  xn[index] = Ad[id+5][2]; 
 	}else{
-	  printf("index = %d\n",index);
 	  xn[index] = Ad[id][0]; index++;
 	  xn[index] = Ad[id][1]; index++;
 	  xn[index] = Ad[id][2]; 
 	}
-	  
 	// mt,mt
 	index = idx(0, id, mt, mt, 0);
-	printf("index = %d\n",index);
 	xn[index] = Ad[id+6][0]; index++;
 	xn[index] = Ad[id+6][1]; index++;
 	xn[index] = Ad[id+6][2]; 
-
 	
 	// Southern Hemisphere
       }else{
@@ -273,79 +266,34 @@ bool Grid::grdgen(double * xn, int mt)
 	xn[index] = Ad[11][0]; index++;
 	xn[index] = Ad[11][1]; index++;
 	xn[index] = Ad[11][2];
-
-
-	// 0,mt
-	index = idx(0, id, 0, mt, 0);
-	printf("index = %d\n",index);
-	xn[index] = Ad[id+1][0]; index++;
-	xn[index] = Ad[id+1][1]; index++;
-	xn[index] = Ad[id+1][2]; 
-	
 	// mt,0
 	index = idx(0, id, mt, 0, 0);
 	if (id == 9) {
-	  printf("index = %d\n",index);
 	  xn[index] = Ad[id-3][0]; index++;
 	  xn[index] = Ad[id-3][1]; index++;
 	  xn[index] = Ad[id-3][2]; 
 	}else{
-	  printf("index = %d\n",index);
 	  xn[index] = Ad[id+2][0]; index++;
 	  xn[index] = Ad[id+2][1]; index++;
 	  xn[index] = Ad[id+2][2]; 
 	}
-
+	// 0,mt
+	index = idx(0, id, 0, mt, 0);
+	xn[index] = Ad[id+1][0]; index++;
+	xn[index] = Ad[id+1][1]; index++;
+	xn[index] = Ad[id+1][2]; 
 	// mt,mt
 	index = idx(0, id, mt, mt, 0);
-	printf("index = %d\n",index);
 	xn[index] = Ad[id-4][0]; index++;
 	xn[index] = Ad[id-4][1]; index++;
 	xn[index] = Ad[id-4][2]; 
-
       }
 
-  }
+      // Edge Points.........
 
 
-/*
-  for ( id=0 ; id<10 ; id++ ){
 
-    id < 5 ? sgn = 1. : sgn = -1.;
-    
-    phi = (2*((id+1)%5) + (id)/5)*fifthpi;
-
-    index = idx(0, id, 0, 0, 0);
-    
-    xn[index] =  0.;
-    index++;
-    xn[index] =  0.;
-    index++;
-    xn[index] =  sgn;
-
-    index = idx(0, id, 0, mt, 0);
-    xn[index] =  sinw*cos(phi);
-    index++;
-    xn[index] =  sinw*sin(phi);
-    index++;
-    xn[index] =  cosw*sgn;
-
-    index = idx(0, id, mt, 0, 0);
-    xn[index] =  sinw*cos(phi + fifthpi + fifthpi);
-    index++;
-    xn[index] =  sinw*sin(phi + fifthpi + fifthpi);
-    index++;
-    xn[index] =  cosw*sgn;
-
-    index = idx(0, id, mt, mt, 0);
-    xn[index] =  sinw*cos(phi + fifthpi);
-    index++;
-    xn[index] =  sinw*sin(phi + fifthpi);
-    index++;
-    xn[index] = -cosw*sgn;
- 
-  }
-*/
+  } // for id
 
 }
 
@@ -418,6 +366,11 @@ bool Grid::genGrid()
 
     
     for ( int i=0 ; i < ( 10*(mt+1)*(mt+1)*3 ) ; i++){
+      printf("%d\t%12.8g\n",i,xn[i]);
+    }
+
+    int id=0;
+    for ( int i=id*(mt+1)*(mt+1)*3 ; i < ( id*(mt+1)*(mt+1)*3 + (mt+1)*(mt+1)*3 ) ; i++){
       printf("%d\t%12.8g\n",i,xn[i]);
     }
 
