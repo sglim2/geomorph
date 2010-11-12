@@ -39,19 +39,26 @@ Data::Data()
 
 ////////////////////////////////////////
 // Data::findBoundary
+// An alternative (and faster) method would be to calculate these values 
+// as the data is read-in. That way we share a loop over nval, and (for
+// mitp data) is in the native format (i.e. no sqrt necessary).
 bool Data::findBoundary()
 {
-  double tmpcmb=0;
-  double tmpa=0;
-  cmb=1.E+20;
-  a=0.;
+    double veryLarge=1E+99;
+    double verySmall=1E-99;
+
+  double tmpcmb=0.;
+  double tmpa=0.;
+  cmb = veryLarge;
+  a   = verySmall;
 
   for (int in=0 ; in<nval ; in++){
-    tmpcmb = sqrt(x[in]*x[in] + y[in]*x[in] + z[in]*x[in] );
-    tmpa   = sqrt(x[in]*x[in] + y[in]*x[in] + z[in]*x[in] );
+    tmpcmb = sqrt(x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
+    tmpa   = sqrt(x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
     tmpcmb < cmb ? cmb = tmpcmb : cmb=cmb;
     tmpa   > a   ? a   = tmpa   : a=a;
   }
+
     return 0;    
 }
 
@@ -120,13 +127,12 @@ bool Data::mitpRead()
   double lat ;
   double lng ;
   double dpth;
-
   x = new double[nval];
   y = new double[nval];
   z = new double[nval];
   V = new double[nval];
 
-  // move tothe first data-line
+  // move to the first data-line
   fclose(fptr);
   fptr=fopen(infile,"r");
   if (fptr==NULL){
@@ -137,6 +143,7 @@ bool Data::mitpRead()
   fscanf(fptr,"%s", &buf);
   fscanf(fptr,"%s", &buf);
 
+  // Collect the rest of the data
   for ( int i = 0 ; i<nval ; i++ ){
       // Collect data
       fscanf(fptr,"%s", &buf);  lat = atof (buf) * pi/180. ;
@@ -145,9 +152,12 @@ bool Data::mitpRead()
       fscanf(fptr,"%s", &buf);  V[i] = atof (buf) ;
 
       // Convert to xyz
-      x[i] = - 1. * cos(lat) * cos(lng) ;
-      y[i] =   1. * sin(lat) ;
-      z[i] =   1. * cos(lat) * sin(lng) ;
+//      x[i] = - 1. * cos(lat) * cos(lng) ;
+//      y[i] =   1. * sin(lat) ;
+//      z[i] =   1. * cos(lat) * sin(lng) ;
+      x[i] = - dpth * cos(lat) * cos(lng) ;
+      y[i] =   dpth * sin(lat) ;
+      z[i] =   dpth * cos(lat) * sin(lng) ;
 
   }
 
