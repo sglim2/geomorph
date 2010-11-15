@@ -39,9 +39,9 @@ Data::Data()
 
 ////////////////////////////////////////
 // Data::findBoundary
-// An alternative (and faster) method would be to calculate these values 
-// as the data is read-in. That way we share a loop over nval, and (for
-// mitp data) is in the native format (i.e. no sqrt necessary).
+// An alternative (and faster) method would be to calculate these values as
+// the data is read in. That way we share a loop over nval, and (for mitp data
+// at least) is in the native format (i.e. no sqrt necessary).
 bool Data::findBoundary()
 {
     double veryLarge=1E+99;
@@ -53,14 +53,42 @@ bool Data::findBoundary()
   a   = verySmall;
 
   for (int in=0 ; in<nval ; in++){
-    tmpcmb = sqrt(x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
-    tmpa   = sqrt(x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
+    tmpcmb = sqrt(x[in]*x[in] + y[in]*y[in] + z[in]*z[in]);
+    tmpa   = sqrt(x[in]*x[in] + y[in]*y[in] + z[in]*z[in]);
     tmpcmb < cmb ? cmb = tmpcmb : cmb=cmb;
     tmpa   > a   ? a   = tmpa   : a=a;
   }
 
     return 0;    
 }
+
+////////////////////////////////////////
+// Data::findLayers 
+// As with Data::findBoundary(), an alernative method would be to calculate
+// these values as the data is read in.
+bool Data::findLayers()
+{
+  
+  int nbins=10000;
+  int * bins = new int[nbins];
+  int nlayr;
+  //  double * rads = new double[nval];
+  double rad;
+ 
+  for ( int n=0 ; n<nbins ; n++) bins[n]=0;
+ 
+  for (int in=0 ; in<nval ; in++){
+    //    rads[in] = sqrt (x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
+    rad      = sqrt (x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
+    bins[ int(floor(nbins*(rad-cmb)/(a-cmb))) ]++;
+  }
+  
+
+      for ( int n=0 ; n<nbins ; n++) printf("%d\t%d\n",n,bins[n]);
+
+  return 0;
+}
+
 
 ////////////////////////////////////////
 // Read
@@ -233,6 +261,8 @@ bool Data::getStats()
 
     // find a and cmb
     findBoundary();
+    // find the number of layers
+    findLayers();
 
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");

@@ -49,6 +49,7 @@ public:
   bool  getStats();
     
   bool  findBoundary();
+  bool  findLayers();
 };
 
 #endif
