@@ -18,11 +18,12 @@
 
 
 Data::Data()
-  : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V(), grid()
+  : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V()
+//  : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V(), grid()
 {
 
   // Create new (empty) Grid instance
-  Grid();
+//  Grid();
 
   intype=UNDEF;
   outtype=UNDEF;
@@ -68,25 +69,29 @@ bool Data::findBoundary()
 // these values as the data is read in.
 bool Data::findLayers()
 {
-  
-  int nbins=10000;
-  int * bins = new int[nbins];
-  int nlayr;
-  //  double * rads = new double[nval];
-  double rad;
- 
-  for ( int n=0 ; n<nbins ; n++) bins[n]=0;
- 
-  for (int in=0 ; in<nval ; in++){
-    //    rads[in] = sqrt (x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
-    rad      = sqrt (x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
-    bins[ int(floor(nbins*(rad-cmb)/(a-cmb))) ]++;
-  }
-  
-
-      for ( int n=0 ; n<nbins ; n++) printf("%d\t%d\n",n,bins[n]);
-
-  return 0;
+    nlayr = 0;
+    int nbins=10000;
+    int * bins = new int[nbins];
+    //  double * rads = new double[nval];
+    double rad;
+    
+    for ( int n=0 ; n<nbins ; n++) bins[n]=0;
+    
+    for (int in=0 ; in<nval ; in++){
+	//    rads[in] = sqrt (x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
+	rad      = sqrt (x[in]*x[in] + y[in]*y[in] + z[in]*z[in] );
+	bins[ int(floor(nbins*(rad-cmb)/(a-cmb))) ]++;
+    }
+    
+    
+    for ( int n=0 ; n<nbins ; n++) {
+//      printf("%d\t%d\n",n,bins[n]);
+	if (bins[n] > 10){
+	    nlayr++;
+	}
+    }
+    
+    return 0;
 }
 
 
@@ -267,6 +272,7 @@ bool Data::getStats()
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");
     printf("|  nvals      =  %12d                  |\n"        , nval);
+    printf("|  nlayr      =  %12d                  |\n"        , nlayr);
     printf("|  V(mean)    =  %12.8g                  |\n"      , Vmean);
     printf("|  Vmin       =  %12.8g                  |\n"      , Vmin);
     printf("|  Vmax       =  %12.8g                  |\n"      , Vmax);
@@ -276,30 +282,4 @@ bool Data::getStats()
     
     
     return 0; //success
-}
-
-////////////////////////////////////////
-// defineGrid
-bool Data::defineGrid()
-{
-   
-    grid.x = new double[ grid.nt+1 * grid.nt+1 * 10 ];
-    grid.y = new double[ grid.nt+1 * grid.nt+1 * 10 ];
-    grid.z = new double[ grid.nt+1 * grid.nt+1 * 10 ];
-    grid.V = new double[ grid.nt+1 * grid.nt+1 * 10 ];
-  
-    return 0; // success
-}
-
-////////////////////////////////////////
-// destroyGrid
-bool Data::destroyGrid()
-{
-   
-    delete [] grid.x;
-    delete [] grid.y;
-    delete [] grid.z;
-    delete [] grid.V;
-
-    return 0; // success
 }

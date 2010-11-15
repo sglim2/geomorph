@@ -122,6 +122,76 @@ int Domain::idx(int r, int i2, int i1, int xyz)
 }
 
 ////////////////////////////////////////
+// Domain::getClosestDataValue
+//
+// Given the index of the geomorph grid, searches for the 'V' value of the
+// nearest spatial point of the 'Data' data.
+bool Domain::getNearestDataValue(int index)
+{
+
+    // search Data::x,y,z for nearest spatial point
+    int datax,datay,dataz,dataV;
+    datax=0.;
+    datay=0.;
+    dataz=0.;
+    dataV=0.;
+
+    // loop over all Data values
+//    for    
+    
+
+    return 0;
+}
+
+////////////////////////////////////////
+// Domain::getValue
+//
+// Given the index (index=>x; index+1=>y;.....) of the geomorph grid, uses the
+// 'interp' method to calculate its value from that contained in Data::x,y,z,
+// and V.
+int Domain::getValue(int index, int interp)
+{
+    switch (interp) {
+	case NEAREST:
+	    if (getNearestDataValue(index)){
+		printf("Error in Domain::getNearestDataValue()\n");
+	    }
+	    break;
+	case LINEAR:
+	    //do something else;
+	    break;
+	default:
+	    break;
+    }
+
+    return 0;
+}
+
+////////////////////////////////////////
+// Domain::importData
+//
+// For each xn element, find the best match data value V using the defined
+// algorithm
+bool Domain::importData()
+{
+    int index=0;
+    int interp=NEAREST;
+//    printf("domain = %d\n", id);
+    
+    for ( int ri=0 ; ri<nr ; ri++){
+	for ( int i2=0 ; i2<mt+1 ; i2++) {
+	    for ( int i1=0 ; i1<mt+1 ; i1++) {
+		index=idx(ri,i2,i1,0);
+		getValue(index, interp)	;
+	    }
+	}
+    }
+    
+
+    return 0;
+}
+
+////////////////////////////////////////
 // Domain::grdgen
 //
 //

@@ -23,18 +23,18 @@ public:
     int       idmax;
     int       npts;
     double    rmax,rmin;
-    double    *x,*y,*z,*V;
     Domain    *domains;
     
     Grid();
     Grid(int, int, int);
     
-    bool genGrid();
-    int  findGrid(int);
-    int  xnProc(int idx);
-    int  xnProc(int r, int id, int i1, int j1, int xyz);
-    int  idx(int r, int id, int i1, int j1, int xyz);
-    
+    bool   genGrid   ();
+    int    findGrid  (int);
+    int    xnProc    (int);
+    int    xnProc    (int, int, int, int, int);
+    int    idx       (int, int, int, int, int);
+    bool   importData();
+
 };
 
 extern"C" {

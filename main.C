@@ -113,15 +113,15 @@ bool gm_processCommandLine(int argc, char* argv[])
   
     if (strcmp(argv[i], "--mt") == 0) {
       i++;
-      data->grid.mt=atoi(argv[i]);
+      grid->mt=atoi(argv[i]);
     }
     if (strcmp(argv[i], "--nt") == 0) {
       i++;
-      data->grid.nt=atoi(argv[i]);
+      grid->nt=atoi(argv[i]);
     }
     if (strcmp(argv[i], "--nd") == 0) {
       i++;
-      data->grid.nd=atoi(argv[i]);
+      grid->nd=atoi(argv[i]);
     }
 
   }
@@ -131,9 +131,9 @@ bool gm_processCommandLine(int argc, char* argv[])
   printf(" outtype  %s(%d) \n", data->outtypeConverter(), data->outtype);
   printf(" infile   %s \n", data->infile);
   printf(" outfile  %s \n", data->outfile);
-  printf(" mt       %d \n", data->grid.mt); 
-  printf(" nt       %d \n", data->grid.nt); 
-  printf(" nd       %d \n", data->grid.nd);
+  printf(" mt       %d \n", grid->mt); 
+  printf(" nt       %d \n", grid->nt); 
+  printf(" nd       %d \n", grid->nd);
   printf("\n");
 
   return 0;
@@ -146,6 +146,7 @@ int main(int argc, char* argv[])
 
   // Create a new (empty) Data instance
   data = new Data;
+  grid = new Grid;
   
   // process command-line and fill some data objects
   if (gm_processCommandLine(argc, argv)) {
@@ -164,26 +165,25 @@ int main(int argc, char* argv[])
   }
 
   // find best grid to match input data
-  int my_mt= data->grid.findGrid(data->nval);
+  int my_mt= grid->findGrid(data->nval);
   printf("best matching mt value = %d\n", my_mt);
-  if ( data->grid.mt != my_mt ) {
+  if ( grid->mt != my_mt ) {
       printf("Overriding any user-specified mt value.\nUsing mt=%d\n", my_mt);
-      data->grid.mt = my_mt; 
+      grid->mt = my_mt; 
   }
 
-  if (data->grid.genGrid()){
+  if (grid->genGrid()){
     printf("Error computing TERRA stats.\n");
   }
   
-  //convert to terra-grid
+  // convert to terra-grid
+  grid->importData();
 
   // convert to output format
 
 
-
-  data->destroyGrid();
   delete [] data;
-
+  delete [] grid;
  return 0;
 
 }

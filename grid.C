@@ -126,6 +126,18 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 }
 
 ////////////////////////////////////////
+// Grid::importData
+//
+// imports 'Data' data into all domains.
+//
+bool Grid::importData()
+{
+    for (int i=0 ; i<10 ; i++){
+	domains[i].importData();
+    }
+}
+
+////////////////////////////////////////
 // Grid::gridfind
 //
 // A basic comparison of any given grid structire to the TERRA
