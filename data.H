@@ -32,7 +32,6 @@ public:
   int       nlayr;
   double    *x,*y,*z,*V;
   double    Vmean,Vmax,Vmin;
-//  Grid      grid;
 
   Data ();
   Data (char *, int);
@@ -43,9 +42,6 @@ public:
 
   char* intypeConverter();
   char* outtypeConverter();
-
-//  bool  defineGrid();
-//  bool  destroyGrid();
 
   bool  getStats();
     

@@ -130,10 +130,11 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 //
 // imports 'Data' data into all domains.
 //
-bool Grid::importData()
+bool Grid::importData(Data * dptr)
 {
-    for (int i=0 ; i<10 ; i++){
-	domains[i].importData();
+  // id =0 only
+    for (int i=0 ; i<1 ; i++){
+	domains[i].importData(dptr);
     }
 }
 
@@ -240,14 +241,14 @@ bool Grid::genGrid()
     }
     
     // print outer shell (i.e nr=64)
+    // Is domain.V set at this point?????
     dptr = domains;
-    for ( int id = 0 ; id < idmax ; id++ ){
+    for ( int id = 0 ; id < 0 ; id++ ){
 	for ( int i= 64*(mt+1)*(mt+1)*3 ; i < 64*(mt+1)*(mt+1)*3 + (mt+1)*(mt+1)*3 ; i+=3){
-	    printf("%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i+0],dptr->xn[i+1],dptr->xn[i+2]);
+	  printf("%12.8g\t%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i],dptr->yn[i],dptr->zn[i],dptr->V[i]);
 	}
 	dptr++;
     }
     */
-
     return 0;
 }

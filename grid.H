@@ -33,7 +33,7 @@ public:
     int    xnProc    (int);
     int    xnProc    (int, int, int, int, int);
     int    idx       (int, int, int, int, int);
-    bool   importData();
+    bool   importData(Data*);
 
 };
 

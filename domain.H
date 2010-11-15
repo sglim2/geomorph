@@ -13,6 +13,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "data.H"
+
 class Domain {
 public:
 
@@ -21,18 +23,19 @@ public:
     int id,nr,mt;
     bool northern;
     
-    double *xn;
+    double *xn,*yn,*zn;
+    double *V;
     
     Domain();
     Domain(int, bool);
     Domain(int, bool, int, int);
     
     int    defineDomain       (int, int, int);
-    int    idx                (int, int, int, int);
+    int    idx                (int, int, int);
     bool   grdgen             ();
-    int    getValue           (int, int );
-    bool   getNearestDataValue(int);
-    bool   importData();
+    int    getValue           (Data*, int, int );
+    double getNearestDataValue(Data*, int);
+    bool   importData(Data*);
 
 };
 

@@ -177,10 +177,20 @@ int main(int argc, char* argv[])
   }
   
   // convert to terra-grid
-  grid->importData();
+  //  Data *domptr = data;
+  grid->importData(data);
 
+  // test some data
   // convert to output format
 
+  // print outer shell (i.e nr=0)
+  Domain * dptr = grid->domains;
+  for ( int id = 0 ; id < 0 ; id++ ){
+    for ( int i=0 ; i < (dptr->mt+1)*(dptr->mt=1) ; i++){
+      printf("%12.8g\t%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i],dptr->yn[i],dptr->zn[i],dptr->V[i]);
+    }
+    dptr++;
+  }
 
   delete [] data;
   delete [] grid;
