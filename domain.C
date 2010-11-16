@@ -175,7 +175,7 @@ double Domain::getNearestDataValue2(Data *dptr, int index)
     //  values of the 'Data' data
     //
 
-    double gx,gy,gx;
+    double gx,gy,gz;
     gx = xn[index];
     gy = yn[index];
     gz = zn[index];
