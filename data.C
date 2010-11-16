@@ -261,10 +261,6 @@ bool Data::getStats()
     Vmin   = min;
     Vmean /= nval;
 
-  if (data->Read()){
-      printf("Error reading input file.");
-  }
-
   // find a and cmb
   if (findBoundary()){
       printf("Error in Data::findBoudary().");
