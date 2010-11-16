@@ -59,7 +59,7 @@ Grid::Grid(int _mt, int _nt, int _nd)
 //   
 int Grid::xnProc(int idx)
 {
-  int xnproc=0;
+//  int xnproc=0;
 
   return idx;
 }
@@ -120,6 +120,7 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
   
   idx = rbase + idbase + i2base + i1base + xyzbase;
 
+  if (nerror!=0) printf("Grid::idx Error.");
 
   return idx;
 
@@ -132,10 +133,15 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 //
 bool Grid::importData(Data * dptr)
 {
-  // id =0 only
-    for (int i=0 ; i<1 ; i++){
-	domains[i].importData(dptr);
+  // id = 6 only
+    for (int i=0 ; i<10 ; i++){
+	if (domains[i].importData(dptr)){
+	    printf("Error in Domain::importData()");
+	    return 1; // fail
+	}
     }
+    
+    return 0; // success
 }
 
 ////////////////////////////////////////
@@ -206,49 +212,12 @@ bool Grid::genGrid()
     // generate grid points within each domain
     dptr = domains;
     for ( int id = 0 ; id < idmax ; id++ ){
-	dptr->grdgen(); 
+	if (dptr->grdgen()){
+	    printf("Error in Domain::grdgen");
+	    return 1; // fail
+	}
 	dptr++;
     }
       
-    /*
-    dptr = domains;
-    for ( int id = 0 ; id < idmax ; id++ ){
-	printf("id = %d\n",id);
-	for ( int i=0 ; i <  nr*(mt+1)*(mt+1)*3  ; i++){
-	    printf("%d\t%12.8g\n",i,dptr->xn[i]);
-	}
-	dptr++;
-    }
-    */
-
-    /*
-    // print outer shell (i.e nr=0)
-    dptr = domains;
-    for ( int id = 0 ; id < idmax ; id++ ){
-	for ( int i=0 ; i < (mt+1)*(mt+1)*3 ; i+=3){
-	    printf("%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i+0],dptr->xn[i+1],dptr->xn[i+2]);
-	}
-	dptr++;
-    }
-
-    // print outer shell (i.e nr=32)
-    dptr = domains;
-    for ( int id = 0 ; id < idmax ; id++ ){
-	for ( int i= 32*(mt+1)*(mt+1)*3 ; i < 32*(mt+1)*(mt+1)*3 + (mt+1)*(mt+1)*3 ; i+=3){
-	    printf("%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i+0],dptr->xn[i+1],dptr->xn[i+2]);
-	}
-	dptr++;
-    }
-    
-    // print outer shell (i.e nr=64)
-    // Is domain.V set at this point?????
-    dptr = domains;
-    for ( int id = 0 ; id < 0 ; id++ ){
-	for ( int i= 64*(mt+1)*(mt+1)*3 ; i < 64*(mt+1)*(mt+1)*3 + (mt+1)*(mt+1)*3 ; i+=3){
-	  printf("%12.8g\t%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i],dptr->yn[i],dptr->zn[i],dptr->V[i]);
-	}
-	dptr++;
-    }
-    */
-    return 0;
+    return 0; // success
 }

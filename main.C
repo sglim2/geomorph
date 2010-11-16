@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
   }
 
   // find best grid to match input data
-  int my_mt= grid->findGrid(data->nval);
+  int my_mt = grid->findGrid(data->nval);
   printf("best matching mt value = %d\n", my_mt);
   if ( grid->mt != my_mt ) {
       printf("Overriding any user-specified mt value.\nUsing mt=%d\n", my_mt);
@@ -178,19 +178,69 @@ int main(int argc, char* argv[])
   
   // convert to terra-grid
   //  Data *domptr = data;
-  grid->importData(data);
+  if (grid->importData(data)){
+    printf("Error importing Data into geomorph grid.\n");
+  }
+
 
   // test some data
-  // convert to output format
+/*
+      Domain * dptr = grid->domains;
+      FILE * Xptr=fopen("outX","w");
+      if (Xptr==NULL){
+	  return 1; //fail
+      }
+      FILE * Yptr=fopen("outY","w");
+      if (Yptr==NULL){
+	  return 1; //fail
+      }
+      FILE * Zptr=fopen("outZ","w");
+      if (Zptr==NULL){
+	  return 1; //fail
+      }
+      FILE * Cptr=fopen("outC","w");
+      if (Cptr==NULL){
+	  return 1; //fail
+      }
+      dptr = grid->domains;
+      for ( int id = 0 ; id < 10 ; id++ ){
+	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		  fprintf(Xptr,"%12.8g\t",dptr[id].xn[dptr[id].idx(0,i2,i1)]);
+	      }
+	      fprintf(Xptr,"\n");
+	  }
+      }
+      dptr = grid->domains;
+      for ( int id = 0 ; id < 10 ; id++ ){
+	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		  fprintf(Yptr,"%12.8g\t",dptr[id].yn[dptr[id].idx(0,i2,i1)]);
+	      }
+	      fprintf(Yptr,"\n");
+	  }
+      }
+      dptr = grid->domains;
+      for ( int id = 0 ; id < 10 ; id++ ){
+	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		  fprintf(Zptr,"%12.8g\t",dptr[id].zn[dptr[id].idx(0,i2,i1)]);
+	      }
+	      fprintf(Zptr,"\n");
+	  }
+      }
+      dptr = grid->domains;
+      for ( int id = 0 ; id < 10 ; id++ ){
+	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		  fprintf(Cptr,"%12.8g\t",dptr[id].V[dptr[id].idx(0,i2,i1)]);
+	      }
+	      fprintf(Cptr,"\n");
+	  }
+      }
+*/
 
-  // print outer shell (i.e nr=0)
-  Domain * dptr = grid->domains;
-  for ( int id = 0 ; id < 0 ; id++ ){
-    for ( int i=0 ; i < (dptr->mt+1)*(dptr->mt=1) ; i++){
-      printf("%12.8g\t%12.8g\t%12.8g\t%12.8g\n",dptr->xn[i],dptr->yn[i],dptr->zn[i],dptr->V[i]);
-    }
-    dptr++;
-  }
+
 
   delete [] data;
   delete [] grid;

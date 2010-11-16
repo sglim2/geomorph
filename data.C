@@ -60,7 +60,7 @@ bool Data::findBoundary()
     tmpa   > a   ? a   = tmpa   : a=a;
   }
 
-    return 0;    
+  return 0;// success
 }
 
 ////////////////////////////////////////
@@ -185,6 +185,8 @@ bool Data::mitpRead()
       fscanf(fptr,"%s", &buf);  V[i] = atof (buf) ;
 
       // Convert to xyz
+      // We may have issues here....
+      // It's possible x,y,z values are swapped somewhere along the line.
 //      x[i] = - 1. * cos(lat) * cos(lng) ;
 //      y[i] =   1. * sin(lat) ;
 //      z[i] =   1. * cos(lat) * sin(lng) ;
@@ -194,11 +196,6 @@ bool Data::mitpRead()
 
   }
 
-/*  
-  for ( int i = 0 ; i<20 ; i++ ){
-      printf ("%12.8g\t%12.8g\t%12.8g\t%12.8g\n", x[i],y[i],z[i],V[i]);
-  }
-*/
 
   fclose(fptr);
   return 0; //success
@@ -264,10 +261,21 @@ bool Data::getStats()
     Vmin   = min;
     Vmean /= nval;
 
-    // find a and cmb
-    findBoundary();
-    // find the number of layers
-    findLayers();
+  if (data->Read()){
+      printf("Error reading input file.");
+  }
+
+  // find a and cmb
+  if (findBoundary()){
+      printf("Error in Data::findBoudary().");
+      return 1;
+  }
+  // find the number of layers
+  if (findLayers()){
+      printf("Error in Data::findLayers().");
+      return 1;
+  }
+  
 
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");

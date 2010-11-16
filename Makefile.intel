@@ -10,7 +10,7 @@ CFLAGS	= -g
 FFLAGS	= -g -r8 
 LDFLAGS	=  
 
-CXX	= icpc
+CXX	= icc
 CC	= icc
 FC	= ifort
 

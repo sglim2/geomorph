@@ -92,6 +92,8 @@ int Domain::defineDomain(int _id, int _nr, int _mt)
     yn = new double[nr*(mt+1)*(mt+1)];
     zn = new double[nr*(mt+1)*(mt+1)];
     V  = new double[nr*(mt+1)*(mt+1)];
+
+    return 0;
 }
 
 ////////////////////////////////////////
@@ -122,6 +124,8 @@ int Domain::idx(int r, int i2, int i1)
   
   idx = rbase + i2base + i1base;
 
+  if (nerror!=0) printf("Domain::idx Error.");
+
   return idx;
 }
 
@@ -134,14 +138,11 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 {
   
     // search Data::x,y,z for nearest spatial point
-    int dataV;
+    double dataV;
     dataV=0.;
 
     double d2 = 1.E+99;
     double xd,yd,zd;
-
-    //    printf("Test - dptr->x = %12.8g\n",dptr->x[0]);
-    //    printf("Test\n");
 
     // loop over all Data values
     for ( int di = 0 ; di < dptr->nval ; di++ ){
@@ -153,7 +154,7 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 	dataV = dptr->V[di];
       }
     }
-    
+
     return dataV;
 }
 
@@ -187,21 +188,20 @@ bool Domain::importData(Data *dptr)
 {
     int index=0;
     int interp=NEAREST;
-//    printf("domain = %d\n", id);
     
     // layer 0 only
-    for ( int ri=0 ; ri< 1 ; ri++){
-	for ( int i2=0 ; i2<mt+1 ; i2++) {
-	  printf("i2 = %d\n",i2);
-	    for ( int i1=0 ; i1<mt+1 ; i1++) {
+    for ( int ri=0 ; ri < nr ; ri++){
+	// limited i2
+	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
+	// limited i1
+	    for ( int i1=0 ; i1 < mt+1 ; i1++) {
 		index=idx(ri,i2,i1);
 		getValue(dptr, index, interp)	;
 	    }
 	}
     }
-    
 
-    return 0;
+    return 0; // success
 }
 
 ////////////////////////////////////////
@@ -211,7 +211,7 @@ bool Domain::importData(Data *dptr)
 bool Domain::grdgen()
 {
     
-    int    nn,index;
+    int    index;
     double R,x0,y0,z0;
 
     double a,tau,rho,u,v,Beta;
@@ -434,4 +434,5 @@ bool Domain::grdgen()
       }
     }
 
+    return 0;
 }
