@@ -130,7 +130,7 @@ int Domain::idx(int r, int i2, int i1)
 }
 
 ////////////////////////////////////////
-// Domain::getClosestDataValue
+// Domain::getNearestDataValue
 //
 // Given the index of the geomorph grid, searches for the 'V' value of the
 // nearest spatial point of the 'Data' data.
@@ -138,6 +138,48 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 {
   
     // search Data::x,y,z for nearest spatial point
+    double dataV;
+    dataV=0.;
+
+    double d2 = 1.E+99;
+    double xd,yd,zd;
+
+    // loop over all Data values
+    for ( int di = 0 ; di < dptr->nval ; di++ ){
+      xd=dptr->x[di] - xn[index];
+      yd=dptr->y[di] - yn[index];
+      zd=dptr->z[di] - zn[index];
+      if ( xd*xd + yd*yd + zd*zd < d2 ) {
+	d2 = xd*xd + yd*yd + zd*zd;
+	dataV = dptr->V[di];
+      }
+    }
+
+    return dataV;
+}
+
+////////////////////////////////////////
+// Domain::getNearestDataValue2
+//
+// Given the index of the geomorph grid, searches for the 'V' value of the
+// nearest spatial point of the 'Data' data. A more optimised algorithm than
+// getNearestDataValue.
+double Domain::getNearestDataValue2(Data *dptr, int index)
+{
+
+    // A start...but a lot of work to be done.
+    //
+    // Perhaps we need to first search for closest matching radial points,
+    // then narrow the search for the closest point.
+    //  ......to do this, we will need some sort of indexing of the radial
+    //  values of the 'Data' data
+    //
+
+    double gx,gy,gx;
+    gx = xn[index];
+    gy = yn[index];
+    gz = zn[index];
+    
     double dataV;
     dataV=0.;
 

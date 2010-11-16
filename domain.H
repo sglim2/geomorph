@@ -30,12 +30,13 @@ public:
     Domain(int, bool);
     Domain(int, bool, int, int);
     
-    int    defineDomain       (int, int, int);
-    int    idx                (int, int, int);
-    bool   grdgen             ();
-    int    getValue           (Data*, int, int );
-    double getNearestDataValue(Data*, int);
-    bool   importData(Data*);
+    int    defineDomain        (int, int, int);
+    int    idx                 (int, int, int);
+    bool   grdgen              ();
+    int    getValue            (Data*, int, int );
+    double getNearestDataValue (Data*, int);
+    double getNearestDataValue2(Data*, int);
+    bool   importData          (Data*);
 
 };
 
