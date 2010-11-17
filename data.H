@@ -10,7 +10,6 @@
 #ifndef _GEOMORPH_DATA_H
 #define _GEOMORPH_DATA_H
 
-#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,7 +26,8 @@ public:
   char *    infile;
   char *    outfile;
   int       intype;
-  int       outtype;
+    int       outtype;
+    int     nlat,nlng,ndpth;
   long int  nval;
   int       nlayr;
   double    *x,*y,*z,*V;

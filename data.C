@@ -139,8 +139,25 @@ bool Data::Read()
 //    y =   sin(lat) 
 //    z =   cos(lat) * sin(lng)
 //
+//
+// Input data is expected to be in the format:
+//  line1: 
+//    headers
+//  subsequent lines: 
+//    data in the order: 
+//      Lat Long Depth Value
+//  Sort order is:
+//    increasing  Depth; 
+//    increasing  Long;
+//    then increasing  Lat.
 bool Data::mitpRead()
-{
+{ 
+  double lat ;
+  double lng ;
+  double dpth;
+  double veryLarge=1E+99;
+  double quiteSmall=1E-5;
+
   nval = 0;
   
   FILE * fptr=fopen(infile,"r");
@@ -155,15 +172,59 @@ bool Data::mitpRead()
   
   // discard the header record
   nval--;
-
   // define arrays
-  double lat ;
-  double lng ;
-  double dpth;
   x = new double[nval];
   y = new double[nval];
   z = new double[nval];
   V = new double[nval];
+
+  // We have nval, now let's find nlat, nlng and ndpth..........
+  // move to the first data-line
+  fclose(fptr);
+  fptr=fopen(infile,"r");
+  if (fptr==NULL){
+      return 1; //fail
+  }
+  // discard headers
+  fscanf(fptr,"%s", &buf);
+  fscanf(fptr,"%s", &buf);
+  fscanf(fptr,"%s", &buf);
+  fscanf(fptr,"%s", &buf);
+
+  lat = -veryLarge;
+  lng = -veryLarge;
+  dpth= -veryLarge;
+  bool nlat_found=false;
+
+  for ( int i = 0 ; i < nval ; i++ ){
+      fscanf(fptr,"%s", &buf);  
+      if (atof(buf) > lat + quiteSmall ) {
+	  nlat++;
+	  lat = atof(buf);
+      }
+      
+      
+      fscanf(fptr,"%s", &buf); 
+      if (atof(buf) > lng + quiteSmall ) {
+	  nlng++;
+	  lng = atof(buf);
+      }
+
+      fscanf(fptr,"%s", &buf); 
+      if (atof(buf) > dpth + quiteSmall ) {
+	  ndpth++;
+	  dpth = atof(buf);
+      }
+
+      //discard last column
+      fscanf(fptr,"%s", &buf); 
+  }
+  
+  printf("nlat  = %d\n",nlat);
+  printf("nlng  = %d\n",nlng);
+  printf("ndpth = %d\n",ndpth);
+
+  //Collect Data..........
 
   // move to the first data-line
   fclose(fptr);

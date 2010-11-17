@@ -140,6 +140,68 @@ bool gm_processCommandLine(int argc, char* argv[])
 }
 
 ////////////////////////////////////////
+// writeGrid
+bool writeGrid()
+{
+    // test some data
+    Domain * dptr = grid->domains;
+    FILE * Xptr=fopen("outX","w");
+    if (Xptr==NULL){
+	return 1; //fail
+    }
+    FILE * Yptr=fopen("outY","w");
+    if (Yptr==NULL){
+	return 1; //fail
+    }
+    FILE * Zptr=fopen("outZ","w");
+    if (Zptr==NULL){
+	return 1; //fail
+    }
+    FILE * Cptr=fopen("outC","w");
+    if (Cptr==NULL){
+	return 1; //fail
+    }
+    dptr = grid->domains;
+    for ( int id = 0 ; id < 10 ; id++ ){
+	for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	    for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		fprintf(Xptr,"%12.8g\t",dptr[id].xn[dptr[id].idx(0,i2,i1)]);
+	    }
+	    fprintf(Xptr,"\n");
+	}
+    }
+    dptr = grid->domains;
+    for ( int id = 0 ; id < 10 ; id++ ){
+	for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	    for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		fprintf(Yptr,"%12.8g\t",dptr[id].yn[dptr[id].idx(0,i2,i1)]);
+	    }
+	    fprintf(Yptr,"\n");
+	}
+    }
+    dptr = grid->domains;
+    for ( int id = 0 ; id < 10 ; id++ ){
+	for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	    for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		fprintf(Zptr,"%12.8g\t",dptr[id].zn[dptr[id].idx(0,i2,i1)]);
+	    }
+	    fprintf(Zptr,"\n");
+	}
+    }
+    dptr = grid->domains;
+    for ( int id = 0 ; id < 10 ; id++ ){
+	for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
+	    for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
+		fprintf(Cptr,"%12.8g\t",dptr[id].V[dptr[id].idx(0,i2,i1)]);
+	    }
+	    fprintf(Cptr,"\n");
+	}
+    }
+
+    return 0; // success
+}
+
+////////////////////////////////////////
 // main
 int main(int argc, char* argv[])
 {
@@ -182,64 +244,9 @@ int main(int argc, char* argv[])
     printf("Error importing Data into geomorph grid.\n");
   }
 
-
-  // test some data
-/*
-      Domain * dptr = grid->domains;
-      FILE * Xptr=fopen("outX","w");
-      if (Xptr==NULL){
-	  return 1; //fail
-      }
-      FILE * Yptr=fopen("outY","w");
-      if (Yptr==NULL){
-	  return 1; //fail
-      }
-      FILE * Zptr=fopen("outZ","w");
-      if (Zptr==NULL){
-	  return 1; //fail
-      }
-      FILE * Cptr=fopen("outC","w");
-      if (Cptr==NULL){
-	  return 1; //fail
-      }
-      dptr = grid->domains;
-      for ( int id = 0 ; id < 10 ; id++ ){
-	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
-	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
-		  fprintf(Xptr,"%12.8g\t",dptr[id].xn[dptr[id].idx(0,i2,i1)]);
-	      }
-	      fprintf(Xptr,"\n");
-	  }
-      }
-      dptr = grid->domains;
-      for ( int id = 0 ; id < 10 ; id++ ){
-	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
-	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
-		  fprintf(Yptr,"%12.8g\t",dptr[id].yn[dptr[id].idx(0,i2,i1)]);
-	      }
-	      fprintf(Yptr,"\n");
-	  }
-      }
-      dptr = grid->domains;
-      for ( int id = 0 ; id < 10 ; id++ ){
-	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
-	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
-		  fprintf(Zptr,"%12.8g\t",dptr[id].zn[dptr[id].idx(0,i2,i1)]);
-	      }
-	      fprintf(Zptr,"\n");
-	  }
-      }
-      dptr = grid->domains;
-      for ( int id = 0 ; id < 10 ; id++ ){
-	  for ( int i2=0 ; i2<(dptr[id].mt+1) ; i2++ ){
-	      for ( int i1=0 ; i1<(dptr[id].mt+1) ; i1++ ){
-		  fprintf(Cptr,"%12.8g\t",dptr[id].V[dptr[id].idx(0,i2,i1)]);
-	      }
-	      fprintf(Cptr,"\n");
-	  }
-      }
-*/
-
+//  if (writeGrid()){
+//    printf("Error importing Data into geomorph grid.\n");
+//  }
 
 
   delete [] data;
