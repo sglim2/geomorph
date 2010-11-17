@@ -133,8 +133,9 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 //
 bool Grid::importData(Data * dptr)
 {
-  // id = 6 only
-    for (int i=0 ; i<10 ; i++){
+  // id = 0 only
+  //    for (int i=0 ; i<10 ; i++){
+    for (int i=0 ; i<1 ; i++){
 	if (domains[i].importData(dptr)){
 	    printf("Error in Domain::importData()");
 	    return 1; // fail

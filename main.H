@@ -26,4 +26,8 @@ static Data* data=0;
 static Grid* grid=0;
 static double a;
 static double cmb;
+static double veryLarge=1E+99;
+static double verySmall=1E-99;
+static double quiteLarge=1E+5;
+static double quiteSmall=1E-5;
 

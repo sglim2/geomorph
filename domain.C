@@ -162,37 +162,46 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 // Domain::getNearestDataValue2
 //
 // Given the index of the geomorph grid, searches for the 'V' value of the
-// nearest spatial point of the 'Data' data. A more optimised algorithm than
+// nearest spatial point in the Data class. A more optimised algorithm than
 // getNearestDataValue.
 double Domain::getNearestDataValue2(Data *dptr, int index)
 {
-
-    // A start...but a lot of work to be done.
-    //
-    // Perhaps we need to first search for closest matching radial points,
-    // then narrow the search for the closest point.
-    //  ......to do this, we will need some sort of indexing of the radial
-    //  values of the 'Data' data
-    //
+  int nr=0; // our layer of interest (ot in fact either side of this!)
 
     double gx,gy,gz;
     gx = xn[index];
     gy = yn[index];
     gz = zn[index];
     
+    // what's our current radius
+    double rad=sqrt(gx*gx + gy*gy + gz*gz);
+
+    // find closest radii
+    double dR=veryLarge;
+    double dataR=0.;
+    for ( int ir=0 ; ir<dptr->ndpth ; ir++ ){
+      dataR = ir*(dptr->maxR - dptr->minR)/dptr->ndpth;
+      if (abs(dataR - rad) < dR) {
+	dR = abs(dataR - rad) ;
+	nr = ir;
+      }
+    }
+
+
     double dataV;
     dataV=0.;
 
     double d2 = 1.E+99;
     double xd,yd,zd;
-
-    // loop over all Data values
-    for ( int di = 0 ; di < dptr->nval ; di++ ){
+    double tmpR2;
+    // loop over all Data values within layer nr
+    for (int di=nr*dptr->nlat*dptr->nlng; di<nr*dptr->nlat*dptr->nlng + dptr->nlat*dptr->nlng; di++ ){
       xd=dptr->x[di] - xn[index];
       yd=dptr->y[di] - yn[index];
       zd=dptr->z[di] - zn[index];
-      if ( xd*xd + yd*yd + zd*zd < d2 ) {
-	d2 = xd*xd + yd*yd + zd*zd;
+      tmpR2=xd*xd + yd*yd + zd*zd;
+      if ( tmpR2 < d2 ) {
+	d2 = tmpR2;
 	dataV = dptr->V[di];
       }
     }
@@ -209,7 +218,8 @@ int Domain::getValue(Data * dptr, int index, int interp)
 {
   switch (interp) {
   case NEAREST:
-    V[index] = getNearestDataValue(dptr,index);
+    //   V[index] = getNearestDataValue(dptr,index);
+    V[index] = getNearestDataValue2(dptr,index);
     break;
   case LINEAR:
     //do something else;
@@ -232,7 +242,8 @@ bool Domain::importData(Data *dptr)
     int interp=NEAREST;
     
     // layer 0 only
-    for ( int ri=0 ; ri < nr ; ri++){
+    //    for ( int ri=0 ; ri < nr ; ri++){
+    for ( int ri=0 ; ri < 1 ; ri++){
 	// limited i2
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
 	// limited i1

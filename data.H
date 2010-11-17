@@ -28,6 +28,8 @@ public:
   int       intype;
     int       outtype;
     int     nlat,nlng,ndpth;
+  double    minR,maxR;
+  double    * lyrs;
   long int  nval;
   int       nlayr;
   double    *x,*y,*z,*V;
@@ -36,9 +38,9 @@ public:
   Data ();
   Data (char *, int);
 
-  bool  Read ();
-  bool  mitpRead ();
-
+  bool   Read ();
+  bool   mitpRead ();
+  double mitpDepth2Radius(double);
 
   char* intypeConverter();
   char* outtypeConverter();

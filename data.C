@@ -19,11 +19,7 @@
 
 Data::Data()
   : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V()
-//  : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V(), grid()
 {
-
-  // Create new (empty) Grid instance
-//  Grid();
 
   intype=UNDEF;
   outtype=UNDEF;
@@ -45,9 +41,6 @@ Data::Data()
 // at least) is in the native format (i.e. no sqrt necessary).
 bool Data::findBoundary()
 {
-    double veryLarge=1E+99;
-    double verySmall=1E-99;
-
   double tmpcmb=0.;
   double tmpa=0.;
   cmb = veryLarge;
@@ -121,6 +114,19 @@ bool Data::Read()
 
     return 0;    
 }
+
+
+////////////////////////////////////////
+// mitpDepth2Radius
+// --------
+//
+//
+double Data::mitpDepth2Radius(double dpth)
+{
+
+ return (EarthRadKM - dpth) / EarthRadKM;
+ 
+}
 ////////////////////////////////////////
 // mitpRead
 // --------
@@ -155,8 +161,6 @@ bool Data::mitpRead()
   double lat ;
   double lng ;
   double dpth;
-  double veryLarge=1E+99;
-  double quiteSmall=1E-5;
 
   nval = 0;
   
@@ -177,7 +181,7 @@ bool Data::mitpRead()
   y = new double[nval];
   z = new double[nval];
   V = new double[nval];
-
+ 
   // We have nval, now let's find nlat, nlng and ndpth..........
   // move to the first data-line
   fclose(fptr);
@@ -194,6 +198,8 @@ bool Data::mitpRead()
   lat = -veryLarge;
   lng = -veryLarge;
   dpth= -veryLarge;
+  minR= +veryLarge;
+  maxR= -veryLarge;
   bool nlat_found=false;
 
   for ( int i = 0 ; i < nval ; i++ ){
@@ -202,7 +208,6 @@ bool Data::mitpRead()
 	  nlat++;
 	  lat = atof(buf);
       }
-      
       
       fscanf(fptr,"%s", &buf); 
       if (atof(buf) > lng + quiteSmall ) {
@@ -214,15 +219,19 @@ bool Data::mitpRead()
       if (atof(buf) > dpth + quiteSmall ) {
 	  ndpth++;
 	  dpth = atof(buf);
+	  if ( mitpDepth2Radius(dpth) < minR ) minR = mitpDepth2Radius(dpth) ;
+	  if ( mitpDepth2Radius(dpth) > maxR ) maxR = mitpDepth2Radius(dpth) ;
       }
 
       //discard last column
       fscanf(fptr,"%s", &buf); 
   }
   
-  printf("nlat  = %d\n",nlat);
-  printf("nlng  = %d\n",nlng);
-  printf("ndpth = %d\n",ndpth);
+  
+  // define more arrays
+  lyrs = new double[ndpth];
+  // collect layers radii
+  //  .... to be finished
 
   //Collect Data..........
 
@@ -242,7 +251,7 @@ bool Data::mitpRead()
       // Collect data
       fscanf(fptr,"%s", &buf);  lat = atof (buf) * pi/180. ;
       fscanf(fptr,"%s", &buf);  lng = (atof (buf) - 180.) * pi/180.  ;
-      fscanf(fptr,"%s", &buf);  dpth = (EarthRadKM - atof (buf)) / EarthRadKM;
+      fscanf(fptr,"%s", &buf);  dpth = mitpDepth2Radius(atof(buf));
       fscanf(fptr,"%s", &buf);  V[i] = atof (buf) ;
 
       // Convert to xyz
@@ -256,7 +265,6 @@ bool Data::mitpRead()
       z[i] =   dpth * cos(lat) * sin(lng) ;
 
   }
-
 
   fclose(fptr);
   return 0; //success
@@ -305,8 +313,6 @@ char* Data::outtypeConverter()
 // getStats
 bool Data::getStats()
 {
-    double veryLarge=1E+99;
-
     double max = -veryLarge,
            min =  veryLarge;
 	    
@@ -338,6 +344,11 @@ bool Data::getStats()
     printf("+----------------------------------------------+\n");
     printf("|  nvals      =  %12d                  |\n"        , nval);
     printf("|  nlayr      =  %12d                  |\n"        , nlayr);
+    printf("|  nlat       =  %12d                  |\n"        , nlat);
+    printf("|  nlng       =  %12d                  |\n"        , nlng);
+    printf("|  ndpth      =  %12d                  |\n"        , ndpth);
+    printf("|  minR       =  %12.8g                  |\n"      , minR);
+    printf("|  maxR       =  %12.8g                  |\n"      , maxR);
     printf("|  V(mean)    =  %12.8g                  |\n"      , Vmean);
     printf("|  Vmin       =  %12.8g                  |\n"      , Vmin);
     printf("|  Vmax       =  %12.8g                  |\n"      , Vmax);
