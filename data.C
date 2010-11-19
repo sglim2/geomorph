@@ -190,10 +190,10 @@ bool Data::mitpRead()
       return 1; //fail
   }
   // discard headers
-  fscanf(fptr,"%s", &buf);
-  fscanf(fptr,"%s", &buf);
-  fscanf(fptr,"%s", &buf);
-  fscanf(fptr,"%s", &buf);
+  fscanf(fptr,"%s", buf);
+  fscanf(fptr,"%s", buf);
+  fscanf(fptr,"%s", buf);
+  fscanf(fptr,"%s", buf);
 
   lat = -veryLarge;
   lng = -veryLarge;
@@ -203,19 +203,19 @@ bool Data::mitpRead()
   bool nlat_found=false;
 
   for ( int i = 0 ; i < nval ; i++ ){
-      fscanf(fptr,"%s", &buf);  
+      fscanf(fptr,"%s", buf);  
       if (atof(buf) > lat + quiteSmall ) {
 	  nlat++;
 	  lat = atof(buf);
       }
       
-      fscanf(fptr,"%s", &buf); 
+      fscanf(fptr,"%s", buf); 
       if (atof(buf) > lng + quiteSmall ) {
 	  nlng++;
 	  lng = atof(buf);
       }
 
-      fscanf(fptr,"%s", &buf); 
+      fscanf(fptr,"%s", buf); 
       if (atof(buf) > dpth + quiteSmall ) {
 	  ndpth++;
 	  dpth = atof(buf);
@@ -224,7 +224,7 @@ bool Data::mitpRead()
       }
 
       //discard last column
-      fscanf(fptr,"%s", &buf); 
+      fscanf(fptr,"%s", buf); 
   }
   
   
@@ -241,28 +241,34 @@ bool Data::mitpRead()
   if (fptr==NULL){
       return 1; //fail
   }
-  fscanf(fptr,"%s", &buf);
-  fscanf(fptr,"%s", &buf);
-  fscanf(fptr,"%s", &buf);
-  fscanf(fptr,"%s", &buf);
+  fscanf(fptr,"%s", buf);
+  fscanf(fptr,"%s", buf);
+  fscanf(fptr,"%s", buf);
+  fscanf(fptr,"%s", buf);
 
   // Collect the rest of the data
   for ( int i = 0 ; i<nval ; i++ ){
       // Collect data
-      fscanf(fptr,"%s", &buf);  lat = atof (buf) * pi/180. ;
-      fscanf(fptr,"%s", &buf);  lng = (atof (buf) - 180.) * pi/180.  ;
-      fscanf(fptr,"%s", &buf);  dpth = mitpDepth2Radius(atof(buf));
-      fscanf(fptr,"%s", &buf);  V[i] = atof (buf) ;
+      fscanf(fptr,"%s", buf);  lat = atof (buf) * pi/180. ;
+      fscanf(fptr,"%s", buf);  lng = (atof (buf) - 180.) * pi/180.  ;
+      fscanf(fptr,"%s", buf);  dpth = mitpDepth2Radius(atof(buf));
+      fscanf(fptr,"%s", buf);  V[i] = atof (buf) ;
 
       // Convert to xyz
       // We may have issues here....
       // It's possible x,y,z values are swapped somewhere along the line.
+      //attempt 1
 //      x[i] = - 1. * cos(lat) * cos(lng) ;
 //      y[i] =   1. * sin(lat) ;
 //      z[i] =   1. * cos(lat) * sin(lng) ;
-      x[i] = - dpth * cos(lat) * cos(lng) ;
-      y[i] =   dpth * sin(lat) ;
-      z[i] =   dpth * cos(lat) * sin(lng) ;
+      // attempt 2
+//      x[i] = - dpth * cos(lat) * cos(lng) ;
+//      y[i] =   dpth * sin(lat) ;
+//      z[i] =   dpth * cos(lat) * sin(lng) ;
+      // attempt 3
+      x[i] =   dpth * cos(lat) * cos(lng) ;
+      z[i] =   dpth * sin(lat) ;
+      y[i] =   dpth * cos(lat) * sin(lng) ;
 
   }
 
@@ -342,7 +348,7 @@ bool Data::getStats()
 
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");
-    printf("|  nvals      =  %12d                  |\n"        , nval);
+    printf("|  nvals      =  %12ld                  |\n"       , nval);
     printf("|  nlayr      =  %12d                  |\n"        , nlayr);
     printf("|  nlat       =  %12d                  |\n"        , nlat);
     printf("|  nlng       =  %12d                  |\n"        , nlng);

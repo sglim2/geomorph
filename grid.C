@@ -129,13 +129,12 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 ////////////////////////////////////////
 // Grid::importData
 //
-// imports 'Data' data into all domains.
+// imports Data::data into all domains.
 //
 bool Grid::importData(Data * dptr)
 {
-  // id = 0 only
-  //    for (int i=0 ; i<10 ; i++){
-    for (int i=0 ; i<1 ; i++){
+    int _idmax = 10;
+    for (int i=0 ; i<_idmax ; i++){
 	if (domains[i].importData(dptr)){
 	    printf("Error in Domain::importData()");
 	    return 1; // fail
@@ -146,14 +145,14 @@ bool Grid::importData(Data * dptr)
 }
 
 ////////////////////////////////////////
-// Grid::gridfind
+// Grid::suggestfind
 //
 // A basic comparison of any given grid structire to the TERRA
 // grid. Returns the mt value of the closest matching TERRA grid
 // comparing the total number of grid points across the two grid
 // structures.
 //
-int Grid::findGrid(int npts)
+int Grid::suggestGrid(int npts)
 {
     int _npts=0;
     int _mt=1;      // eventually provides the closest matching mt value
@@ -198,11 +197,6 @@ bool Grid::genGrid()
     printf("|  nproc     =  %12d                  |\n"        , nproc);
     printf("+----------------------------------------------+\n");
     
-    // mt (and subsequently npts) for test purposes only
-//    mt = 8;
-//    npts  = (10*mt*mt + 2)*(mt/2 + 1);
-//    nr = 1;
-
     // make sure all domains are set up correctly
     dptr = domains;
     for ( int id = 0 ; id < idmax ; id++ ){

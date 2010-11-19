@@ -166,7 +166,7 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 // getNearestDataValue.
 double Domain::getNearestDataValue2(Data *dptr, int index)
 {
-  int nr=0; // our layer of interest (ot in fact either side of this!)
+    int nr; // our layer of interest in Data:dptr (or in fact either side of this!)
 
     double gx,gy,gz;
     gx = xn[index];
@@ -176,32 +176,35 @@ double Domain::getNearestDataValue2(Data *dptr, int index)
     // what's our current radius
     double rad=sqrt(gx*gx + gy*gy + gz*gz);
 
-    // find closest radii
+    // find closest radial layer in Data::dptr nr
     double dR=veryLarge;
     double dataR=0.;
+    double tmpR=0;   // only needed for temporary printf statement
     for ( int ir=0 ; ir<dptr->ndpth ; ir++ ){
-      dataR = ir*(dptr->maxR - dptr->minR)/dptr->ndpth;
-      if (abs(dataR - rad) < dR) {
-	dR = abs(dataR - rad) ;
-	nr = ir;
+      dataR = dptr->minR + ir*(dptr->maxR - dptr->minR)/dptr->ndpth;
+      if (fabs(dataR - rad) < dR) {
+	dR = fabs(dataR - rad) ;
+	nr = dptr->ndpth - ir;  // reverse ordering.
+	tmpR = dataR;
       }
     }
 
+    printf("grad=%12.8g\tdrad=%12.8g\tnr=%d\n",rad,tmpR,nr);
 
     double dataV;
     dataV=0.;
 
     double d2 = 1.E+99;
     double xd,yd,zd;
-    double tmpR2;
+    double tmpd2;
     // loop over all Data values within layer nr
     for (int di=nr*dptr->nlat*dptr->nlng; di<nr*dptr->nlat*dptr->nlng + dptr->nlat*dptr->nlng; di++ ){
       xd=dptr->x[di] - xn[index];
       yd=dptr->y[di] - yn[index];
       zd=dptr->z[di] - zn[index];
-      tmpR2=xd*xd + yd*yd + zd*zd;
-      if ( tmpR2 < d2 ) {
-	d2 = tmpR2;
+      tmpd2=xd*xd + yd*yd + zd*zd;
+      if ( tmpd2 < d2 ) {
+	d2 = tmpd2;
 	dataV = dptr->V[di];
       }
     }
@@ -241,9 +244,9 @@ bool Domain::importData(Data *dptr)
     int index=0;
     int interp=NEAREST;
     
-    // layer 0 only
     //    for ( int ri=0 ; ri < nr ; ri++){
-    for ( int ri=0 ; ri < 1 ; ri++){
+    // layer 0 only
+    for ( int ri=12 ; ri < 13 ; ri++){
 	// limited i2
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
 	// limited i1
@@ -469,7 +472,7 @@ bool Domain::grdgen()
 	}
     }
     
-    // genrerate radial points
+    // generate radial points
     
     for ( int ir = 1 ; ir < nr ; ir++){
       index=idx(ir, 0, 0);
@@ -479,10 +482,13 @@ bool Domain::grdgen()
 	  y0 = yn[idx(0,i2,i1)];
 	  z0 = zn[idx(0,i2,i1)];
 	  
-	  xn[index] = x0 - x0*(a-cmb)*ir/nr;
-	  yn[index] = y0 - y0*(a-cmb)*ir/nr;
-	  zn[index] = z0 - z0*(a-cmb)*ir/nr;
-
+//	  xn[index] = x0 - x0*(a-cmb)*ir/nr;
+//	  yn[index] = y0 - y0*(a-cmb)*ir/nr;
+//	  zn[index] = z0 - z0*(a-cmb)*ir/nr;
+	  xn[index] = x0 - (a-cmb)*ir/nr;
+	  yn[index] = y0 - (a-cmb)*ir/nr;
+	  zn[index] = z0 - (a-cmb)*ir/nr;
+	  index++;
 	}
       }
     }

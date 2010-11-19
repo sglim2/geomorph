@@ -28,12 +28,12 @@ public:
     Grid();
     Grid(int, int, int);
     
-    bool   genGrid   ();
-    int    findGrid  (int);
-    int    xnProc    (int);
-    int    xnProc    (int, int, int, int, int);
-    int    idx       (int, int, int, int, int);
-    bool   importData(Data*);
+    bool   genGrid    ();
+    int    suggestGrid(int);
+    int    xnProc     (int);
+    int    xnProc     (int, int, int, int, int);
+    int    idx        (int, int, int, int, int);
+    bool   importData (Data*);
 
 };
 
