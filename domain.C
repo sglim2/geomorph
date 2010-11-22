@@ -79,7 +79,7 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
 // Domain::defineDomain
 //
 //
-int Domain::defineDomain(int _id, int _nr, int _mt)
+bool Domain::defineDomain(int _id, int _nr, int _mt)
 {
     
     id = _id;
@@ -244,12 +244,10 @@ bool Domain::importData(Data *dptr)
     int index=0;
     int interp=NEAREST;
     
-    //    for ( int ri=0 ; ri < nr ; ri++){
-    // layer 0 only
-    for ( int ri=12 ; ri < 13 ; ri++){
-	// limited i2
+    for ( int ri=0 ; ri < nr ; ri++){
+    // layer 12 only...
+    // for ( int ri=12 ; ri < 13 ; ri++){
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
-	// limited i1
 	    for ( int i1=0 ; i1 < mt+1 ; i1++) {
 		index=idx(ri,i2,i1);
 		getValue(dptr, index, interp)	;
@@ -257,6 +255,17 @@ bool Domain::importData(Data *dptr)
 	}
     }
 
+    return 0; // success
+}
+
+////////////////////////////////////////
+// Domain::exportMVIS
+//
+// export Data::dptr in the MVIS format.
+// 
+bool Domain::exportMVIS(FILE * fptr, int nproc, int proc)
+{
+    
     return 0; // success
 }
 
@@ -472,8 +481,7 @@ bool Domain::grdgen()
 	}
     }
     
-    // generate radial points
-    
+    // generate radial points (we already know ir=0)
     for ( int ir = 1 ; ir < nr ; ir++){
       index=idx(ir, 0, 0);
       for ( int i2 = 0 ; i2 < mt+1 ; i2++ ){
@@ -482,12 +490,12 @@ bool Domain::grdgen()
 	  y0 = yn[idx(0,i2,i1)];
 	  z0 = zn[idx(0,i2,i1)];
 	  
-//	  xn[index] = x0 - x0*(a-cmb)*ir/nr;
-//	  yn[index] = y0 - y0*(a-cmb)*ir/nr;
-//	  zn[index] = z0 - z0*(a-cmb)*ir/nr;
-	  xn[index] = x0 - (a-cmb)*ir/nr;
-	  yn[index] = y0 - (a-cmb)*ir/nr;
-	  zn[index] = z0 - (a-cmb)*ir/nr;
+	  xn[index] = x0 - x0*(a-cmb)*ir/nr;
+	  yn[index] = y0 - y0*(a-cmb)*ir/nr;
+	  zn[index] = z0 - z0*(a-cmb)*ir/nr;
+//	  xn[index] = x0 - (a-cmb)*ir/nr;
+//	  yn[index] = y0 - (a-cmb)*ir/nr;
+//	  zn[index] = z0 - (a-cmb)*ir/nr;
 	  index++;
 	}
       }

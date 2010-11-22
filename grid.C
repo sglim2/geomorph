@@ -145,6 +145,101 @@ bool Grid::importData(Data * dptr)
 }
 
 ////////////////////////////////////////
+// Grid::exportData
+//
+// exports data in desired format.
+//
+bool Grid::exportMVIS(Data * dptr)
+{
+    
+    FILE * fptr;
+    char outfile[256];
+
+    // we now cycle over 'processors'
+    for ( int proc=0 ; proc < nproc ; proc++ ){
+	
+	
+	// open a file per 'process'
+	sprintf(outfile,"%s",dptr->outfile);
+	printf("outfile = %s\n",outfile);
+        
+	// open file
+	fptr=fopen(outfile,"a");
+
+
+	// call each domain which is part of our 'process'
+	for (int i=0 ; i < idmax ; i++){
+	    
+	    // call our domain export routine
+	    if (domains[i].exportMVIS(fptr, nproc, proc )){
+		printf("Error in Domain::exportMVIS()");
+		return 1; // fail
+	    }
+	}
+
+	// close file, ready for re-assigning to a new 'process'
+	fclose(fptr);
+    }
+
+    return 0; // success
+}
+
+////////////////////////////////////////
+// Grid::exportData
+//
+// exports data in desired format.
+//
+// Note, we cannot use a switch statement here since it defies the standard
+// (and throws an error on pgi/gnu): 
+//    the -> operator is not allowed in an integral constant expression.
+//
+bool Grid::exportGrid(Data * dptr)
+{
+    
+    if ( dptr->outtype == dptr->MVIS ) {
+	if (exportMVIS(dptr) ){
+	    printf("Error in exportMVIS\n");
+	    return 1; // fail
+	}
+    }else
+	if ( dptr->outtype == dptr->TERRA ) {
+//	    if (exportTERRA(dptr) ){
+//		printf("Error in exportTERRA\n");
+//		return 1; // fail
+//	    }
+	}else 
+	    if ( dptr->outtype == dptr->MITP ) {
+//		if (exportMITP(dptr) ){
+//		    printf("Error in exportMITP\n");
+//		    return 1; // fail
+//		}
+	    }else 
+		if ( dptr->outtype == dptr->UNDEF ) {
+		    return 1; // fail
+		}else 
+		    return 1; // fail
+
+/*    
+    switch (dptr->outtype) {
+	case dptr->MVIS:
+	    exportMVIS(dptr);
+	    break;
+	case dptr->TERRA:
+	    //exportTERRA();
+	    break;
+	case dptr->MITP:
+	    //exportMITP();
+	    break;
+	case dptr->UNDEF:
+	    return 1;
+	default:
+	    break;
+    }
+*/  
+    return 0; // success
+}
+
+////////////////////////////////////////
 // Grid::suggestfind
 //
 // A basic comparison of any given grid structire to the TERRA
@@ -200,7 +295,10 @@ bool Grid::genGrid()
     // make sure all domains are set up correctly
     dptr = domains;
     for ( int id = 0 ; id < idmax ; id++ ){
-	dptr->defineDomain(id,nr,mt);
+	if (dptr->defineDomain(id,nr,mt)){
+	    printf("Error in Domain::defineDomain()");
+	    return 1; // fail
+	}
 	dptr++;
     }
     

@@ -142,7 +142,7 @@ bool gm_processCommandLine(int argc, char* argv[])
 ////////////////////////////////////////
 // writeGrid
 //
-// writes the outer shell of the geomorph grid only
+// writes the 'rad' layer of the geomorph grid only.
 //
 bool writeGrid()
 {
@@ -249,10 +249,15 @@ int main(int argc, char* argv[])
     printf("Error importing Data into geomorph grid.\n");
   }
 
-  if (writeGrid()){
-    printf("Error importing Data into geomorph grid.\n");
-  }
+  // write a single shell (for use in matlab, or alternative)
+//  if (writeGrid()){
+//    printf("Error importing Data into geomorph grid.\n");
+//  }
 
+  if (grid->exportGrid(data)){
+    printf("Error exporting Data failed.\n");
+    return 1; // fail
+  }
 
   delete [] data;
   delete [] grid;

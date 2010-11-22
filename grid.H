@@ -34,6 +34,8 @@ public:
     int    xnProc     (int, int, int, int, int);
     int    idx        (int, int, int, int, int);
     bool   importData (Data*);
+    bool   exportGrid (Data*);
+    bool   exportMVIS (Data*);
 
 };
 
