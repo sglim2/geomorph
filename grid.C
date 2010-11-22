@@ -149,25 +149,29 @@ bool Grid::importData(Data * dptr)
 //
 // exports data in desired format.
 //
+// Dur to the necessary sequential output, this must be done in serial.
+//
 bool Grid::exportMVIS(Data * dptr)
 {
-    
+    // assuming nd=10...for now
+
     FILE * fptr;
     char outfile[256];
 
     // we now cycle over 'processors'
     for ( int proc=0 ; proc < nproc ; proc++ ){
-	
-	
+		
 	// open a file per 'process'
-	sprintf(outfile,"%s",dptr->outfile);
+	sprintf(outfile,"%s.%4d.01", dptr->outfile, proc);
 	printf("outfile = %s\n",outfile);
         
 	// open file
 	fptr=fopen(outfile,"a");
+	if (fptr==NULL){
+	    return 1; //fail
+	}
 
-
-	// call each domain which is part of our 'process'
+	// call each domain which is part of our 'process'  (if nd=10, this means all of them)
 	for (int i=0 ; i < idmax ; i++){
 	    
 	    // call our domain export routine

@@ -266,6 +266,12 @@ bool Domain::importData(Data *dptr)
 bool Domain::exportMVIS(FILE * fptr, int nproc, int proc)
 {
     
+    int index=0;
+    
+   // cycle through our 'process' points
+
+//    for ( int i2=)...
+
     return 0; // success
 }
 
