@@ -299,7 +299,7 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 
 //    i1start = nt * ( proc % (mt/nt) );
     i1start = nt * divresult.rem;
-    i2end   = i1start + nt - 1;
+    i1end   = i1start + nt - 1;
     
     i2start = nt * divresult.quot ;
     i2end   = i2start + nt -1;

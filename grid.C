@@ -164,7 +164,7 @@ bool Grid::exportMVIS(Data * dptr)
     for ( int proc=0 ; proc < nproc ; proc++ ){
 		
 	// open a file per 'process'
-	sprintf(outfile,"%s.%4d.01", dptr->outfile, proc);
+	sprintf(outfile,"%s.%04d.01", dptr->outfile, proc);
 	printf("outfile = %s\n",outfile);
         
 	// open file
