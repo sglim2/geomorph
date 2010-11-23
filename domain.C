@@ -113,8 +113,9 @@ int Domain::idx(int r, int i2, int i1)
   int nerror = 0;
 
   if (  r  > nr    || r     < 0 ) nerror=1; 
-  if ( i1  > mt    || i1    < 0 ) nerror=1;
   if ( i2  > mt    || i2    < 0 ) nerror=1;
+  if ( i1  > mt    || i1    < 0 ) nerror=1;
+
 
   int idx=0;
   
@@ -124,7 +125,7 @@ int Domain::idx(int r, int i2, int i1)
   
   idx = rbase + i2base + i1base;
 
-  if (nerror!=0) printf("Domain::idx Error.");
+  if (nerror!=0) printf("Domain::idx Error: ir = %d; i2 = %d; i1 = %d\n",r,i2,i1);
 
   return idx;
 }
@@ -179,17 +180,17 @@ double Domain::getNearestDataValue2(Data *dptr, int index)
     // find closest radial layer in Data::dptr nr
     double dR=veryLarge;
     double dataR=0.;
-    double tmpR=0;   // only needed for temporary printf statement
+//    double tmpR=0;   // only needed for temporary printf statement
     for ( int ir=0 ; ir<dptr->ndpth ; ir++ ){
       dataR = dptr->minR + ir*(dptr->maxR - dptr->minR)/dptr->ndpth;
       if (fabs(dataR - rad) < dR) {
 	dR = fabs(dataR - rad) ;
 	nr = dptr->ndpth - ir;  // reverse ordering.
-	tmpR = dataR;
+//	tmpR = dataR;
       }
     }
 
-    printf("grad=%12.8g\tdrad=%12.8g\tnr=%d\n",rad,tmpR,nr);
+//    printf("grad=%12.8g\tdrad=%12.8g\tnr=%d\n",rad,tmpR,nr);
 
     double dataV;
     dataV=0.;
@@ -239,6 +240,7 @@ int Domain::getValue(Data * dptr, int index, int interp)
 //
 // For each xn element, find the best match data value V using the defined
 // algorithm
+//
 bool Domain::importData(Data *dptr)
 {
     int index=0;
@@ -247,6 +249,7 @@ bool Domain::importData(Data *dptr)
     for ( int ri=0 ; ri < nr ; ri++){
     // layer 12 only...
     // for ( int ri=12 ; ri < 13 ; ri++){
+	printf("......Layer %d\n",ri);
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
 	    for ( int i1=0 ; i1 < mt+1 ; i1++) {
 		index=idx(ri,i2,i1);
@@ -259,19 +262,61 @@ bool Domain::importData(Data *dptr)
 }
 
 ////////////////////////////////////////
+// Domain::sqrti
+//
+// Returns the (floored int) integer square root of 'a'.
+//   2 <= sqrt(a) <= 2^15
+//
+int Domain::sqrti(int a)
+{
+    int i;
+
+    if (a<1)  return -1;
+
+    for ( i=1; i<=32768; i++){
+	if (i*i > a ){
+	    i--;
+	    return i;
+	}
+    }
+
+    return -1; // fail
+}
+
+////////////////////////////////////////
 // Domain::exportMVIS
 //
 // export Data::dptr in the MVIS format.
 // 
-bool Domain::exportMVIS(FILE * fptr, int nproc, int proc)
+bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 {
     
-    int index=0;
+    int   index=0;
+    int   i1start,i1end,i2start,i2end;
+    div_t divresult;
+
+    divresult = div(proc, mt/nt);
+
+//    i1start = nt * ( proc % (mt/nt) );
+    i1start = nt * divresult.rem;
+    i2end   = i1start + nt - 1;
     
-   // cycle through our 'process' points
+    i2start = nt * divresult.quot ;
+    i2end   = i2start + nt -1;
 
-//    for ( int i2=)...
-
+    // cycle through our 'process' points
+    
+    for ( int i2=i2start ; i2<=i2end ; i2++ ){
+	for ( int i1=i1start ; i1<=i1end ; i1++ ){
+	    index = idx(0,i2,i1);
+	    fprintf(fptr,"%12.8g\t%12.8g\t%12.8g\n",xn[index],yn[index],zn[index]);
+	    for ( int ir=0 ; ir<nr ; ir++ ){
+		index = idx(ir,i2,i1);
+		fprintf(fptr,"%12.8g\n",V[index]);
+	    }
+	}
+    }
+    
     return 0; // success
 }
 

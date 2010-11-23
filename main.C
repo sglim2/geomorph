@@ -240,11 +240,13 @@ int main(int argc, char* argv[])
       grid->mt = my_mt; 
   }
 
+  printf("Generating grid....\n");
   if (grid->genGrid()){
     printf("Error computing TERRA stats.\n");
   }
   
   // import Data::data to geomorph grid
+  printf("Converting Data....\n");
   if (grid->importData(data)){
     printf("Error importing Data into geomorph grid.\n");
   }
@@ -254,6 +256,7 @@ int main(int argc, char* argv[])
 //    printf("Error importing Data into geomorph grid.\n");
 //  }
 
+  printf("Exporting Data....\n");
   if (grid->exportGrid(data)){
     printf("Error exporting Data failed.\n");
     return 1; // fail

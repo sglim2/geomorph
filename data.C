@@ -200,7 +200,6 @@ bool Data::mitpRead()
   dpth= -veryLarge;
   minR= +veryLarge;
   maxR= -veryLarge;
-  bool nlat_found=false;
 
   for ( int i = 0 ; i < nval ; i++ ){
       fscanf(fptr,"%s", buf);  

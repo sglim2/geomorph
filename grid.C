@@ -135,6 +135,7 @@ bool Grid::importData(Data * dptr)
 {
     int _idmax = 10;
     for (int i=0 ; i<_idmax ; i++){
+	printf("...Domain %d\n",i);
 	if (domains[i].importData(dptr)){
 	    printf("Error in Domain::importData()");
 	    return 1; // fail
@@ -149,7 +150,8 @@ bool Grid::importData(Data * dptr)
 //
 // exports data in desired format.
 //
-// Dur to the necessary sequential output, this must be done in serial.
+// Due to the necessary sequential output, this must be done in serial for
+// each process.
 //
 bool Grid::exportMVIS(Data * dptr)
 {
@@ -175,7 +177,7 @@ bool Grid::exportMVIS(Data * dptr)
 	for (int i=0 ; i < idmax ; i++){
 	    
 	    // call our domain export routine
-	    if (domains[i].exportMVIS(fptr, nproc, proc )){
+	    if ( domains[i].exportMVIS(fptr, nproc, proc, nt) ){
 		printf("Error in Domain::exportMVIS()");
 		return 1; // fail
 	    }
@@ -223,23 +225,6 @@ bool Grid::exportGrid(Data * dptr)
 		}else 
 		    return 1; // fail
 
-/*    
-    switch (dptr->outtype) {
-	case dptr->MVIS:
-	    exportMVIS(dptr);
-	    break;
-	case dptr->TERRA:
-	    //exportTERRA();
-	    break;
-	case dptr->MITP:
-	    //exportMITP();
-	    break;
-	case dptr->UNDEF:
-	    return 1;
-	default:
-	    break;
-    }
-*/  
     return 0; // success
 }
 

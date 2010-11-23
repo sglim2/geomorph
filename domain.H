@@ -37,7 +37,8 @@ public:
     double getNearestDataValue (Data*, int);
     double getNearestDataValue2(Data*, int);
     bool   importData          (Data*);
-    bool   exportMVIS          (FILE *, int, int);
+    bool   exportMVIS          (FILE *, int, int, int);
+    int    sqrti               (int);
 
 };
 
