@@ -134,11 +134,12 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 bool Grid::importData(Data * dptr)
 {
     int _idmax = 10;
+#pragma omp parallel for  
     for (int i=0 ; i<_idmax ; i++){
 	printf("...Domain %d\n",i);
 	if (domains[i].importData(dptr)){
 	    printf("Error in Domain::importData()");
-	    return 1; // fail
+	    //	    return 1; // fail
 	}
     }
     
@@ -159,8 +160,11 @@ bool Grid::exportMVIS(Data * dptr)
 
     FILE * fptr;
     char outfile[256];
+    
+    int  fail;
 
     // we now cycle over 'processors'
+#pragma omp parallel for  
     for ( int proc=0 ; proc < nproc ; proc++ ){
 		
 	// open a file per 'process'
@@ -170,7 +174,8 @@ bool Grid::exportMVIS(Data * dptr)
 	// open file
 	fptr=fopen(outfile,"a");
 	if (fptr==NULL){
-	    return 1; //fail
+	  fail=1;
+	  //	  break;
 	}
 
 	// call each domain which is part of our 'process'  (if nd=10, this means all of them)
@@ -179,13 +184,19 @@ bool Grid::exportMVIS(Data * dptr)
 	    // call our domain export routine
 	    if ( domains[i].exportMVIS(fptr, nproc, proc, nt) ){
 		printf("Error in Domain::exportMVIS()");
-		return 1; // fail
+		fail=1;
+		break;
+
 	    }
 	}
 
 	// close file, ready for re-assigning to a new 'process'
-	fclose(fptr);
+	fclose(fptr);	    
+	
+	//	if (fail=1) break;
     }
+
+    if (fail==1) return fail;
 
     return 0; // success
 }

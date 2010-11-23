@@ -6,10 +6,9 @@ LIBS	=
 CXXINC	=
 INC	=
 DEFS	= 
-CFLAGS	= -g -ansi -pedantic -Wall 
-CFLAGS	= -g 
+CFLAGS	= -g -ansi -pedantic -fopenmp
 FFLAGS	= -g -fdefault-real-8 
-LDFLAGS	= -lgfortran 
+LDFLAGS	= -fopenmp
 
 CXX	= g++
 CC	= gcc
