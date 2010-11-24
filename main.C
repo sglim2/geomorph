@@ -235,10 +235,16 @@ int main(int argc, char* argv[])
   // find best grid to match input data
   int my_mt = grid->suggestGrid(data->nval);
   printf("best matching mt value = %d\n", my_mt);
-  if ( grid->mt != my_mt ) {
-      printf("Overriding any user-specified mt value.\nUsing mt=%d\n", my_mt);
-      grid->mt = my_mt; 
+//  if ( grid->mt != my_mt ) {
+//  printf("Overriding any user-specified mt value.\nUsing mt=%d\n", my_mt);
+//      grid->mt = my_mt; 
+//  }
+  if ( grid->mt == 0 ){
+      grid->mt = my_mt;
+  }else if ( grid->mt != my_mt ){
+      printf("Warning: User-specified value on mt is not optimal. Try using mt=%d\n", my_mt);
   }
+
 
   printf("Generating grid....\n");
   if (grid->genGrid()){

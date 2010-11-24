@@ -309,10 +309,10 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
     for ( int i2=i2start ; i2<=i2end ; i2++ ){
 	for ( int i1=i1start ; i1<=i1end ; i1++ ){
 	    index = idx(0,i2,i1);
-	    fprintf(fptr,"%12.8g\t%12.8g\t%12.8g\n",xn[index],yn[index],zn[index]);
+	    fprintf(fptr,"%16.8E\t%16.8E\t%16.8E\n",xn[index],yn[index],zn[index]);
 	    for ( int ir=0 ; ir<nr ; ir++ ){
 		index = idx(ir,i2,i1);
-		fprintf(fptr,"%12.8g\n",V[index]);
+		fprintf(fptr,"%16.8E\n",V[index]);
 	    }
 	}
     }

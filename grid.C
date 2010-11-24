@@ -19,8 +19,9 @@
 Grid::Grid()
     : domains(), mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
 {
-  idmax = 10;
-  domains = new Domain[idmax];
+    mt = 0;
+    idmax = 10;
+    domains = new Domain[idmax];
 }
 
 
@@ -284,12 +285,12 @@ bool Grid::genGrid()
     
     printf("TERRA-grid Stats....\n");
     printf("+----------------------------------------------+\n");
-    printf("|  mt        =  %12d                  |\n"        , mt);
-    printf("|  nt        =  %12d                  |\n"        , nt);;
-    printf("|  nd        =  %12d                  |\n"        , nd);
-    printf("|  npts      =  %12d                  |\n"        , npts);
-    printf("|  nr        =  %12d                  |\n"        , nr);
-    printf("|  nproc     =  %12d                  |\n"        , nproc);
+    printf("|  mt        =  %12d                   |\n"        , mt);
+    printf("|  nt        =  %12d                   |\n"        , nt);;
+    printf("|  nd        =  %12d                   |\n"        , nd);
+    printf("|  npts      =  %12d                   |\n"        , npts);
+    printf("|  nr        =  %12d                   |\n"        , nr);
+    printf("|  nproc     =  %12d                   |\n"        , nproc);
     printf("+----------------------------------------------+\n");
     
     // make sure all domains are set up correctly
