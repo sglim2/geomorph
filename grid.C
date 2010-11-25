@@ -165,7 +165,6 @@ bool Grid::exportMVIS(Data * dptr)
     int  fail;
 
     // we now cycle over 'processors'
-#pragma omp parallel for  
     for ( int proc=0 ; proc < nproc ; proc++ ){
 		
 	// open a file per 'process'
@@ -275,7 +274,7 @@ int Grid::suggestGrid(int npts)
 ////////////////////////////////////////
 // Grid::genfind
 //
-bool Grid::genGrid()
+bool Grid::genGrid(double _cmb)
 {
   
     Domain * dptr;
@@ -306,7 +305,7 @@ bool Grid::genGrid()
     // generate grid points within each domain
     dptr = domains;
     for ( int id = 0 ; id < idmax ; id++ ){
-	if (dptr->grdgen()){
+	if (dptr->grdgen(_cmb)){
 	    printf("Error in Domain::grdgen");
 	    return 1; // fail
 	}

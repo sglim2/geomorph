@@ -28,7 +28,7 @@ public:
     Grid();
     Grid(int, int, int);
     
-    bool   genGrid    ();
+    bool   genGrid    (double);
     int    suggestGrid(int);
     int    xnProc     (int);
     int    xnProc     (int, int, int, int, int);

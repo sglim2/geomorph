@@ -34,6 +34,7 @@ public:
     int       nlayr;
     double    *x,*y,*z,*V;
     double    Vmean,Vmax,Vmin;
+    double    a,cmb;
     
     Data ();
     Data (char *, int);

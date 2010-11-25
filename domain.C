@@ -299,10 +299,10 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 
 //    i1start = nt * ( proc % (mt/nt) );
     i1start = nt * divresult.rem;
-    i1end   = i1start + nt - 1;
+    i1end   = i1start + nt;
     
     i2start = nt * divresult.quot ;
-    i2end   = i2start + nt -1;
+    i2end   = i2start + nt;
 
     // cycle through our 'process' points
     
@@ -324,7 +324,7 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 // Domain::grdgen
 //
 //
-bool Domain::grdgen()
+bool Domain::grdgen(double cmb)
 {
     
     int    index;
@@ -532,6 +532,7 @@ bool Domain::grdgen()
 	}
     }
     
+//    printf("cmb = %12.8g\n",cmb);
     // generate radial points (we already know ir=0)
     for ( int ir = 1 ; ir < nr ; ir++){
       index=idx(ir, 0, 0);

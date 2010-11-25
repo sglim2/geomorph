@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
 
 
   printf("Generating grid....\n");
-  if (grid->genGrid()){
+  if (grid->genGrid(data->cmb)){
     printf("Error computing TERRA stats.\n");
   }
   

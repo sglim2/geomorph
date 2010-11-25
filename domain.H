@@ -32,7 +32,7 @@ public:
     
     bool   defineDomain        (int, int, int);
     int    idx                 (int, int, int);
-    bool   grdgen              ();
+    bool   grdgen              (double);
     int    getValue            (Data*, int, int );
     double getNearestDataValue (Data*, int);
     double getNearestDataValue2(Data*, int);

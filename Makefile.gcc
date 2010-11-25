@@ -7,6 +7,7 @@ CXXINC	=
 INC	=
 DEFS	= 
 CFLAGS	= -g -ansi -pedantic -fopenmp
+#CFLAGS	= -O3 -ansi -pedantic -fopenmp
 FFLAGS	= -g -fdefault-real-8 
 LDFLAGS	= -fopenmp
 
