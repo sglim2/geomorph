@@ -39,6 +39,7 @@ public:
     bool   importData          (Data*);
     bool   exportMVIS          (FILE *, int, int, int);
     int    sqrti               (int);
+    bool   rotate3d            (double*, double*, double*, double, double, double, double);
 
 };
 

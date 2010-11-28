@@ -321,6 +321,55 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 }
 
 ////////////////////////////////////////
+// Domain::rotate3d
+//
+// Given the point to be rotated, the rotation axis _x,_y_z, and the rotation
+// angle, rotates the point about the axis by phi radians. The resulting point
+// is returned in px,py,pz.
+//  Assumes the input point (px^2 + py^2 +  pz^2) = 1.
+bool Domain::rotate3d(double *px, double *py, double *pz, double rx,double ry, double rz, double phi)
+{
+  double R[3][3], A[3], B[3];
+
+  B[0] = *px;
+  B[1] = *py;
+  B[2] = *pz;
+
+  printf("px; py; pz = %12.8E;  %12.8E;  %12.8E \n",px, py, pz);
+  printf("B0; B1; B2 = %12.8E;  %12.8E;  %12.8E \n",B[0], B[1], B[2]);
+
+  A[0] = 0.;
+  A[1] = 0.;
+  A[2] = 0.;
+
+  R[0][0] = cos(phi) + rx*rx*(1-cos(phi));
+  R[0][1] = rx*ry*(1-cos(phi)) - rz*sin(phi);
+  R[0][2] = rx*rz*(1-cos(phi)) + ry*sin(phi);
+  
+  R[1][0] = ry*rx*(1-cos(phi)) + rz*sin(phi);
+  R[1][1] = cos(phi) + ry*ry*(1-cos(phi));
+  R[1][2] = ry*rz*(1-cos(phi)) - rx*sin(phi);
+
+  R[2][0] = rz*rx*(1-cos(phi)) - ry*sin(phi);
+  R[2][1] = rz*ry*(1-cos(phi)) + rx*sin(phi);
+  R[2][2] = cos(phi) + rz*rz*(1-cos(phi));
+
+  // Rotate the vertices by Ry
+  for ( int ix = 0 ; ix < 3 ; ix++ ){
+    for ( int iy = 0 ; iy < 3 ; iy++ ){
+      A[ix] += R[ix][iy]*B[iy];
+    }
+  }	
+  
+  px[0] = A[0];
+  py[0] = A[1];
+  pz[0] = A[2];
+  
+  return 0; // success
+
+}
+
+////////////////////////////////////////
 // Domain::grdgen
 //
 //
@@ -330,8 +379,13 @@ bool Domain::grdgen(double cmb)
     int    index;
     double R,x0,y0,z0;
 
+    double TA,Tax,Tay,Taz,Tbx,Tby,Tbz,Tcx,Tcy,Tcz,F,E;
+
     double a,tau,rho,u,v,Beta;
     double Ry[3][3], A[12][3], Ad[12][3];
+
+    tau = (1+sqrt(5))/2;
+    TA  = asin( 1/(sqrt(tau*sqrt(5))) );
 
     a=1.;
     tau=0.5*(sqrt(5)+1);
@@ -446,13 +500,24 @@ bool Domain::grdgen(double cmb)
     // i2,i1=0
     for ( int i2 = 1 ; i2 < mt ; i2++ ){
 	index=idx(0, i2, 0);
+	
+	Tbx = xn[idx(0,i2-1,0)];
+	Tby = yn[idx(0,i2-1,0)];
+	Tbz = zn[idx(0,i2-1,0)];
+
+	Tcx = xn[index];
+	Tcy = yn[index];
+	Tcz = zn[index];
+
+
+	/*
 	xn[index] =   
 	    xn[idx(0, 0, 0)] + i2*(xn[idx(0, mt, 0)] - xn[idx(0, 0, 0)])/mt;
 	yn[index] =   
 	    yn[idx(0, 0, 0)] + i2*(yn[idx(0, mt, 0)] - yn[idx(0, 0, 0)])/mt;
 	zn[index] =   
 	    zn[idx(0, 0, 0)] + i2*(zn[idx(0, mt, 0)] - zn[idx(0, 0, 0)])/mt;
-	
+	*/
 	R = sqrt(pow(xn[index],2) +  
 	         pow(yn[index],2) +
 	         pow(zn[index],2) );
