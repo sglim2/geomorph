@@ -252,15 +252,17 @@ int main(int argc, char* argv[])
   }
   
   // import Data::data to geomorph grid
-  printf("Converting Data....\n");
-  if (grid->importData(data)){
-    printf("Error importing Data into geomorph grid.\n");
-  }
-
-  // write a single shell (for use in matlab, or alternative)
-//  if (writeGrid()){
+//  printf("Converting Data....\n");
+//  if (grid->importData(data)){
 //    printf("Error importing Data into geomorph grid.\n");
 //  }
+
+/*
+  // write a single shell (for use in matlab, or alternative)
+  if (writeGrid()){
+    printf("Error importing Data into geomorph grid.\n");
+  }
+*/
 
   printf("Exporting Data....\n");
   if (grid->exportGrid(data)){

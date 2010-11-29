@@ -335,24 +335,24 @@ bool Domain::rotate3d(double *px, double *py, double *pz, double rx,double ry, d
   B[1] = *py;
   B[2] = *pz;
 
-  printf("px; py; pz = %12.8E;  %12.8E;  %12.8E \n",px, py, pz);
-  printf("B0; B1; B2 = %12.8E;  %12.8E;  %12.8E \n",B[0], B[1], B[2]);
+//printf("px; py; pz = %12.8E;  %12.8E;  %12.8E \n",px, py, pz);
+//printf("B0; B1; B2 = %12.8E;  %12.8E;  %12.8E \n",B[0], B[1], B[2]);
 
   A[0] = 0.;
   A[1] = 0.;
   A[2] = 0.;
 
-  R[0][0] = cos(phi) + rx*rx*(1-cos(phi));
+  R[0][0] = cos(phi)    + rx*rx*(1-cos(phi));
   R[0][1] = rx*ry*(1-cos(phi)) - rz*sin(phi);
   R[0][2] = rx*rz*(1-cos(phi)) + ry*sin(phi);
   
   R[1][0] = ry*rx*(1-cos(phi)) + rz*sin(phi);
-  R[1][1] = cos(phi) + ry*ry*(1-cos(phi));
+  R[1][1] = cos(phi)    + ry*ry*(1-cos(phi));
   R[1][2] = ry*rz*(1-cos(phi)) - rx*sin(phi);
 
   R[2][0] = rz*rx*(1-cos(phi)) - ry*sin(phi);
   R[2][1] = rz*ry*(1-cos(phi)) + rx*sin(phi);
-  R[2][2] = cos(phi) + rz*rz*(1-cos(phi));
+  R[2][2] = cos(phi)    + rz*rz*(1-cos(phi));
 
   // Rotate the vertices by Ry
   for ( int ix = 0 ; ix < 3 ; ix++ ){
@@ -370,6 +370,26 @@ bool Domain::rotate3d(double *px, double *py, double *pz, double rx,double ry, d
 }
 
 ////////////////////////////////////////
+// Domain::crossProduct
+//
+// Overwrites p2* with the cross-product of  p1 x p2
+//
+bool Domain::crossProduct(double p1x, double p1y, double p1z, double *p2x, double *p2y, double *p2z)
+{
+    double ax,ay,az;
+    
+    ax = p1y*p2z[0] - p1z*p2y[0];
+    ay = p1z*p2x[0] - p1x*p2z[0];
+    az = p1x*p2y[0] - p1y*p2x[0];
+
+    p2x[0] = ax;
+    p2y[0] = ay;
+    p2z[0] = az;
+
+    return 0; //success
+}
+
+////////////////////////////////////////
 // Domain::grdgen
 //
 //
@@ -381,17 +401,17 @@ bool Domain::grdgen(double cmb)
 
     double TA,Tax,Tay,Taz,Tbx,Tby,Tbz,Tcx,Tcy,Tcz,F,E;
 
-    double a,tau,rho,u,v,Beta;
+    double a,tau,rho,u,v,Beta,phi;
     double Ry[3][3], A[12][3], Ad[12][3];
 
-    tau = (1+sqrt(5))/2;
+    tau = (sqrt(5) + 1)/2;
     TA  = asin( 1/(sqrt(tau*sqrt(5))) );
 
     a=1.;
-    tau=0.5*(sqrt(5)+1);
     rho=tau-1;
     u=a/(sqrt(1+pow(rho,2)));
     v=rho*u;
+    phi = 2 * asin( 1/sqrt(tau*sqrt(5)) );
     
     Beta= atan(v/u);
     Ry[0][0] = cos(Beta);
@@ -501,32 +521,59 @@ bool Domain::grdgen(double cmb)
     for ( int i2 = 1 ; i2 < mt ; i2++ ){
 	index=idx(0, i2, 0);
 	
-	Tbx = xn[idx(0,i2-1,0)];
-	Tby = yn[idx(0,i2-1,0)];
-	Tbz = zn[idx(0,i2-1,0)];
+	Tbx = xn[idx(0,0,0)];
+	Tby = yn[idx(0,0,0)];
+	Tbz = zn[idx(0,0,0)];
 
-	Tcx = xn[index];
-	Tcy = yn[index];
-	Tcz = zn[index];
-
+	Tcx = xn[idx(0, mt, 0)];
+	Tcy = yn[idx(0, mt, 0)];
+	Tcz = zn[idx(0, mt, 0)];
+	
+	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i2*phi/mt );
+	
+	xn[index] = Tbx;
+	yn[index] = Tby;
+	zn[index] = Tbz;
 
 	/*
+	index=idx(0, i2, 0);
 	xn[index] =   
 	    xn[idx(0, 0, 0)] + i2*(xn[idx(0, mt, 0)] - xn[idx(0, 0, 0)])/mt;
 	yn[index] =   
 	    yn[idx(0, 0, 0)] + i2*(yn[idx(0, mt, 0)] - yn[idx(0, 0, 0)])/mt;
 	zn[index] =   
 	    zn[idx(0, 0, 0)] + i2*(zn[idx(0, mt, 0)] - zn[idx(0, 0, 0)])/mt;
-	*/
+	
 	R = sqrt(pow(xn[index],2) +  
 	         pow(yn[index],2) +
 	         pow(zn[index],2) );
 	xn[index] = 1/R * xn[index];
 	yn[index] = 1/R * yn[index];
 	zn[index] = 1/R * zn[index];
+	*/
     }
-    // i1,i2=0
+    // i2=0,i1
     for ( int i1 = 1 ; i1 < mt ; i1++ ){
+
+	index=idx(0, 0, i1);
+	
+	Tbx = xn[idx(0, 0, 0)];
+	Tby = yn[idx(0, 0, 0)];
+	Tbz = zn[idx(0, 0, 0)];
+
+	Tcx = xn[idx(0, 0, mt)];
+	Tcy = yn[idx(0, 0, mt)];
+	Tcz = zn[idx(0, 0, mt)];
+	
+	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i1*phi/mt );
+	
+	xn[index] = Tbx;
+	yn[index] = Tby;
+	zn[index] = Tbz;
+
+	/*
 	index=idx(0, 0, i1);
 	xn[index] =   
 	    xn[idx(0, 0, 0)] + i1*(xn[idx(0, 0, mt)] - xn[idx(0, 0, 0)])/mt;
@@ -541,9 +588,29 @@ bool Domain::grdgen(double cmb)
 	xn[index] = 1/R * xn[index];
 	yn[index] = 1/R * yn[index];
 	zn[index] = 1/R * zn[index];
+	*/
     }
     // i2,i1=mt
     for ( int i2 = 1 ; i2 < mt ; i2++ ){
+
+	index=idx(0, i2, mt);
+	
+	Tbx = xn[idx(0, 0, mt)];
+	Tby = yn[idx(0, 0, mt)];
+	Tbz = zn[idx(0, 0, mt)];
+
+	Tcx = xn[idx(0, mt, mt)];
+	Tcy = yn[idx(0, mt, mt)];
+	Tcz = zn[idx(0, mt, mt)];
+	
+	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i2*phi/mt );
+	
+	xn[index] = Tbx;
+	yn[index] = Tby;
+	zn[index] = Tbz;
+
+	/*
 	index=idx(0, i2, mt);
 	xn[index] =   
 	    xn[idx(0, 0, mt)] + i2*(xn[idx(0, mt, mt)] - xn[idx(0, 0, mt)])/mt;
@@ -558,9 +625,29 @@ bool Domain::grdgen(double cmb)
 	xn[index] = 1/R * xn[index];
 	yn[index] = 1/R * yn[index];
 	zn[index] = 1/R * zn[index];
+	*/
     }
     // i1,i2=mt
     for ( int i1 = 1 ; i1 < mt ; i1++ ){
+
+	index=idx(0, mt, i1);
+	
+	Tbx = xn[idx(0, mt, i1)];
+	Tby = yn[idx(0, mt, i1)];
+	Tbz = zn[idx(0, mt, i1)];
+
+	Tcx = xn[idx(0, mt, mt)];
+	Tcy = yn[idx(0, mt, mt)];
+	Tcz = zn[idx(0, mt, mt)];
+	
+	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i1*phi/mt );
+	
+	xn[index] = Tbx;
+	yn[index] = Tby;
+	zn[index] = Tbz;
+
+	/*
 	index=idx(0, mt, i1);
 	xn[index] =   
 	    xn[idx(0, mt, 0)] + i1*(xn[idx(0, mt, mt)] - xn[idx(0, mt, 0)])/mt;
@@ -575,11 +662,21 @@ bool Domain::grdgen(double cmb)
 	xn[index] = 1/R * xn[index];
 	yn[index] = 1/R * yn[index];
 	zn[index] = 1/R * zn[index];
+	*/
     }
-   
+
     // Everywhere inbetween
     for ( int i1 = 1 ; i1 < mt ; i1++ ){
 	for ( int i2 = 1 ; i2 < mt ; i2++ ){
+
+	index=idx(0, i2, i1);
+
+	Tbx = xn[idx(0, mt, i1)];
+	Tby = yn[idx(0, mt, i1)];
+	Tbz = zn[idx(0, mt, i1)];
+
+
+    /*
 	index=idx(0, i2, i1);
 	xn[index] =   
 	    xn[idx(0, i1, 0)] + i2*(xn[idx(0, i1, mt)] - xn[idx(0, i1, 0)])/mt;  
@@ -594,9 +691,10 @@ bool Domain::grdgen(double cmb)
 	xn[index] = 1/R * xn[index];
 	yn[index] = 1/R * yn[index];
 	zn[index] = 1/R * zn[index];
+    */
 	}
     }
-    
+
 //    printf("cmb = %12.8g\n",cmb);
     // generate radial points (we already know ir=0)
     for ( int ir = 1 ; ir < nr ; ir++){
