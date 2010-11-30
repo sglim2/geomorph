@@ -321,13 +321,26 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 }
 
 ////////////////////////////////////////
+// Domain::getAngle3d
+//
+// Given two vectors Aand B, getAngle3d returns the angle A0B.
+//
+double Domain::getAngle3d(double ax, double ay, double az, double bx, double by, double bz)
+{
+    double maga = sqrt( ax*ax + ay*ay + az*az);
+    double magb = sqrt( bx*bx + by*by + bz*bz);
+
+    return acos( dotProduct(ax,ay,az,bx,by,bz)/maga/magb );
+}
+
+////////////////////////////////////////
 // Domain::rotate3d
 //
 // Given the point to be rotated, the rotation axis _x,_y_z, and the rotation
 // angle, rotates the point about the axis by phi radians. The resulting point
 // is returned in px,py,pz.
 //  Assumes the input point (px^2 + py^2 +  pz^2) = 1.
-bool Domain::rotate3d(double *px, double *py, double *pz, double rx,double ry, double rz, double phi)
+bool Domain::rotate3d(double *px, double *py, double *pz, double rx, double ry, double rz, double phi)
 {
   double R[3][3], A[3], B[3];
 
@@ -367,6 +380,31 @@ bool Domain::rotate3d(double *px, double *py, double *pz, double rx,double ry, d
   
   return 0; // success
 
+}
+
+////////////////////////////////////////
+// Domain::normalise
+//
+// Returns the dot product of the vectors p1 x p2
+//
+bool Domain::normalise(double *ax, double *ay, double *az)
+{
+    double maga = sqrt(ax[0]*ax[0] + ay[0]*ay[0] + az[0]*az[0]);
+    ax[0]=ax[0]/maga;
+    ay[0]=ay[0]/maga;
+    az[0]=az[0]/maga;
+    
+    return 0;
+}
+
+////////////////////////////////////////
+// Domain::dotProduct
+//
+// Returns the dot product of the vectors p1 x p2
+//
+double Domain::dotProduct(double p1x, double p1y, double p1z, double p2x, double p2y, double p2z)
+{
+    return p1x*p2x + p1y*p2y + p1z*p2z; 
 }
 
 ////////////////////////////////////////
@@ -456,6 +494,7 @@ bool Domain::grdgen(double cmb)
 	}	
     }
    
+
     // Vertex Points........
     // Northern Hemisphere
     if (id<5) {
@@ -516,6 +555,11 @@ bool Domain::grdgen(double cmb)
 	zn[index] = Ad[id-4][2]; 
     }
     
+    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0, 0, 0], yn[ 0, 0, 0], zn[ 0, 0, 0]);
+    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0, 0,mt], yn[ 0, 0,mt], zn[ 0, 0,mt]);
+    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0,mt, 0], yn[ 0,mt, 0], zn[ 0,mt, 0]);
+    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0,mt,mt], yn[ 0,mt,mt], zn[ 0,mt,mt]);
+
     // Edge Points......... (assumes unit radius)
     // i2,i1=0
     for ( int i2 = 1 ; i2 < mt ; i2++ ){
@@ -529,8 +573,11 @@ bool Domain::grdgen(double cmb)
 	Tcy = yn[idx(0, mt, 0)];
 	Tcz = zn[idx(0, mt, 0)];
 	
+	phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
 	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	normalise(&Tcx,&Tcy,&Tcz);
 	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i2*phi/mt );
+	normalise(&Tbx,&Tby,&Tbz); // just in case
 	
 	xn[index] = Tbx;
 	yn[index] = Tby;
@@ -566,9 +613,12 @@ bool Domain::grdgen(double cmb)
 	Tcy = yn[idx(0, 0, mt)];
 	Tcz = zn[idx(0, 0, mt)];
 	
+	phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
 	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	normalise(&Tcx,&Tcy,&Tcz);
 	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i1*phi/mt );
-	
+	normalise(&Tbx,&Tby,&Tbz); // just in case
+
 	xn[index] = Tbx;
 	yn[index] = Tby;
 	zn[index] = Tbz;
@@ -603,8 +653,11 @@ bool Domain::grdgen(double cmb)
 	Tcy = yn[idx(0, mt, mt)];
 	Tcz = zn[idx(0, mt, mt)];
 	
+	phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
 	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	normalise(&Tcx,&Tcy,&Tcz);
 	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i2*phi/mt );
+	normalise(&Tbx,&Tby,&Tbz); // just in case
 	
 	xn[index] = Tbx;
 	yn[index] = Tby;
@@ -627,21 +680,53 @@ bool Domain::grdgen(double cmb)
 	zn[index] = 1/R * zn[index];
 	*/
     }
+
+
     // i1,i2=mt
     for ( int i1 = 1 ; i1 < mt ; i1++ ){
 
 	index=idx(0, mt, i1);
 	
-	Tbx = xn[idx(0, mt, i1)];
-	Tby = yn[idx(0, mt, i1)];
-	Tbz = zn[idx(0, mt, i1)];
+	Tbx = xn[idx(0, mt, 0)];
+	Tby = yn[idx(0, mt, 0)];
+	Tbz = zn[idx(0, mt, 0)];
 
 	Tcx = xn[idx(0, mt, mt)];
 	Tcy = yn[idx(0, mt, mt)];
 	Tcz = zn[idx(0, mt, mt)];
 	
+	phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
 	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	normalise(&Tcx,&Tcy,&Tcz);
 	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i1*phi/mt );
+	normalise(&Tbx,&Tby,&Tbz); // just in case
+	
+	xn[index] = Tbx;
+	yn[index] = Tby;
+	zn[index] = Tbz;
+    }
+
+
+
+/*
+    // i1,i2=mt
+    for ( int i1 = 1 ; i1 < mt ; i1++ ){
+
+	index=idx(0, mt, i1);
+	
+	Tbx = xn[idx(0, mt, 0)];
+	Tby = yn[idx(0, mt, 0)];
+	Tbz = zn[idx(0, mt, 0)];
+
+	Tcx = xn[idx(0, mt, mt)];
+	Tcy = yn[idx(0, mt, mt)];
+	Tcz = zn[idx(0, mt, mt)];
+	
+	phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
+	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	normalise(&Tcx,&Tcy,&Tcz);
+	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i1*phi/mt );
+	normalise(&Tbx,&Tby,&Tbz); // just in case
 	
 	xn[index] = Tbx;
 	yn[index] = Tby;
@@ -662,20 +747,44 @@ bool Domain::grdgen(double cmb)
 	xn[index] = 1/R * xn[index];
 	yn[index] = 1/R * yn[index];
 	zn[index] = 1/R * zn[index];
-	*/
+	
     }
+*/
 
-    // Everywhere inbetween
+
+
+
+
+    // Everywhere inbetween...
+    //
+    // There's a bug here somwhere. It seems this algoritm doesn't match the TERRA-Grid.
     for ( int i1 = 1 ; i1 < mt ; i1++ ){
 	for ( int i2 = 1 ; i2 < mt ; i2++ ){
 
-	index=idx(0, i2, i1);
+	    index=idx(0, i2, i1);
 
-	Tbx = xn[idx(0, mt, i1)];
-	Tby = yn[idx(0, mt, i1)];
-	Tbz = zn[idx(0, mt, i1)];
-
-
+//------ under test
+/*
+	    Tbx = xn[idx(0, 0, i1)];
+	    Tby = yn[idx(0, 0, i1)];
+	    Tbz = zn[idx(0, 0, i1)];
+	    
+	    Tcx = xn[idx(0, mt, i1)];
+	    Tcy = yn[idx(0, mt, i1)];
+	    Tcz = zn[idx(0, mt, i1)];
+	    
+	    phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
+	    printf("phi %2d  %2d - %12.8E\n",i2,i1,phi);
+	    crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
+	    normalise(&Tcx,&Tcy,&Tcz);
+	    rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i2*phi/mt );
+	    normalise(&Tbx,&Tby,&Tbz); // just in case
+	    
+	    xn[index] = Tbx;
+	    yn[index] = Tby;
+	    zn[index] = Tbz;
+*/
+//-------
     /*
 	index=idx(0, i2, i1);
 	xn[index] =   
@@ -695,7 +804,7 @@ bool Domain::grdgen(double cmb)
 	}
     }
 
-//    printf("cmb = %12.8g\n",cmb);
+/*
     // generate radial points (we already know ir=0)
     for ( int ir = 1 ; ir < nr ; ir++){
       index=idx(ir, 0, 0);
@@ -715,6 +824,6 @@ bool Domain::grdgen(double cmb)
 	}
       }
     }
-
+*/
     return 0;
 }

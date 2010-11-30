@@ -43,6 +43,11 @@ public:
 				double, double, double, double);
     bool   crossProduct        (double, double, double, 
 				double*, double*, double*);
+    double dotProduct          (double, double, double, 
+				double, double, double);
+    double getAngle3d          (double, double, double, 
+				double, double, double);
+    bool   normalise           (double *, double *, double *);
 
 };
 

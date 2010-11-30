@@ -109,6 +109,8 @@ c...        diagonals of diamond--
  
       end do
 
+c...
+
       do k=1,3
          do id=1,10
             do j1=1,nt+1
