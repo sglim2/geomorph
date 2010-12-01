@@ -9,7 +9,7 @@ DEFS	=
 CFLAGS	= -g -ansi -pedantic -fopenmp
 #CFLAGS	= -O3 -ansi -pedantic -fopenmp
 FFLAGS	= -g -fdefault-real-8 
-LDFLAGS	= -fopenmp -lgfortran
+LDFLAGS	= -fopenmp
 
 CXX	= g++
 CC	= gcc
@@ -24,7 +24,7 @@ RM	= rm -f
 all: $(EXEC)
 
 $(EXEC): $(OBJS) 
-	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS) 
+	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS)
 
 .PHONY : clean
 clean:

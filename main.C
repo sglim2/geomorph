@@ -10,10 +10,6 @@
 
 #include "main.H"
 
-	
-extern"C" {
-    void grdgentest_(int *);
-}
 
 ////////////////////////////////////////
 // return the basename of a path
@@ -249,28 +245,21 @@ int main(int argc, char* argv[])
       printf("Warning: User-specified value on mt is not optimal. Try using mt=%d\n", my_mt);
   }
 
-
   printf("Generating grid....\n");
   if (grid->genGrid(data->cmb)){
     printf("Error computing TERRA stats.\n");
   }
-  
-  int my_mt2 = grid->mt;
-  printf("\n\n\nmy_mt2 = %d\n",my_mt2);
-  grdgentest_(&my_mt2);
 
   // import Data::data to geomorph grid
-//  printf("Converting Data....\n");
-//  if (grid->importData(data)){
-//    printf("Error importing Data into geomorph grid.\n");
-//  }
-
-/*
-  // write a single shell (for use in matlab, or alternative)
-  if (writeGrid()){
+  printf("Converting Data....\n");
+  if (grid->importData(data)){
     printf("Error importing Data into geomorph grid.\n");
   }
-*/
+
+  // write a single shell (for use in matlab, or alternative)
+//  if (writeGrid()){
+//    printf("Error importing Data into geomorph grid.\n");
+//  }
 
   printf("Exporting Data....\n");
   if (grid->exportGrid(data)){

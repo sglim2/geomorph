@@ -485,11 +485,6 @@ bool Domain::grdgen(double cmb)
     A[10][0]= 0;  A[10][1]=-u; A[10][2]=-v;  
     A[11][0]=-v;  A[11][1]= 0; A[11][2]=-u;   
 
-    printf("A...\n");
-    for ( int i = 0 ; i < 12 ; i++ ){
-	printf("%12.8E  %12.8E  %12.8E\n",A[i][0], A[i][1], A[i][2]);
-    }
-    
     // Rotate the vertices by Ry
     for ( int i = 0 ; i < 12 ; i++ ){
 	for ( int ix = 0 ; ix < 3 ; ix++ ){
@@ -499,16 +494,10 @@ bool Domain::grdgen(double cmb)
 	}	
     }
    
-    printf("Ad...\n");
-    for ( int i = 0 ; i < 12 ; i++ ){
-	printf("%12.8E  %12.8E  %12.8E\n",Ad[i][0], Ad[i][1], Ad[i][2]);
-    }
-    
-
     // Vertex Points........
     // Northern Hemisphere
     if (id<5) {
-	// North Pole, 0,0
+	// North Pole - 0,0
 	index = idx(0, 0, 0);
 	xn[index] = Ad[0][0];
 	yn[index] = Ad[0][1];
@@ -565,12 +554,6 @@ bool Domain::grdgen(double cmb)
 	zn[index] = Ad[id-4][2]; 
     }
     
-    
-    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0, 0, 0)], yn[idx( 0, 0, 0)], zn[idx( 0, 0, 0)]);
-    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0, 0,mt)], yn[idx( 0, 0,mt)], zn[idx( 0, 0,mt)]);
-    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0,mt, 0)], yn[idx( 0,mt, 0)], zn[idx( 0,mt, 0)]);
-    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0,mt,mt)], yn[idx( 0,mt,mt)], zn[idx( 0,mt,mt)]);
-
     // Edge Points......... (assumes unit radius)
     // i2,i1=0
     for ( int i2 = 1 ; i2 < mt ; i2++ ){
@@ -593,23 +576,6 @@ bool Domain::grdgen(double cmb)
 	xn[index] = Tbx;
 	yn[index] = Tby;
 	zn[index] = Tbz;
-
-	/*
-	index=idx(0, i2, 0);
-	xn[index] =   
-	    xn[idx(0, 0, 0)] + i2*(xn[idx(0, mt, 0)] - xn[idx(0, 0, 0)])/mt;
-	yn[index] =   
-	    yn[idx(0, 0, 0)] + i2*(yn[idx(0, mt, 0)] - yn[idx(0, 0, 0)])/mt;
-	zn[index] =   
-	    zn[idx(0, 0, 0)] + i2*(zn[idx(0, mt, 0)] - zn[idx(0, 0, 0)])/mt;
-	
-	R = sqrt(pow(xn[index],2) +  
-	         pow(yn[index],2) +
-	         pow(zn[index],2) );
-	xn[index] = 1/R * xn[index];
-	yn[index] = 1/R * yn[index];
-	zn[index] = 1/R * zn[index];
-	*/
     }
     // i2=0,i1
     for ( int i1 = 1 ; i1 < mt ; i1++ ){
@@ -633,23 +599,6 @@ bool Domain::grdgen(double cmb)
 	xn[index] = Tbx;
 	yn[index] = Tby;
 	zn[index] = Tbz;
-
-	/*
-	index=idx(0, 0, i1);
-	xn[index] =   
-	    xn[idx(0, 0, 0)] + i1*(xn[idx(0, 0, mt)] - xn[idx(0, 0, 0)])/mt;
-	yn[index] =   
-	    yn[idx(0, 0, 0)] + i1*(yn[idx(0, 0, mt)] - yn[idx(0, 0, 0)])/mt;
-	zn[index] =   
-	    zn[idx(0, 0, 0)] + i1*(zn[idx(0, 0, mt)] - zn[idx(0, 0, 0)])/mt;
-	
-	R = sqrt(pow(xn[index],2) +  
-	         pow(yn[index],2) +
-	         pow(zn[index],2) );
-	xn[index] = 1/R * xn[index];
-	yn[index] = 1/R * yn[index];
-	zn[index] = 1/R * zn[index];
-	*/
     }
     // i2,i1=mt
     for ( int i2 = 1 ; i2 < mt ; i2++ ){
@@ -673,26 +622,7 @@ bool Domain::grdgen(double cmb)
 	xn[index] = Tbx;
 	yn[index] = Tby;
 	zn[index] = Tbz;
-
-	/*
-	index=idx(0, i2, mt);
-	xn[index] =   
-	    xn[idx(0, 0, mt)] + i2*(xn[idx(0, mt, mt)] - xn[idx(0, 0, mt)])/mt;
-	yn[index] =   
-	    yn[idx(0, 0, mt)] + i2*(yn[idx(0, mt, mt)] - yn[idx(0, 0, mt)])/mt;
-	zn[index] =   
-	    zn[idx(0, 0, mt)] + i2*(zn[idx(0, mt, mt)] - zn[idx(0, 0, mt)])/mt;
-	
-	R = sqrt(pow(xn[index],2) +  
-	         pow(yn[index],2) +
-	         pow(zn[index],2) );
-	xn[index] = 1/R * xn[index];
-	yn[index] = 1/R * yn[index];
-	zn[index] = 1/R * zn[index];
-	*/
     }
-
-
     // i1,i2=mt
     for ( int i1 = 1 ; i1 < mt ; i1++ ){
 
@@ -715,41 +645,18 @@ bool Domain::grdgen(double cmb)
 	xn[index] = Tbx;
 	yn[index] = Tby;
 	zn[index] = Tbz;
-
-/*	
-	index=idx(0, mt, i1);
-	xn[index] =   
-	    xn[idx(0, mt, 0)] + i1*(xn[idx(0, mt, mt)] - xn[idx(0, mt, 0)])/mt;
-	yn[index] =   
-	    yn[idx(0, mt, 0)] + i1*(yn[idx(0, mt, mt)] - yn[idx(0, mt, 0)])/mt;
-	zn[index] =   
-	    zn[idx(0, mt, 0)] + i1*(zn[idx(0, mt, mt)] - zn[idx(0, mt, 0)])/mt;
-	
-	R = sqrt(pow(xn[index],2) +  
-	         pow(yn[index],2) +
-	         pow(zn[index],2) );
-	xn[index] = 1/R * xn[index];
-	yn[index] = 1/R * yn[index];
-	zn[index] = 1/R * zn[index];
-*/	
     }
-
-
-
-
-
-
+   
     // Everywhere inbetween...
     //
     // There's a bug here somwhere. It seems this algoritm (edge point
     // rotation) doesn't match the TERRA-Grid.
     for ( int i2 = 1 ; i2 < mt ; i2++ ){
-	for ( int i1 = 1 ; i1 < mt ; i1++ ){
+        for ( int i1 = 1 ; i1 < mt ; i1++ ){
 
 
 	    index=idx(0, i2, i1);
 
-//------ under test
 	    Tbx = xn[idx(0, 0, i1)];
 	    Tby = yn[idx(0, 0, i1)];
 	    Tbz = zn[idx(0, 0, i1)];
@@ -767,28 +674,9 @@ bool Domain::grdgen(double cmb)
 	    xn[index] = Tbx;
 	    yn[index] = Tby;
 	    zn[index] = Tbz;
-//-------
-
-/*	    
-	    index=idx(0, i2, i1);
-	    xn[index] =   
-		xn[idx(0, i1, 0)] + i2*(xn[idx(0, i1, mt)] - xn[idx(0, i1, 0)])/mt;  
-	    yn[index] =   
-		yn[idx(0, i1, 0)] + i2*(yn[idx(0, i1, mt)] - yn[idx(0, i1, 0)])/mt;
-	    zn[index] =   
-		zn[idx(0, i1, 0)] + i2*(zn[idx(0, i1, mt)] - zn[idx(0, i1, 0)])/mt;
-	    
-	    R = sqrt(pow(xn[index],2) +  
-		     pow(yn[index],2) +
-		     pow(zn[index],2) );
-	    xn[index] = 1/R * xn[index];
-	    yn[index] = 1/R * yn[index];
-	    zn[index] = 1/R * zn[index];
-*/	    
 	}
     }
-
-/*
+    
     // generate radial points (we already know ir=0)
     for ( int ir = 1 ; ir < nr ; ir++){
       index=idx(ir, 0, 0);
@@ -801,13 +689,237 @@ bool Domain::grdgen(double cmb)
 	  xn[index] = x0 - x0*(a-cmb)*ir/nr;
 	  yn[index] = y0 - y0*(a-cmb)*ir/nr;
 	  zn[index] = z0 - z0*(a-cmb)*ir/nr;
-//	  xn[index] = x0 - (a-cmb)*ir/nr;
-//	  yn[index] = y0 - (a-cmb)*ir/nr;
-//	  zn[index] = z0 - (a-cmb)*ir/nr;
 	  index++;
 	}
       }
     }
-*/
+
+    return 0;
+}
+
+////////////////////////////////////////
+// Domain::midpt
+//
+//
+bool Domain::midpt(double *x, double *y, double *z,
+		   double x1, double y1, double z1,
+		   double x2, double y2, double z2)
+{
+  x[0] = x1 + x2;
+  y[0] = y1 + y2;;
+  z[0] = z1 + z2;
+
+  double norm = 1./sqrt(x[0]*x[0] + y[0]*y[0] + z[0]*z[0]);
+
+  x[0] = norm*x[0];
+  y[0] = norm*y[0];
+  z[0] = norm*z[0];
+
+  return 0;
+}
+
+
+////////////////////////////////////////
+// Domain::grdgen2
+//
+// Should be used over grdgen().
+//
+bool Domain::grdgen2(double cmb)
+{
+    
+  int    index,index1,index2;
+    double R,x0,y0,z0;
+
+    double TA,Tax,Tay,Taz,Tbx,Tby,Tbz,Tcx,Tcy,Tcz,F,E;
+
+    double a,tau,rho,u,v,Beta;
+    double Ry[3][3], A[12][3], Ad[12][3];
+
+
+
+    int     lvt      = int (1.45*log(mt));
+    double  sgn      = 1.;
+    double  fifthpi  = 0.4*asin(1.);
+    double  w        = 2.0*acos(1./(2.*sin(fifthpi)));
+    double  cosw     = cos(w);
+    double  sinw     = sin(w);
+    int     m,l,l2,i1,i2;
+    //    double  nn       = (mt+1)*(mt+1);
+
+    tau = (1+sqrt(5))/2;
+    TA  = asin( 1/(sqrt(tau*sqrt(5))) );
+
+    a=1.;
+    tau=0.5*(sqrt(5)+1);
+    rho=tau-1;
+    u=a/(sqrt(1+pow(rho,2)));
+    v=rho*u;
+    
+    Beta= atan(v/u);
+    Ry[0][0] = cos(Beta);
+    Ry[0][1] = 0;
+    Ry[0][2] = -sin(Beta);
+
+    Ry[1][0] = 0;
+    Ry[1][1] = 1;
+    Ry[1][2] = 0;
+
+    Ry[2][0] = sin(Beta);
+    Ry[2][1] = 0;
+    Ry[2][2] = cos(Beta);
+
+    for ( int i = 0 ; i < 12 ; i++ ){
+      Ad[i][0]=0;
+      Ad[i][1]=0;
+      Ad[i][2]=0;
+    }
+  
+    // Set up the intial regular icosahedral grid
+    // Note: this grid needs to be rotated about y-axis in order to match the TERRA grid.
+    A[0][0] = v;  A[0][1] = 0; A[0][2] = u; 
+    A[1][0] = u;  A[1][1] = v; A[1][2] = 0; 
+    A[2][0] = 0;  A[2][1] = u; A[2][2] = v;   
+    A[3][0] =-v;  A[3][1] = 0; A[3][2] = u;  
+    A[4][0] = 0;  A[4][1] =-u; A[4][2] = v;  
+    A[5][0] = u;  A[5][1] =-v; A[5][2] = 0;
+    A[6][0] = v;  A[6][1] = 0; A[6][2] =-u; 
+    A[7][0] = 0;  A[7][1] = u; A[7][2] =-v;
+    A[8][0] =-u;  A[8][1] = v; A[8][2] = 0;
+    A[9][0] =-u;  A[9][1] =-v; A[9][2] = 0;
+    A[10][0]= 0;  A[10][1]=-u; A[10][2]=-v;  
+    A[11][0]=-v;  A[11][1]= 0; A[11][2]=-u;   
+
+    // Rotate the vertices by Ry
+    for ( int i = 0 ; i < 12 ; i++ ){
+	for ( int ix = 0 ; ix < 3 ; ix++ ){
+	    for ( int iy = 0 ; iy < 3 ; iy++ ){
+		Ad[i][ix] += Ry[ix][iy]*A[i][iy];
+	    }
+	}	
+    }
+   
+    // Vertex Points........
+    // Northern Hemisphere
+    if (id<5) {
+	// North Pole
+	index = idx(0, 0, 0);
+	xn[index] = Ad[0][0];
+	yn[index] = Ad[0][1];
+	zn[index] = Ad[0][2];
+	// mt,0
+	index = idx(0, mt, 0);
+	xn[index] = Ad[id+1][0];
+	yn[index] = Ad[id+1][1];
+	zn[index] = Ad[id+1][2]; 
+	// 0,mt
+	index = idx(0, 0, mt);
+	if (id == 0) {
+	    xn[index] = Ad[id+5][0];
+	    yn[index] = Ad[id+5][1];
+	    zn[index] = Ad[id+5][2]; 
+	}else{
+	    xn[index] = Ad[id][0];
+	    yn[index] = Ad[id][1];
+	    zn[index] = Ad[id][2]; 
+	}
+	// mt,mt
+	index = idx(0, mt, mt);
+	xn[index] = Ad[id+6][0];
+	yn[index] = Ad[id+6][1];
+	zn[index] = Ad[id+6][2]; 
+	
+	// Southern Hemisphere
+    }else{
+	// South Pole
+	index = idx(0, 0, 0);
+	xn[index] = Ad[11][0];
+	yn[index] = Ad[11][1];
+	zn[index] = Ad[11][2];
+	// mt,0
+	index = idx(0, mt, 0);
+	if (id == 9) {
+	    xn[index] = Ad[id-3][0];
+	    yn[index] = Ad[id-3][1];
+	    zn[index] = Ad[id-3][2]; 
+	}else{
+	    xn[index] = Ad[id+2][0];
+	    yn[index] = Ad[id+2][1];
+	    zn[index] = Ad[id+2][2]; 
+	}
+	// 0,mt
+	index = idx(0, 0, mt);
+	xn[index] = Ad[id+1][0];
+	yn[index] = Ad[id+1][1];
+	zn[index] = Ad[id+1][2]; 
+	// mt,mt
+	index = idx(0, mt, mt);
+	xn[index] = Ad[id-4][0];
+	yn[index] = Ad[id-4][1];
+	zn[index] = Ad[id-4][2]; 
+    }
+
+    
+    for ( int k = 0; k < lvt ; k++){
+      
+      m  = int (pow(2,k)+0.1);
+      l  = mt/m;
+      l2 = l/2;
+
+
+      // rows of diamond--
+      for (int j1=0 ; j1 < m + 1 ; j1++ ){
+	for (int j2=0 ; j2 < m  ; j2++ ){
+
+	  i1 = (j1)*l;
+	  i2 = (j2)*l + l2;
+	  index = idx(0,i2,i1);
+	  index1= idx(0,i2-l2,i1);
+	  index2= idx(0,i2+l2,i1);
+	  midpt(
+		&xn[index], &yn[index], &zn[index],
+                xn[index1],yn[index1],zn[index1],
+                xn[index2],yn[index2],zn[index2]);
+	  
+	} // j2
+      } // j1
+
+
+      // columns of diamond--
+      for (int j1=0 ; j1 < m + 1 ; j1++ ){
+	for (int j2=0 ; j2 < m  ; j2++ ){
+
+	  i1 = (j2)*l + l2;
+	  i2 = (j1)*l;
+	  index = idx(0,i2,i1);
+	  index1= idx(0,i2,i1-l2);
+	  index2= idx(0,i2,i1+l2);
+	  midpt(
+		&xn[index], &yn[index], &zn[index],
+                xn[index1],yn[index1],zn[index1],
+                xn[index2],yn[index2],zn[index2]);
+	  
+	} // j2
+      } // j1
+
+
+      // diagonals of diamond--
+      for (int j1=0 ; j1 < m  ; j1++ ){
+	for (int j2=0 ; j2 < m  ; j2++ ){
+
+	  i1 = (j1)*l + l2;
+	  i2 = (j2)*l + l2;
+	  index = idx(0,i2,i1);
+	  index1= idx(0,i2+l2,i1-l2);
+	  index2= idx(0,i2-l2,i1+l2);
+	  midpt(
+		&xn[index], &yn[index], &zn[index],
+                xn[index1],yn[index1],zn[index1],
+                xn[index2],yn[index2],zn[index2]);
+	  
+	} // j2
+      } // j1
+
+    } // k
+
     return 0;
 }
