@@ -304,7 +304,8 @@ bool Grid::genGrid(double _cmb)
     
     // generate grid points within each domain
     dptr = domains;
-    for ( int id = 0 ; id < idmax ; id++ ){
+//    for ( int id = 0 ; id < idmax ; id++ ){
+    for ( int id = 0 ; id < 1 ; id++ ){
 	if (dptr->grdgen(_cmb)){
 	    printf("Error in Domain::grdgen");
 	    return 1; // fail

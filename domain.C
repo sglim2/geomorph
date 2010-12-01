@@ -485,6 +485,11 @@ bool Domain::grdgen(double cmb)
     A[10][0]= 0;  A[10][1]=-u; A[10][2]=-v;  
     A[11][0]=-v;  A[11][1]= 0; A[11][2]=-u;   
 
+    printf("A...\n");
+    for ( int i = 0 ; i < 12 ; i++ ){
+	printf("%12.8E  %12.8E  %12.8E\n",A[i][0], A[i][1], A[i][2]);
+    }
+    
     // Rotate the vertices by Ry
     for ( int i = 0 ; i < 12 ; i++ ){
 	for ( int ix = 0 ; ix < 3 ; ix++ ){
@@ -494,11 +499,16 @@ bool Domain::grdgen(double cmb)
 	}	
     }
    
+    printf("Ad...\n");
+    for ( int i = 0 ; i < 12 ; i++ ){
+	printf("%12.8E  %12.8E  %12.8E\n",Ad[i][0], Ad[i][1], Ad[i][2]);
+    }
+    
 
     // Vertex Points........
     // Northern Hemisphere
     if (id<5) {
-	// North Pole
+	// North Pole, 0,0
 	index = idx(0, 0, 0);
 	xn[index] = Ad[0][0];
 	yn[index] = Ad[0][1];
@@ -527,7 +537,7 @@ bool Domain::grdgen(double cmb)
 	
 	// Southern Hemisphere
     }else{
-	// South Pole
+	// South Pole - 0,0
 	index = idx(0, 0, 0);
 	xn[index] = Ad[11][0];
 	yn[index] = Ad[11][1];
@@ -555,10 +565,11 @@ bool Domain::grdgen(double cmb)
 	zn[index] = Ad[id-4][2]; 
     }
     
-    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0, 0, 0], yn[ 0, 0, 0], zn[ 0, 0, 0]);
-    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0, 0,mt], yn[ 0, 0,mt], zn[ 0, 0,mt]);
-    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0,mt, 0], yn[ 0,mt, 0], zn[ 0,mt, 0]);
-    printf("%12.8E  %12.8E  %12.8E\n", xn[ 0,mt,mt], yn[ 0,mt,mt], zn[ 0,mt,mt]);
+    
+    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0, 0, 0)], yn[idx( 0, 0, 0)], zn[idx( 0, 0, 0)]);
+    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0, 0,mt)], yn[idx( 0, 0,mt)], zn[idx( 0, 0,mt)]);
+    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0,mt, 0)], yn[idx( 0,mt, 0)], zn[idx( 0,mt, 0)]);
+    printf("%12.8E  %12.8E  %12.8E\n", xn[idx( 0,mt,mt)], yn[idx( 0,mt,mt)], zn[idx( 0,mt,mt)]);
 
     // Edge Points......... (assumes unit radius)
     // i2,i1=0
@@ -704,35 +715,8 @@ bool Domain::grdgen(double cmb)
 	xn[index] = Tbx;
 	yn[index] = Tby;
 	zn[index] = Tbz;
-    }
 
-
-
-/*
-    // i1,i2=mt
-    for ( int i1 = 1 ; i1 < mt ; i1++ ){
-
-	index=idx(0, mt, i1);
-	
-	Tbx = xn[idx(0, mt, 0)];
-	Tby = yn[idx(0, mt, 0)];
-	Tbz = zn[idx(0, mt, 0)];
-
-	Tcx = xn[idx(0, mt, mt)];
-	Tcy = yn[idx(0, mt, mt)];
-	Tcz = zn[idx(0, mt, mt)];
-	
-	phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
-	crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
-	normalise(&Tcx,&Tcy,&Tcz);
-	rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i1*phi/mt );
-	normalise(&Tbx,&Tby,&Tbz); // just in case
-	
-	xn[index] = Tbx;
-	yn[index] = Tby;
-	zn[index] = Tbz;
-
-	/*
+/*	
 	index=idx(0, mt, i1);
 	xn[index] =   
 	    xn[idx(0, mt, 0)] + i1*(xn[idx(0, mt, mt)] - xn[idx(0, mt, 0)])/mt;
@@ -747,9 +731,9 @@ bool Domain::grdgen(double cmb)
 	xn[index] = 1/R * xn[index];
 	yn[index] = 1/R * yn[index];
 	zn[index] = 1/R * zn[index];
-	
+*/	
     }
-*/
+
 
 
 
@@ -757,14 +741,15 @@ bool Domain::grdgen(double cmb)
 
     // Everywhere inbetween...
     //
-    // There's a bug here somwhere. It seems this algoritm doesn't match the TERRA-Grid.
-    for ( int i1 = 1 ; i1 < mt ; i1++ ){
-	for ( int i2 = 1 ; i2 < mt ; i2++ ){
+    // There's a bug here somwhere. It seems this algoritm (edge point
+    // rotation) doesn't match the TERRA-Grid.
+    for ( int i2 = 1 ; i2 < mt ; i2++ ){
+	for ( int i1 = 1 ; i1 < mt ; i1++ ){
+
 
 	    index=idx(0, i2, i1);
 
 //------ under test
-/*
 	    Tbx = xn[idx(0, 0, i1)];
 	    Tby = yn[idx(0, 0, i1)];
 	    Tbz = zn[idx(0, 0, i1)];
@@ -774,7 +759,6 @@ bool Domain::grdgen(double cmb)
 	    Tcz = zn[idx(0, mt, i1)];
 	    
 	    phi = getAngle3d(Tbx,Tby,Tbz,Tcx,Tcy,Tcz);
-	    printf("phi %2d  %2d - %12.8E\n",i2,i1,phi);
 	    crossProduct(Tbx,Tby,Tbz,&Tcx,&Tcy,&Tcz);
 	    normalise(&Tcx,&Tcy,&Tcz);
 	    rotate3d(&Tbx,&Tby,&Tbz,Tcx,Tcy,Tcz, i2*phi/mt );
@@ -783,24 +767,24 @@ bool Domain::grdgen(double cmb)
 	    xn[index] = Tbx;
 	    yn[index] = Tby;
 	    zn[index] = Tbz;
-*/
 //-------
-    /*
-	index=idx(0, i2, i1);
-	xn[index] =   
-	    xn[idx(0, i1, 0)] + i2*(xn[idx(0, i1, mt)] - xn[idx(0, i1, 0)])/mt;  
-	yn[index] =   
-	    yn[idx(0, i1, 0)] + i2*(yn[idx(0, i1, mt)] - yn[idx(0, i1, 0)])/mt;
-	zn[index] =   
-	    zn[idx(0, i1, 0)] + i2*(zn[idx(0, i1, mt)] - zn[idx(0, i1, 0)])/mt;
-	
-	R = sqrt(pow(xn[index],2) +  
-	         pow(yn[index],2) +
-	         pow(zn[index],2) );
-	xn[index] = 1/R * xn[index];
-	yn[index] = 1/R * yn[index];
-	zn[index] = 1/R * zn[index];
-    */
+
+/*	    
+	    index=idx(0, i2, i1);
+	    xn[index] =   
+		xn[idx(0, i1, 0)] + i2*(xn[idx(0, i1, mt)] - xn[idx(0, i1, 0)])/mt;  
+	    yn[index] =   
+		yn[idx(0, i1, 0)] + i2*(yn[idx(0, i1, mt)] - yn[idx(0, i1, 0)])/mt;
+	    zn[index] =   
+		zn[idx(0, i1, 0)] + i2*(zn[idx(0, i1, mt)] - zn[idx(0, i1, 0)])/mt;
+	    
+	    R = sqrt(pow(xn[index],2) +  
+		     pow(yn[index],2) +
+		     pow(zn[index],2) );
+	    xn[index] = 1/R * xn[index];
+	    yn[index] = 1/R * yn[index];
+	    zn[index] = 1/R * zn[index];
+*/	    
 	}
     }
 

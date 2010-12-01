@@ -10,6 +10,10 @@
 
 #include "main.H"
 
+	
+extern"C" {
+    void grdgentest_(int *);
+}
 
 ////////////////////////////////////////
 // return the basename of a path
@@ -251,6 +255,10 @@ int main(int argc, char* argv[])
     printf("Error computing TERRA stats.\n");
   }
   
+  int my_mt2 = grid->mt;
+  printf("\n\n\nmy_mt2 = %d\n",my_mt2);
+  grdgentest_(&my_mt2);
+
   // import Data::data to geomorph grid
 //  printf("Converting Data....\n");
 //  if (grid->importData(data)){
