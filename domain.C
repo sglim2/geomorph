@@ -921,5 +921,24 @@ bool Domain::grdgen2(double cmb)
 
     } // k
 
+
+    // generate radial points (we already know ir=0)
+    for ( int ir = 1 ; ir < nr ; ir++){
+      index=idx(ir, 0, 0);
+      for ( int i2 = 0 ; i2 < mt+1 ; i2++ ){
+	for ( int i1 = 0 ; i1 < mt+1 ; i1++ ){
+	  x0 = xn[idx(0,i2,i1)];
+	  y0 = yn[idx(0,i2,i1)];
+	  z0 = zn[idx(0,i2,i1)];
+	  
+	  xn[index] = x0 - x0*(a-cmb)*ir/nr;
+	  yn[index] = y0 - y0*(a-cmb)*ir/nr;
+	  zn[index] = z0 - z0*(a-cmb)*ir/nr;
+	  index++;
+	}
+      }
+    }
+    
+
     return 0;
 }

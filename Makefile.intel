@@ -6,9 +6,9 @@ LIBS	=
 CXXINC	=
 INC	=
 DEFS	= 
-CFLAGS	= -g 
-FFLAGS	= -g -r8 
-LDFLAGS	=  
+CFLAGS	= -O2  -parallel -guide
+FFLAGS	= -O2 -r8 
+LDFLAGS	= -guide -parallel
 
 CXX	= icpc
 CC	= icc
@@ -23,7 +23,7 @@ RM	= rm -f
 all: $(EXEC)
 
 $(EXEC): $(OBJS) 
-	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS) $(LDFLAGS)
+	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS)
 
 .PHONY : clean
 clean:

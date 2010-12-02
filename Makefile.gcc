@@ -6,10 +6,10 @@ LIBS	=
 CXXINC	=
 INC	=
 DEFS	= 
-CFLAGS	= -g -ansi -pedantic
-#CFLAGS	= -O3 -ansi -pedantic -fopenmp
+#CFLAGS	= -g -ansi -pedantic -fopenmp
+CFLAGS	= -O3 -ansi -pedantic -fopenmp
 FFLAGS	= -g -fdefault-real-8 
-LDFLAGS	= 
+LDFLAGS	= -fopenmp
 
 CXX	= g++
 CC	= gcc

@@ -135,7 +135,7 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 bool Grid::importData(Data * dptr)
 {
     int _idmax = 10;
-#pragma omp parallel for  
+#pragma omp parallel for default(none) shared (_idmax,dptr)
     for (int i=0 ; i<_idmax ; i++){
 	printf("...Domain %d\n",i);
 	if (domains[i].importData(dptr)){
@@ -143,6 +143,7 @@ bool Grid::importData(Data * dptr)
 	    //	    return 1; // fail
 	}
     }
+#pragma omp end parallel for
     
     return 0; // success
 }
@@ -162,7 +163,7 @@ bool Grid::exportMVIS(Data * dptr)
     FILE * fptr;
     char outfile[256];
     
-    int  fail;
+    int  fail=0;
 
     // we now cycle over 'processors'
     for ( int proc=0 ; proc < nproc ; proc++ ){
@@ -174,7 +175,7 @@ bool Grid::exportMVIS(Data * dptr)
 	// open file
 	fptr=fopen(outfile,"a");
 	if (fptr==NULL){
-	  fail=1;
+//	    fail = 1; // commented to enable auto-parallelization on PGI compiler;
 	  //	  break;
 	}
 
@@ -184,9 +185,7 @@ bool Grid::exportMVIS(Data * dptr)
 	    // call our domain export routine
 	    if ( domains[i].exportMVIS(fptr, nproc, proc, nt) ){
 		printf("Error in Domain::exportMVIS()");
-		fail=1;
-		break;
-
+//	    fail = 1; // commented to enable auto-parallelization on PGI compiler
 	    }
 	}
 
@@ -196,9 +195,7 @@ bool Grid::exportMVIS(Data * dptr)
 	//	if (fail=1) break;
     }
 
-    if (fail==1) return fail;
-
-    return 0; // success
+    return fail; 
 }
 
 ////////////////////////////////////////
@@ -276,7 +273,8 @@ int Grid::suggestGrid(int npts)
 //
 bool Grid::genGrid(double _cmb)
 {
-  
+    int fail = 0;
+    
     Domain * dptr;
     npts  = 10*(mt+1)*(mt+1)*(mt/2 + 1);
     nr    = mt/2+1;
@@ -297,7 +295,7 @@ bool Grid::genGrid(double _cmb)
     for ( int id = 0 ; id < idmax ; id++ ){
 	if (dptr->defineDomain(id,nr,mt)){
 	    printf("Error in Domain::defineDomain()");
-	    return 1; // fail
+//	    fail = 1; // commented to enable auto-parallelization on PGI compiler
 	}
 	dptr++;
     }
@@ -307,10 +305,10 @@ bool Grid::genGrid(double _cmb)
     for ( int id = 0 ; id < idmax ; id++ ){
 	if (dptr->grdgen2(_cmb)){
 	    printf("Error in Domain::grdgen");
-	    return 1; // fail
+//	    fail = 1; // commented to enable auto-parallelization on PGI compiler
 	}
 	dptr++;
     }
       
-    return 0; // success
+    return fail; 
 }
