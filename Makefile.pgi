@@ -7,9 +7,9 @@ CXXINC	=
 INC	=
 DEFS	= 
 #CFLAGS	= -g 
-CFLAGS	= -O3  -fastsse
+CFLAGS	= -O3 -fastsse -openmp
 FFLAGS	= -g -r8 
-LDFLAGS	= 
+LDFLAGS	= -openmp
 
 CXX	= pgCC
 CC	= pgcc
@@ -24,7 +24,7 @@ RM	= rm -f
 all: $(EXEC)
 
 $(EXEC): $(OBJS) 
-	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS) $(LDFLAGS)
+	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS) 
 
 .PHONY : clean
 clean:
