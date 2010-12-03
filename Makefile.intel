@@ -6,9 +6,10 @@ LIBS	=
 CXXINC	=
 INC	=
 DEFS	= 
-CFLAGS	= -O2  -parallel -guide
+#CFLAGS	= -O2 
+CFLAGS	= -O3 -parallel -par-report2 -openmp
 FFLAGS	= -O2 -r8 
-LDFLAGS	= -guide -parallel
+LDFLAGS	= -parallel -openmp
 
 CXX	= icpc
 CC	= icc

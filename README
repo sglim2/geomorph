@@ -1,7 +1,9 @@
 
-Tidying up the Code
-===================
+1. Tidying up the Code
+=======================
 
+1.1 GCC - All Warnings
+======================
 Every now and again, while developing the code, it may be prudent to compile
 the code with the options
 
@@ -14,12 +16,35 @@ in gcc. These turn on all warnings, which you may fix, or choose to ignore.
 Of course, other methods of warnings/errors would be to compile with a number
 of separate compilers - intel and portland compilers are a good start.
 
-Auto-Parallelization
-====================
+1.2 Intel - Check Uninitialized Variables
+=========================================
+
+This is a useful run-time check for the existence of uninitialized
+variables. This is very useful when using pointer/common blocks in code, in
+which the definition is likely tobe out of scope of most functions/subroutines.
+
+The idea in this test is to compile the code using the intel compilers, with the flag
+
+[code]
+CFLAGS	= -O3 -check-uninit
+LDFLAGS	= 
+[/code]
+
+and run the code in such a way that it uses a large portion of the the
+routines (we'd like to check as many routines as possible).
 
 
-Parallellising Serial Code with GNU Compilers
----------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+2. Auto-Parallelization
+=======================
+
+
+2.1 Parallellising Serial Code with GNU Compilers
+-------------------------------------------------
 
 From GCC 4.5 onwards, auto-parallelization is implemented into the compiler
 collection. This provides parallelisation of serial code using OpenMP without
@@ -43,9 +68,9 @@ examples we're using r41 of geomorph called as below:
 The result, without auto-parallelisation, is:
 
 [code]
-real    0m47.146s
-user    0m44.660s
-sys     0m0.646s
+real    0m26.269s
+user    0m25.512s
+sys     0m0.345s
 [/code]
 
 Now let's compile with auto-parallelisation:
@@ -60,8 +85,8 @@ $OMP_NUM_THREADS. It should be set to the number of cores at your
 disposal. The result:
 
 [code]
-real    0m44.716s
-user    0m43.727s
+real    0m24.716s
+user    0m23.727s
 sys     0m0.429s
 [/code]
 
@@ -73,17 +98,265 @@ them.  For instance, in the function Grid::importData(), the loop over domains
 useful section of the code to parallelize, since it takes close to 100% of the
 run-time of the code. However, for a section of code to be auto-parallelized,
 a number of pre-requisites must be met (We will see this explicitly in the
-section on 'Parallelizing Serial Code with PGI Compilers'). The pre-requisite
-not met in this instance is 'no function calls within a parallel loop'. Our
-loop over 'i' calls the function Domain::importData(), and so is not
-auto-parallelised with the gnu compilers.
+sections on 'Parallelizing Serial Code with PGI Compilers' and '
+Parallellising Serial Code with Intel Compilers'). The pre-requisite not met
+in this instance is 'no function calls within a parallel loop'. Our loop over
+'i' calls the function Domain::importData(), and so is not auto-parallelised
+with the gnu compilers.
 
 
-Parallellising Serial Code with PGI Compilers
----------------------------------------------
+2.2 Parallellising Serial Code with PGI Compilers
+-------------------------------------------------
+
+
+2.3 Parallellising Serial Code with Intel Compilers
+---------------------------------------------------
+
+Firstly, a typical compile option for our serial code would be:
+
+[code]
+CFLAGS	= -O3  
+LDFLAGS	=
+[/code]
+
+This produces fully serial code.  Using the same test case as with the GNU
+compilers above, we have:
+
+[code]
+real    0m26.040s
+user    0m23.513s
+sys     0m0.446s
+[code]
+
+In order for our intel compiler to produce parallelized code (in parts, using
+OpenMP), we could use the '-parallel' flag:
+
+[code]
+CFLAGS	= -O3 -parallel
+LDFLAGS	= -parallel
+[/code]
+
+This, however gives a similar situation to that of GNU auto-parallelization -
+the major loop which really should be parallelised is not, and remains as
+serial code:
+
+[code]
+real    0m24.496s
+user    0m23.992s
+sys     0m0.380s
+[/code]
+
+In order to understand why certain loops were not parallelized, an extra flag
+needs to be introduced at compile-time:
+
+[code]
+CFLAGS	= -O3 -parallel -par-report2
+LDFLAGS	= -parallel
+[/code]
+
+This controls the diagnostic information reported by the
+auto-parallelizer. You may then siphen through the report altering the code to
+benefit from auto-parallelization, if at all possible.
+
+Even if you don't like the auto-parallelization routines of intel, this is an
+excellent method to find out possible sections of code which could benefit
+from manual parallelization, and a great starting block in migrating serial
+code into parallel code.
+
+But what if the intel compiler doesn't parallelize code which you think should be
+parallelized? Well, you can add the intel-specific pramga:
+
+[code]
+#pragma parallel
+[/code]
+
+immediately before the loop in the source, which forces intel to look more
+closely at the loop, though it still may not parallelize it - the reason being
+the loop may not fall within the threshold for the auto-parallelization of
+loops. 
+
+(By the way, the opposite of the above pragma is unsurprisingly 'noparallel',
+which forces intel to not parallelize a loop).
+
+If you really want to loop to be auto-parallelized, reduce this
+threshold to the max loop index (here, it's 10):
+
+[code]
+CFLAGS	= -O3 -parallel -par-report2 -par-threshold10
+LDFLAGS	= -parallel
+[/code]
+
+The result is now:
+
+[code]                                                
+Segmentation fault
+[/code]
+
+Why? Well, it turns out that a loop within this foreced parallelized loop was
+auto-parallelized. Remember, if a compiler doesn;t parallelize a loop, it for
+a reason. Investigate why it's not parallelized, before forcing the the
+compiler to do somethin it doesn;t want to.
+
+So, what's the solution? Well we know that a specific loop should be
+parallelized that the auto-parallelizer doesn't think is suitable. This means
+we must manually parallelize the code with OpenMP. Adding the lines
+
+[code]
+#pragma omp parallel for
+[/code]
+and 
+[code]
+#pragma end parallel for
+[/code]
+
+either side of the loop may be enough to do the trick. Then compile with the flags:
+
+[code]
+CFLAGS	= -O3 -parallel -par-report2 -openmp
+LDFLAGS	= -parallel -openmp
+[/code]
+
+and run the code:
+
+[code]
+real    0m22.664s
+user    0m26.808s
+sys     0m0.441s
+[/code]
+
+This works and is the fastest run yet.
 
 
 
-Profiling
-=========
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+3. Profiling
+=============
+
+3.1 Profiling Serial with gprof and GNU Compilers
+-------------------------------------------------
+
+
+
+3.2 Profiling Serial code with pgprof and PGI Compilers
+--------------------------------------------------------
+
+To profile serial code using pgprog, compile the code using the PGI compilers
+and the flag -pg. There are other profiling flags available - search for
+'-Mprof' in the PGI compiler man pages..
+
+[code]
+CFLAGS	= -O3  -fastsse -pg
+LDFLAGS	= -pg
+[/code]
+
+On successful completion of the executed code, the profiled executable will
+generate a file named 'pgprof.out', or 'gmon.out'.
+
+The profile of the code can then be investigated using 'pgprof'.
+
+
+3.3 Profiling Serial code with gprof and Intel Compilers
+---------------------------------------------------------
+
+To profile serial code using intel compilers, compile the code using the Intel compilers
+and the flag -pg. There are other profiling flags available - search for
+'-Mprof' in the PGI compiler man pages..
+
+[code]
+CFLAGS	= -O3 -pg
+LDFLAGS	= -pg
+[/code]
+
+On successful completion of the executed code, the profiled executable will
+generate a file named 'gmon.out'.
+
+The profiled data can then be analyzed by any suitable application - gprof
+
+Intel itself has a couple of tools designed for analyzing profile data - VTUNE
+is a sampling profiler and does not require that the code be specially
+compiled, and the fourth tool is ITAC which is designed for profiling parallel
+applications.
+
+
+3.3.1 Profile-Guided Optimization (PGO)
+---------------------------------------
+
+
+3.4 Profiling Code Using Google-perftools
+-----------------------------------------
+
+3.4.1 Generating a Profile-able Executable
+------------------------------------------
+To use google-perftools on your code, no recompilation of the source is
+necessary, but you may need to re-link the object files including the
+profiling library.
+
+[code]
+CFLAGS	= -O3 -ansi -pedantic -s -funroll-loops
+LDFLAGS	= -L/usr/lib64 -lprofiler
+[/code]
+
+In Linux 2.6 and above, profiling works correctly with threads, automatically profiling all threads.
+
+3.4.2 Executing the Code
+------------------------
+In order to profile your code, there are two alternatives of how to set this up:
+
+   1. Define the environment variable CPUPROFILE to the filename to dump the
+   profile to. For instance, to profile
+   /usr/local/bin/my_binary_compiled_with_libprofiler_so:
+
+[code]
+     % export CPUPROFILE="./geomorph.prof"
+[/code]
+
+   2. In your code, bracket the code you want profiled in calls to
+   ProfilerStart() and ProfilerStop(). (These functions are declared in
+   <google/profiler.h>.) ProfilerStart() will take the profile-filename as an
+   argument.
+
+geomorph is not set up to use option 2, so option 1 is used instead. Run the code:
+
+[code]
+time ./geomorph --mt 16 --nt 8 --nd 10 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis
+[/code]
+
+and the file 'geomorh.prof' should be produced.
+
+3.4.2 Analyzing the Profile Data
+--------------------------------
+pprof is the script used to analyze a profile. It has many output modes, both
+textual and graphical. See
+http://google-perftools.googlecode.com/svn/trunk/doc/cpuprofile.html for
+further information. Some useful calls are:
+
+[code]
+pprof geomorph geomorph.prof
+[/code]
+...Enters "interactive" mode
+
+[code]
+pprof --text geomorph geomorph.prof
+[/code]
+...Outputs one line per procedure
+
+[code]
+pprof --gv  geomorph geomorph.prof
+[/code]
+...Displays annotated call-graph via 'gv'
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+4.Memory Checking Tools
+-----------------------
+
+4.1 Valgrind
+------------
+Valgrind is a tool for analysing memory management and threading bugs, and profiling programs in detail.
 

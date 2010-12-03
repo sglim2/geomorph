@@ -6,7 +6,8 @@ LIBS	=
 CXXINC	=
 INC	=
 DEFS	= 
-CFLAGS	= -g 
+#CFLAGS	= -g 
+CFLAGS	= -O3  -fastsse
 FFLAGS	= -g -r8 
 LDFLAGS	= 
 
