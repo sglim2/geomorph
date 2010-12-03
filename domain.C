@@ -167,7 +167,7 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 // getNearestDataValue.
 double Domain::getNearestDataValue2(Data *dptr, int index)
 {
-    int nr; // our layer of interest in Data:dptr (or in fact either side of this!)
+    int nr=0; // our layer of interest in Data:dptr (or in fact either side of this!)
 
     double gx,gy,gz;
     gx = xn[index];
@@ -180,17 +180,13 @@ double Domain::getNearestDataValue2(Data *dptr, int index)
     // find closest radial layer in Data::dptr nr
     double dR=veryLarge;
     double dataR=0.;
-//    double tmpR=0;   // only needed for temporary printf statement
     for ( int ir=0 ; ir<dptr->ndpth ; ir++ ){
       dataR = dptr->minR + ir*(dptr->maxR - dptr->minR)/dptr->ndpth;
       if (fabs(dataR - rad) < dR) {
 	dR = fabs(dataR - rad) ;
 	nr = dptr->ndpth - ir;  // reverse ordering.
-//	tmpR = dataR;
       }
     }
-
-//    printf("grad=%12.8g\tdrad=%12.8g\tnr=%d\n",rad,tmpR,nr);
 
     double dataV;
     dataV=0.;
@@ -435,9 +431,9 @@ bool Domain::grdgen(double cmb)
 {
     
     int    index;
-    double R,x0,y0,z0;
+    double x0,y0,z0;
 
-    double TA,Tax,Tay,Taz,Tbx,Tby,Tbz,Tcx,Tcy,Tcz,F,E;
+    double TA,Tbx,Tby,Tbz,Tcx,Tcy,Tcz;
 
     double a,tau,rho,u,v,Beta,phi;
     double Ry[3][3], A[12][3], Ad[12][3];
@@ -728,23 +724,15 @@ bool Domain::grdgen2(double cmb)
 {
     
   int    index,index1,index2;
-    double R,x0,y0,z0;
+    double x0,y0,z0;
 
-    double TA,Tax,Tay,Taz,Tbx,Tby,Tbz,Tcx,Tcy,Tcz,F,E;
+    double TA;
 
     double a,tau,rho,u,v,Beta;
     double Ry[3][3], A[12][3], Ad[12][3];
 
-
-
-    int     lvt      = int (1.45*log(mt));
-    double  sgn      = 1.;
-    double  fifthpi  = 0.4*asin(1.);
-    double  w        = 2.0*acos(1./(2.*sin(fifthpi)));
-    double  cosw     = cos(w);
-    double  sinw     = sin(w);
+    int     lvt = int (1.45*log(mt));
     int     m,l,l2,i1,i2;
-    //    double  nn       = (mt+1)*(mt+1);
 
     tau = (1+sqrt(5))/2;
     TA  = asin( 1/(sqrt(tau*sqrt(5))) );

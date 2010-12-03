@@ -135,7 +135,7 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 bool Grid::importData(Data * dptr)
 {
     int _idmax = 10;
-#pragma omp parallel for default(none) shared (_idmax,dptr)
+
     for (int i=0 ; i<_idmax ; i++){
 	printf("...Domain %d\n",i);
 	if (domains[i].importData(dptr)){
@@ -143,7 +143,6 @@ bool Grid::importData(Data * dptr)
 	    //	    return 1; // fail
 	}
     }
-#pragma omp end parallel for
     
     return 0; // success
 }

@@ -1,0 +1,89 @@
+
+Tidying up the Code
+===================
+
+Every now and again, while developing the code, it may be prudent to compile
+the code with the options
+
+[code]
+-Wall -Wextra 
+[/code]
+
+in gcc. These turn on all warnings, which you may fix, or choose to ignore.
+
+Of course, other methods of warnings/errors would be to compile with a number
+of separate compilers - intel and portland compilers are a good start.
+
+Auto-Parallelization
+====================
+
+
+Parallellising Serial Code with GNU Compilers
+---------------------------------------------
+
+From GCC 4.5 onwards, auto-parallelization is implemented into the compiler
+collection. This provides parallelisation of serial code using OpenMP without
+any change to the serial code. All that is needed is a few compile- and
+link-time options.
+
+Firstly, typical compile option for our serial code would be:
+
+[code]
+CFLAGS	= -O3 -ansi -pedantic -s -funroll-loops 
+LDFLAGS	=
+[/code]
+
+So, lets compile with these options and run the code. In the following
+examples we're using r41 of geomorph called as below:
+
+[code]
+ time ./geomorph --intype mitp --outtype mvis --mt 16 --nt 8 --nd 10 --infile ../data/MITP08.txt --outfile mvis001
+[/code]
+
+The result, without auto-parallelisation, is:
+
+[code]
+real    0m47.146s
+user    0m44.660s
+sys     0m0.646s
+[/code]
+
+Now let's compile with auto-parallelisation:
+
+[code]
+CFLAGS	= -O3 -ansi -pedantic -s -funroll-loops  -floop-parallelize-all -ftree-parallelize-loops=8
+LDFLAGS	= -ftree-parallelize-loops=8
+[/code]
+
+Before running the code, check your environment for the variable
+$OMP_NUM_THREADS. It should be set to the number of cores at your
+disposal. The result:
+
+[code]
+real    0m44.716s
+user    0m43.727s
+sys     0m0.429s
+[/code]
+
+Disapointing! There seems to be little performance gain here. What's the
+reason for this?  There are a number of time-consuming and independent loops
+in the code, so you'd think the auto-parallelisation would happily consume
+them.  For instance, in the function Grid::importData(), the loop over domains
+'i' is a prime candidate to be auto-parallelized. This would be the most
+useful section of the code to parallelize, since it takes close to 100% of the
+run-time of the code. However, for a section of code to be auto-parallelized,
+a number of pre-requisites must be met (We will see this explicitly in the
+section on 'Parallelizing Serial Code with PGI Compilers'). The pre-requisite
+not met in this instance is 'no function calls within a parallel loop'. Our
+loop over 'i' calls the function Domain::importData(), and so is not
+auto-parallelised with the gnu compilers.
+
+
+Parallellising Serial Code with PGI Compilers
+---------------------------------------------
+
+
+
+Profiling
+=========
+
