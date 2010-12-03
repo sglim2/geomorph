@@ -62,15 +62,15 @@ So, lets compile with these options and run the code. In the following
 examples we're using r41 of geomorph called as below:
 
 [code]
- time ./geomorph --intype mitp --outtype mvis --mt 16 --nt 8 --nd 10 --infile ../data/MITP08.txt --outfile mvis001
+ time ./geomorph --intype mitp --outtype mvis --mt 32 --nt 16 --nd 10 --infile ../data/MITP08.txt --outfile mvis001
 [/code]
 
 The result, without auto-parallelisation, is:
 
 [code]
-real    0m26.269s
-user    0m25.512s
-sys     0m0.345s
+real    1m28.368s
+user    1m27.737s
+sys     0m0.407s
 [/code]
 
 Now let's compile with auto-parallelisation:
@@ -85,9 +85,7 @@ $OMP_NUM_THREADS. It should be set to the number of cores at your
 disposal. The result:
 
 [code]
-real    0m24.716s
-user    0m23.727s
-sys     0m0.429s
+[not much better!!!]
 [/code]
 
 Disapointing! There seems to be little performance gain here. What's the
@@ -96,13 +94,13 @@ in the code, so you'd think the auto-parallelisation would happily consume
 them.  For instance, in the function Grid::importData(), the loop over domains
 'i' is a prime candidate to be auto-parallelized. This would be the most
 useful section of the code to parallelize, since it takes close to 100% of the
-run-time of the code. However, for a section of code to be auto-parallelized,
-a number of pre-requisites must be met (We will see this explicitly in the
-sections on 'Parallelizing Serial Code with PGI Compilers' and '
-Parallellising Serial Code with Intel Compilers'). The pre-requisite not met
-in this instance is 'no function calls within a parallel loop'. Our loop over
-'i' calls the function Domain::importData(), and so is not auto-parallelised
-with the gnu compilers.
+run-time of the code for mt>64. However, for a section of code to be
+auto-parallelized, a number of pre-requisites must be met (We will see this
+explicitly in the sections on 'Parallelizing Serial Code with PGI Compilers'
+and ' Parallellising Serial Code with Intel Compilers'). The pre-requisite not
+met in this instance is 'no function calls within a parallel loop'. Our loop
+over 'i' calls the function Domain::importData(), and so is not
+auto-parallelised with the gnu compilers.
 
 
 2.2 Parallellising Serial Code with PGI Compilers
@@ -123,9 +121,9 @@ This produces fully serial code.  Using the same test case as with the GNU
 compilers above, we have:
 
 [code]
-real    0m26.040s
-user    0m23.513s
-sys     0m0.446s
+real    1m15.956s
+user    1m15.407s
+sys     0m0.361s
 [code]
 
 In order for our intel compiler to produce parallelized code (in parts, using
@@ -141,9 +139,9 @@ the major loop which really should be parallelised is not, and remains as
 serial code:
 
 [code]
-real    0m24.496s
-user    0m23.992s
-sys     0m0.380s
+real    1m16.442s
+user    1m15.933s
+sys     0m0.345s
 [/code]
 
 In order to understand why certain loops were not parallelized, an extra flag
@@ -219,9 +217,9 @@ LDFLAGS	= -parallel -openmp
 and run the code:
 
 [code]
-real    0m22.664s
-user    0m26.808s
-sys     0m0.441s
+real    0m51.848s
+user    1m25.749s
+sys     0m0.375s
 [/code]
 
 This works and is the fastest run yet.
