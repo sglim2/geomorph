@@ -7,9 +7,9 @@ CXXINC	=
 INC	=
 DEFS	= 
 #CFLAGS	= -g 
-CFLAGS	= -O3 -fastsse -openmp
+CFLAGS	= -O3 -fastsse -mp
 FFLAGS	= -g -r8 
-LDFLAGS	= -openmp
+LDFLAGS	= -mp=allcores
 
 CXX	= pgCC
 CC	= pgcc
