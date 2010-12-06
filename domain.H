@@ -41,6 +41,7 @@ public:
     double getNearestDataValue (Data*, int);
     double getNearestDataValue2(Data*, int);
     bool   importData          (Data*);
+    bool   importData_gpu      (Data*);
     bool   exportMVIS          (FILE *, int, int, int);
     int    sqrti               (int);
     bool   rotate3d            (double*, double*, double*, 
@@ -56,10 +57,15 @@ public:
 };
 
 extern"C" {
-    double getNearestDataValue2_gpu(int, double, double, int, int, 
-				  double *, double *, double *,
-				  double *, double *, double *, double *,
-				  int);
+  //    double getNearestDataValue2_gpu(int, double, double, int, int, 
+  //				  double *, double *, double *,
+  //				  double *, double *, double *, double *,
+  //				  int);
+  
+    bool importData_c_gpu(int, int, 
+			  int, double, double, int, int, 
+			  double *, double *, double *, double *,
+			  double *, double *, double *, double *);
 }
 
 #endif

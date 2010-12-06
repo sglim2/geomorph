@@ -223,13 +223,13 @@ int Domain::getValue(Data * dptr, int index, int interp)
       //
       
       // a slightly more intelligent routine...
-//      V[index] = getNearestDataValue2(dptr,index);
+      V[index] = getNearestDataValue2(dptr,index);
       
       // the slightly more intelligent routine, plus GPU computation
-      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
-				      xn, yn, zn,
-				      dptr->x,  dptr->y,  dptr->z, dptr->V,
-				      index);
+      //      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
+      //				      xn, yn, zn,
+      //				      dptr->x,  dptr->y,  dptr->z, dptr->V,
+      //				      index);
     break;
   case LINEAR:
     //do something else;
@@ -262,6 +262,23 @@ bool Domain::importData(Data *dptr)
 	}
     }
 
+    return 0; // success
+}
+
+////////////////////////////////////////
+// Domain::importData_gpu
+//
+// A simple interfaceto the gpu-enabled code
+//
+bool Domain::importData_gpu(Data *dptr)
+{
+
+  importData_c_gpu(nr,mt,
+		   dptr->ndpth, dptr->minR, dptr->maxR, 
+		   dptr->nlat, dptr->nlng,
+		   xn, yn, zn, V,
+		   dptr->x,  dptr->y,  dptr->z, dptr->V);
+  
     return 0; // success
 }
 
