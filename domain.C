@@ -732,7 +732,6 @@ bool Domain::grdgen2(double cmb)
     int    m,l,l2,i1,i2;
 
     tau = (1+sqrt(5))/2;
-    TA  = asin( 1/(sqrt(tau*sqrt(5))) );
 
     a=1.;
     tau=0.5*(sqrt(5)+1);
