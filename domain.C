@@ -433,13 +433,12 @@ bool Domain::grdgen(double cmb)
     int    index;
     double x0,y0,z0;
 
-    double TA,Tbx,Tby,Tbz,Tcx,Tcy,Tcz;
+    double Tbx,Tby,Tbz,Tcx,Tcy,Tcz;
 
     double a,tau,rho,u,v,Beta,phi;
     double Ry[3][3], A[12][3], Ad[12][3];
 
     tau = (sqrt(5) + 1)/2;
-    TA  = asin( 1/(sqrt(tau*sqrt(5))) );
 
     a=1.;
     rho=tau-1;
@@ -723,16 +722,14 @@ bool Domain::midpt(double *x, double *y, double *z,
 bool Domain::grdgen2(double cmb)
 {
     
-  int    index,index1,index2;
+    int    index,index1,index2;
     double x0,y0,z0;
-
-    double TA;
 
     double a,tau,rho,u,v,Beta;
     double Ry[3][3], A[12][3], Ad[12][3];
 
-    int     lvt = int (1.45*log(mt));
-    int     m,l,l2,i1,i2;
+    int    lvt = int (1.45*log(mt));
+    int    m,l,l2,i1,i2;
 
     tau = (1+sqrt(5))/2;
     TA  = asin( 1/(sqrt(tau*sqrt(5))) );
