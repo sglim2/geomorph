@@ -218,8 +218,18 @@ int Domain::getValue(Data * dptr, int index, int interp)
 {
   switch (interp) {
   case NEAREST:
-    //   V[index] = getNearestDataValue(dptr,index);
-    V[index] = getNearestDataValue2(dptr,index);
+      // brute-force...
+      //   V[index] = getNearestDataValue(dptr,index);
+      //
+      
+      // a slightly more intelligent routine...
+      //    V[index] = getNearestDataValue2(dptr,index);
+      
+      // the slightly more intelligent routine, plus GPU computation
+      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
+				      xn, yn, zn,
+				      dptr->x,  dptr->y,  dptr->z, dptr->V,
+				      index);
     break;
   case LINEAR:
     //do something else;
@@ -243,8 +253,6 @@ bool Domain::importData(Data *dptr)
     int interp=NEAREST;
     
     for ( int ri=0 ; ri < nr ; ri++){
-    // layer 12 only...
-    // for ( int ri=12 ; ri < 13 ; ri++){
 	printf("......Layer %d\n",ri);
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
 	    for ( int i1=0 ; i1 < mt+1 ; i1++) {

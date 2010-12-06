@@ -55,4 +55,11 @@ public:
 
 };
 
+extern"C" {
+    double getNearestDataValue2_gpu(int, double, double, int, int, 
+				  double *, double *, double *,
+				  double *, double *, double *, double *,
+				  int);
+}
+
 #endif

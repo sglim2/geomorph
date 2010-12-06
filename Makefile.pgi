@@ -6,10 +6,10 @@ LIBS	=
 CXXINC	=
 INC	=
 DEFS	= 
-#CFLAGS	= -g 
-CFLAGS	= -O3 -fastsse -mp
+CFLAGS	= -O3 -fastsse -ta=nvidia -Minfo=accel 
+CXXFLAGS= -O3 -fastsse 
 FFLAGS	= -g -r8 
-LDFLAGS	= -mp=allcores
+LDFLAGS	= -ta=nvidia
 
 CXX	= pgCC
 CC	= pgcc
@@ -17,7 +17,7 @@ FC	= pgf90
 
 RM	= rm -f
 
-.C.o: ; $(CXX) -c $(CFLAGS) $*.C
+.C.o: ; $(CXX) -c $(CXXFLAGS) $*.C
 .c.o: ; $(CC) -c $(CFLAGS) $*.c
 .f.o: ; $(FC) -c $(FFLAGS) $*.f
 
