@@ -9,7 +9,7 @@ DEFS	=
 CFLAGS	= -O3 -fastsse -ta=nvidia -Minfo=accel 
 CXXFLAGS= -O3 -fastsse 
 FFLAGS	= -g -r8 
-LDFLAGS	= -ta=nvidia
+LDFLAGS	= 
 
 CXX	= pgCC
 CC	= pgcc

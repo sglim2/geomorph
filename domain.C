@@ -223,7 +223,7 @@ int Domain::getValue(Data * dptr, int index, int interp)
       //
       
       // a slightly more intelligent routine...
-      //    V[index] = getNearestDataValue2(dptr,index);
+//      V[index] = getNearestDataValue2(dptr,index);
       
       // the slightly more intelligent routine, plus GPU computation
       V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
