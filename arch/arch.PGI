@@ -1,0 +1,16 @@
+# ============================================
+# PGI Compiler Suite; no GPU support.
+#
+#
+# ============================================
+LIBS	= 
+
+CFLAGS	= -O3 -fastsse
+CXXFLAGS= -O3 -fastsse 
+LDFLAGS	= 
+
+CXX	= pgCC
+CC	= pgcc
+GPUCC	= $(CC)
+FC	= pgf90
+

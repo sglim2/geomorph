@@ -1,0 +1,15 @@
+# ============================================
+# Intel Compiler Suite with Nvidia GPU support
+# via nvcc.
+#
+# ============================================
+LIBS	= 
+
+CFLAGS	= -O3 -DGEOMORPH_GPU
+CXXFLAGS= -O3 -DGEOMORPH_GPU
+LDFLAGS	= 
+
+CXX	= icpc
+CC	= nvcc
+FC	= ifort
+

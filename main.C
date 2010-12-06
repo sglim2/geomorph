@@ -64,7 +64,12 @@ bool gm_processCommandLine(int argc, char* argv[])
     --nt . . . . . . . 
     --nd . . . . . . . 
    */
-
+  
+  if (!data){
+    printf("Error: Data::data no initialized.\n");
+    exit(0);
+  }
+  
   programName = gm_basename(argv[0]);
 
   for (int i = 1; i < argc; i++) {

@@ -255,7 +255,7 @@ bool Domain::importData(Data *dptr)
     for ( int ri=0 ; ri < nr ; ri++){
 	printf("......Layer %d\n",ri);
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
-	    for ( int i1=0 ; i1 < mt+1 ; i1++) {
+	    for ( int i1 = 0 ; i1 < mt+1 ; i1++) {
 		index=idx(ri,i2,i1);
 		getValue(dptr, index, interp)	;
 	    }
@@ -301,7 +301,6 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 
     divresult = div(proc, mt/nt);
 
-//    i1start = nt * ( proc % (mt/nt) );
     i1start = nt * divresult.rem;
     i1end   = i1start + nt;
     
@@ -309,7 +308,6 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
     i2end   = i2start + nt;
 
     // cycle through our 'process' points
-    
     for ( int i2=i2start ; i2<=i2end ; i2++ ){
 	for ( int i1=i1start ; i1<=i1end ; i1++ ){
 	    index = idx(0,i2,i1);

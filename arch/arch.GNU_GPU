@@ -1,0 +1,15 @@
+# ============================================
+# PGI Compiler Suite with Nvidia GPU support
+# via nvcc
+#
+# ============================================
+LIBS	= 
+
+CFLAGS	= -O3 -DGEOMORPH_GPU
+CXXFLAGS= -O3 -ansi -pedantic -s -funroll-loops -DGEOMORPH_GPU
+LDFLAGS	= 
+
+CXX	= g++
+CC	= nvcc
+FC	= gfortran
+

@@ -1,0 +1,16 @@
+# ============================================
+# PGI Compiler Suite; no GPU support.
+#
+#
+# ============================================
+LIBS	= 
+
+CFLAGS	= -O3 -openmp
+CXXFLAGS= -O3 -openmp
+LDFLAGS	= -openmp
+
+CXX	= icpc
+CC	= icc
+GPUCC	= $(CC)
+FC	= ifort
+

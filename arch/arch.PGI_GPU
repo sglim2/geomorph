@@ -1,0 +1,15 @@
+# ============================================
+# PGI Compiler Suite with Nvidia GPU support
+# via nvcc
+#
+# ============================================
+LIBS	= 
+
+CFLAGS	= -O3 -DGEOMORPH_GPU
+CXXFLAGS= -O3 -fastsse -DGEOMORPH_GPU 
+LDFLAGS	= 
+
+CXX	= pgCC
+CC	= nvcc
+FC	= pgf90
+

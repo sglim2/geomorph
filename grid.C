@@ -60,8 +60,7 @@ Grid::Grid(int _mt, int _nt, int _nd)
 //   
 int Grid::xnProc(int idx)
 {
-//  int xnproc=0;
-
+  // not yet implemented (or needed!)
   return idx;
 }
 
@@ -136,6 +135,7 @@ bool Grid::importData(Data * dptr)
 {
     int _idmax = 10;
 
+#ifndef GEOMORPH_GPU
 #pragma omp parallel for
     for (int i=0 ; i<_idmax ; i++){
 	printf("...Domain %d\n",i);
@@ -145,6 +145,11 @@ bool Grid::importData(Data * dptr)
 	}
     }
 #pragma end parallel for
+#else
+    
+    // something else...
+    
+#endif
     
     return 0; // success
 }
@@ -176,24 +181,19 @@ bool Grid::exportMVIS(Data * dptr)
 	// open file
 	fptr=fopen(outfile,"a");
 	if (fptr==NULL){
-//	    fail = 1; // commented to enable auto-parallelization on PGI compiler;
-	  //	  break;
 	}
 
 	// call each domain which is part of our 'process'  (if nd=10, this means all of them)
-	for (int i=0 ; i < idmax ; i++){
+	for (int i=0 ; i < idmax*nd/10 ; i++){
 	    
 	    // call our domain export routine
 	    if ( domains[i].exportMVIS(fptr, nproc, proc, nt) ){
 		printf("Error in Domain::exportMVIS()");
-//	    fail = 1; // commented to enable auto-parallelization on PGI compiler
 	    }
 	}
 
 	// close file, ready for re-assigning to a new 'process'
 	fclose(fptr);	    
-	
-	//	if (fail=1) break;
     }
 
     return fail; 
@@ -238,7 +238,7 @@ bool Grid::exportGrid(Data * dptr)
 }
 
 ////////////////////////////////////////
-// Grid::suggestfind
+// Grid::suggestGrid
 //
 // A basic comparison of any given grid structire to the TERRA
 // grid. Returns the mt value of the closest matching TERRA grid
@@ -270,7 +270,7 @@ int Grid::suggestGrid(int npts)
 }
 
 ////////////////////////////////////////
-// Grid::genfind
+// Grid::genGrid
 //
 bool Grid::genGrid(double _cmb)
 {
