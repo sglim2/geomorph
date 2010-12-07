@@ -79,7 +79,7 @@ double getNearestDataValue2_gpu(int _ndpth, double _minR, double _maxR, int _nla
 ////////////////////////////////////////
 // importData_c_gpu()
 //
-bool importData_c_gpu(int nr, int mt, 
+extern "C" bool importData_c_gpu(int nr, int mt, 
 		      int _ndpth, double _minR, double _maxR, int _nlat, int _nlng, 
 		      double *_xn, double *_yn, double *_zn, double *_Vn,
 		      double *_x,  double *_y , double *_z , double *_V)
@@ -101,3 +101,6 @@ bool importData_c_gpu(int nr, int mt,
 
   return 0;
 }
+
+
+

@@ -7,7 +7,7 @@ LIBS	=
 
 CFLAGS	= -O3 -DGEOMORPH_GPU
 CXXFLAGS= -O3 -DGEOMORPH_GPU
-LDFLAGS	= 
+LDFLAGS	= -L/usr/local/cuda/lib64 -lcudart
 
 CXX	= icpc
 CC	= nvcc
