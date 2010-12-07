@@ -5,6 +5,7 @@
 # ============================================
 LIBS	= 
 
+OBJS2	= dummy.o
 CFLAGS	= -O3 -ansi -pedantic -s -funroll-loops -fopenmp
 CXXFLAGS= -O3 -ansi -pedantic -s -funroll-loops -fopenmp
 LDFLAGS	= -fopenmp

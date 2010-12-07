@@ -5,6 +5,7 @@
 # ============================================
 LIBS	= 
 
+OBJS2	= domain_gpu.o
 CFLAGS	= -O3 -DGEOMORPH_GPU
 CXXFLAGS= -O3 -ansi -pedantic -s -funroll-loops -DGEOMORPH_GPU
 LDFLAGS	= -L/usr/local/cuda/lib64 -lcudart

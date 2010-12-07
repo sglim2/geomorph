@@ -1,15 +1,9 @@
 
-////////////////////////////////////////
-// idx_gpu()
-//
 int idx_gpu(int r, int i2, int i1, int nr, int mt)
 {
    return 0;
 }
 
-////////////////////////////////////////
-// getNearestDataValue2_gpu()
-//
 double getNearestDataValue2_gpu(int _ndpth, double _minR, double _maxR, int _nlat, int _nlng, 
 				double *_xn, double *_yn, double *_zn,
 				double *_x,  double *_y , double *_z , double *_V,
@@ -18,9 +12,6 @@ double getNearestDataValue2_gpu(int _ndpth, double _minR, double _maxR, int _nla
    return 0;
 }
 
-////////////////////////////////////////
-// importData_c_gpu()
-//
 int importData_c_gpu(int nr, int mt, 
 		      int _ndpth, double _minR, double _maxR, int _nlat, int _nlng, 
 		      double *_xn, double *_yn, double *_zn, double *_Vn,

@@ -144,7 +144,7 @@ bool Grid::importData(Data * dptr)
 	    //	    return 1; // fail
 	}
     }
-#pragma end parallel for
+
 #else
     // if we're using the GPU we need to avoid moving in and out of the GPU
     // unit. For each domain, we move onto the GPU and stay there - for all

@@ -6,9 +6,9 @@
 LIBS	= 
 
 OBJS2	= dummy.o
-CFLAGS	= -O3 -openmp
-CXXFLAGS= -O3 -openmp
-LDFLAGS	= -openmp
+CFLAGS	= -O3 -parallel -par-report2 -openmp
+CXXFLAGS= -O3 -parallel -par-report2 -openmp
+LDFLAGS	= -parallel -openmp
 
 CXX	= icpc
 CC	= icc
