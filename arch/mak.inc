@@ -1,9 +1,8 @@
 
-OBJS =\
+OBJS1 =\
      main.o \
      grid.o \
      data.o \
-     domain.o \
-     domain_gpu.o
+     domain.o 
 
 EXEC = geomorph

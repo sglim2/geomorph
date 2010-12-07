@@ -2,6 +2,7 @@
 include arch/mak.inc
 include arch/arch.$(ARCH)
 
+OBJS	= $(OBJS1) $(OBJS2)
 RM	= rm -f
 
 .C.o: ; $(CXX) -c $(CXXFLAGS) $*.C
