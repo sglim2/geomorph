@@ -8,11 +8,11 @@ RM	= rm -f
 .c.o: ; $(CC) -c $(CFLAGS) $*.c
 .f.o: ; $(FC) -c $(FFLAGS) $*.f
 
+all: $(EXEC)
+
 # for some reason, the automatic variables don;t work on .cu files
 domain_gpu.o:
 	$(CC) -c $(CFLAGS) domain_gpu.cu
-
-all: $(EXEC)
 
 $(EXEC): $(OBJS) 
 	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS) 
