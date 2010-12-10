@@ -249,7 +249,7 @@ bool Data::mitpRead()
   for ( int i = 0 ; i<nval ; i++ ){
       // Collect data
       fscanf(fptr,"%s", buf);  lat = atof (buf) * pi/180. ;
-      fscanf(fptr,"%s", buf);  lng = (atof (buf) - 180.) * pi/180.  ;
+      fscanf(fptr,"%s", buf);  lng = atof (buf) * pi/180. ;
       fscanf(fptr,"%s", buf);  dpth = mitpDepth2Radius(atof(buf));
       fscanf(fptr,"%s", buf);  V[i] = atof (buf) ;
 
@@ -268,7 +268,6 @@ bool Data::mitpRead()
       x[i] =   dpth * cos(lat) * cos(lng) ;
       z[i] =   dpth * sin(lat) ;
       y[i] =   dpth * cos(lat) * sin(lng) ;
-
   }
 
   fclose(fptr);
