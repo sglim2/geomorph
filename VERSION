@@ -8,6 +8,14 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
+
+=================================
+Version 0.1.1
+=================================
+
+. Updated and simplified the makefile
+. Added C code which may eventually be used to compile to run on the GPU.
+
 =================================
 Version 0.1
 =================================
