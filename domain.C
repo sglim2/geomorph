@@ -329,7 +329,7 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 	for ( int i1=i1start ; i1<=i1end ; i1++ ){
 	    index = idx(0,i2,i1);
 	    fprintf(fptr,"%16.8E\t%16.8E\t%16.8E\n",xn[index],yn[index],zn[index]);
-	    for ( int ir=0 ; ir<nr ; ir++ ){
+	    for ( int ir=nr-1 ; ir>=0 ; ir-- ){
 		index = idx(ir,i2,i1);
 		fprintf(fptr,"%16.8E\n",V[index]);
 	    }
