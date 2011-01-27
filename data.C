@@ -106,6 +106,9 @@ bool Data::Read()
 	case MITP :
 	    return mitpRead();
 //	    break; // unreachable!!
+	case FILT :
+	    return filtRead();
+//	    break; // unreachable!!
 	default :
 	    printf("Error.Intype undefined");
 	    return 1; //fail
@@ -125,6 +128,19 @@ double Data::mitpDepth2Radius(double dpth)
 {
 
  return (EarthRadKM - dpth) / EarthRadKM;
+ 
+}
+
+
+////////////////////////////////////////
+// filtDepth2Radius
+// --------
+//
+//
+double Data::filtDepth2Radius(double dpth)
+{
+
+    return mitpDepth2Radius(dpth);
  
 }
 ////////////////////////////////////////
@@ -274,6 +290,105 @@ bool Data::mitpRead()
   return 0; //success
 }
 
+
+////////////////////////////////////////
+// filtRead
+// --------
+// Filt data consists of multiple files, each continaing a 
+// single layer of data.
+bool Data::filtRead()
+{ 
+
+  double lat ;
+  double lng ;
+  double dpth;
+
+  int file_nval=0;
+  char buf[255]; 
+  char tmpinfile[64];
+  nval = 0;
+
+  // find nval....
+  for (int dpth=filtinstart; dpth<=filtinend ; dpth+=(filtinend-filtinstart)/(filtinnumfiles-1) ) {
+
+      sprintf(tmpinfile,"%s.%dkm.xyz",infile,dpth);
+      printf("%s\n",tmpinfile);
+ 
+      FILE * fptr=fopen(tmpinfile,"r");
+      if (fptr==NULL){
+	  printf("Cannot open file %s for reading\n",tmpinfile);
+	  return 1; //fail
+      }
+
+      file_nval=0;
+      while( fgets(buf,sizeof(buf),fptr) != NULL) {
+	  file_nval++;
+      } 
+
+      // no header to discard
+      // file_nval--;
+      nval += file_nval;
+
+      fclose(fptr);
+  } // for dpth
+
+  
+  // define arrays based on nval
+  x = new double[nval];
+  y = new double[nval];
+  z = new double[nval];
+  V = new double[nval];
+
+  int nval_counter = 0;
+  
+  // Collect Data....
+  for (int dpthkm=filtinstart; dpthkm<=filtinend ; dpthkm+=(filtinend-filtinstart)/(filtinnumfiles-1) ) {
+      sprintf(tmpinfile,"%s.%dkm.xyz",infile,dpthkm);
+ 
+      FILE * fptr=fopen(tmpinfile,"r");
+      if (fptr==NULL){
+	  return 1; //fail
+      }
+      
+      // find file_nval again...
+      file_nval=0;
+      while( fgets(buf,sizeof(buf),fptr) != NULL) {
+	  file_nval++;
+      } 
+      
+      // move to beginning of file
+      fclose(fptr);
+      fptr=fopen(tmpinfile,"r");
+      if (fptr==NULL){
+	  return 1; //fail
+      }
+      
+      lat = -veryLarge;
+      lng = -veryLarge;
+      dpth= -veryLarge;
+      minR= +veryLarge;
+      maxR= -veryLarge;
+      
+      for ( int i = nval_counter ; i<nval_counter+file_nval ; i++ ){
+	  // Collect data
+	  fscanf(fptr,"%s", buf);  lng = atof (buf) * pi/180. ;
+	  fscanf(fptr,"%s", buf);  lat = atof (buf) * pi/180. ;
+	                           dpth = filtDepth2Radius(dpthkm);
+	  fscanf(fptr,"%s", buf);  V[i] = atof (buf) ;
+	  
+	  // Convert to xyz
+	  x[i] =   dpth * cos(lat) * cos(lng) ;
+	  z[i] =   dpth * sin(lat) ;
+	  y[i] =   dpth * cos(lat) * sin(lng) ;
+      }
+      nval_counter+=file_nval;
+      fclose(fptr);
+  } // for dpth
+
+  return 0; //success
+}
+
+
 ////////////////////////////////////////
 // intypeConverter
 char* Data::intypeConverter()
@@ -287,6 +402,8 @@ char* Data::intypeConverter()
 	    case TERRA: strcpy(buf, "TERRA");
 		break;
 	    case MITP : strcpy(buf, "MITP");
+		break;
+	    case FILT : strcpy(buf, "FILTP");
 		break;
 	    default: strcpy(buf, "UNDEF");
 	}
@@ -307,6 +424,8 @@ char* Data::outtypeConverter()
 	    case TERRA: strcpy(buf, "TERRA");
 		break;
 	    case MITP : strcpy(buf, "MITP");
+		break;
+	    case FILT : strcpy(buf, "FILT");
 		break;
 	    default: strcpy(buf, "UNDEF");
 	}

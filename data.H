@@ -21,12 +21,14 @@
 class Data {
 public:
     
-    enum Type { UNDEF, MVIS, TERRA, MITP };
+    enum Type { UNDEF, MVIS, TERRA, MITP, FILT };
     
     char *    infile;
     char *    outfile;
     int       intype;
     int       outtype;
+    int       filtinstart,filtinend,filtinnumfiles;
+    int       filtoutstart,filtoutend,filtoutnumfiles;
     int       nlat,nlng,ndpth;
     double    minR,maxR;
     double    * lyrs;
@@ -40,8 +42,14 @@ public:
     Data (char *, int);
     
     bool   Read ();
+  
+    // MITP
     bool   mitpRead ();
     double mitpDepth2Radius(double);
+
+    // FILT
+    bool   filtRead ();
+    double filtDepth2Radius(double);
     
     char*  intypeConverter();
     char*  outtypeConverter();

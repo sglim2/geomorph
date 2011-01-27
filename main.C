@@ -86,6 +86,8 @@ bool gm_processCommandLine(int argc, char* argv[])
 	data->intype = data->TERRA;
       }else if (strcmp(argv[i], "mitp") == 0) {
 	data->intype = data->MITP;
+      }else if (strcmp(argv[i], "filt") == 0) {
+	data->intype = data->FILT;
       }else {
 	gm_usage();
 	exit(0);
@@ -99,6 +101,8 @@ bool gm_processCommandLine(int argc, char* argv[])
 	data->outtype = data->TERRA;
       }else if (strcmp(argv[i], "mitp") == 0) {
 	data->outtype = data->MITP;
+      }else if (strcmp(argv[i], "filt") == 0) {
+	data->outtype = data->FILT;
       }else {
 	gm_usage();
 	exit(0);
@@ -114,6 +118,32 @@ bool gm_processCommandLine(int argc, char* argv[])
       i++;
       data->outfile = new char[strlen(argv[i])];
       strcpy(data->outfile,argv[i]);
+    }
+
+    if (strcmp(argv[i], "--filtinstart") == 0) {
+      i++;
+      data->filtinstart = atoi(argv[i]);
+    }
+    if (strcmp(argv[i], "--filtinend") == 0) {
+      i++;
+      data->filtinend = atoi(argv[i]);
+    }
+    if (strcmp(argv[i], "--filtinnum") == 0) {
+      i++;
+      data->filtinnumfiles = atoi(argv[i]);
+    }
+  
+    if (strcmp(argv[i], "--filtoutstart") == 0) {
+      i++;
+      data->filtoutstart = atoi(argv[i]);
+    }
+    if (strcmp(argv[i], "--filtoutend") == 0) {
+      i++;
+      data->filtoutend = atoi(argv[i]);
+    }
+    if (strcmp(argv[i], "--filtoutnum") == 0) {
+      i++;
+      data->filtoutnumfiles = atoi(argv[i]);
     }
   
     if (strcmp(argv[i], "--mt") == 0) {
@@ -132,13 +162,16 @@ bool gm_processCommandLine(int argc, char* argv[])
   }
 
   printf("\nInput Arguments:\n");
-  printf(" intype   %s(%d) \n", data->intypeConverter(), data->intype);
-  printf(" outtype  %s(%d) \n", data->outtypeConverter(), data->outtype);
-  printf(" infile   %s \n", data->infile);
-  printf(" outfile  %s \n", data->outfile);
-  printf(" mt       %d \n", grid->mt); 
-  printf(" nt       %d \n", grid->nt); 
-  printf(" nd       %d \n", grid->nd);
+  printf(" intype      %s(%d) \n", data->intypeConverter(), data->intype);
+  printf(" outtype     %s(%d) \n", data->outtypeConverter(), data->outtype);
+  printf(" infile      %s \n", data->infile);
+  printf(" outfile     %s \n", data->outfile);
+  printf(" filtinstart %d \n", data->filtinstart);
+  printf(" filtinend   %d \n", data->filtinend);
+  printf(" filtinnum   %d \n", data->filtinnumfiles);
+  printf(" mt          %d \n", grid->mt); 
+  printf(" nt          %d \n", grid->nt); 
+  printf(" nd          %d \n", grid->nd);
   printf("\n");
 
   return 0;
@@ -152,7 +185,7 @@ bool gm_processCommandLine(int argc, char* argv[])
 bool writeGrid()
 {
   int _idmax=10;
-  int rad=12;
+  int rad=0;
   
     // test some data
     Domain * dptr = grid->domains;
@@ -229,12 +262,12 @@ int main(int argc, char* argv[])
 
   // read input and convert to geomorph x,y,z,V structure
   if (data->Read()){
-      printf("Error reading input file.");
+      printf("Error reading input file.\n");
   }
 
   // get input stats
   if (data->getStats()){
-    printf("Error computing Stats.");
+    printf("Error computing Stats.\n");
   }
 
   // find best grid to match input data
@@ -262,9 +295,9 @@ int main(int argc, char* argv[])
   }
 
   // write a single shell (for use in matlab, or alternative)
-//  if (writeGrid()){
-//    printf("Error importing Data into geomorph grid.\n");
-//  }
+  if (writeGrid()){
+    printf("Error writing Grid data.\n");
+  }
 
   printf("Exporting Data....\n");
   if (grid->exportGrid(data)){
