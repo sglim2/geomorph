@@ -29,7 +29,7 @@ public:
     int       outtype;
     int       filtinstart,filtinend,filtinnumfiles;
     int       filtoutstart,filtoutend,filtoutnumfiles;
-    int       nlat,nlng,ndpth;
+    int       nlat,nlng,ndpth,nvalpershell;
     double    minR,maxR;
     double    * lyrs;
     long int  nval;

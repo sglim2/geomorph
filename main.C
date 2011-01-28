@@ -1,11 +1,23 @@
 /*
- *
- * GeoMorph
+ * +==========================================================+
+ * |                                                  __      |
+ * |   ____   ____  ____   _____   ____  _____  ____ |  |__   |
+ * |  / __ \ / __ \/  _ \ /     \ /  _ \/  __ \/___ \|  |  \  | 
+ * | / /_/  >  ___(  <_> )  Y Y  (  <_> )  | \/  |_> >   Y  \ |
+ * | \___  / \____ \____/|__|_|__/\____/|__|  |   __/|___|__/ |
+ * |/_____/                                   |__|            |
+ * +==========================================================+ 
  *
  * A grid conversion tool for popular geodynamics and seismic tomography data
  * 
- * Exmaple:
+ * Exmaple 1:
+ * =========
  * $ > ./geomorph --mt 256 --nt 16 --nd 10 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis
+ *
+ * Exmaple 2:
+ * =========
+ * $ > ./geomorph --mt 32 --nt 16 --nd 10 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis
+ *
  */
 
 #include "main.H"
@@ -295,9 +307,9 @@ int main(int argc, char* argv[])
   }
 
   // write a single shell (for use in matlab, or alternative)
-  if (writeGrid()){
-    printf("Error writing Grid data.\n");
-  }
+//  if (writeGrid()){
+//    printf("Error writing Grid data.\n");
+//  }
 
   printf("Exporting Data....\n");
   if (grid->exportGrid(data)){

@@ -210,6 +210,57 @@ double Domain::getNearestDataValue2(Data *dptr, int index)
 }
 
 ////////////////////////////////////////
+// Domain::getNearestDataValue2_filt
+//
+// Given the index of the geomorph grid, searches for the 'V' value of the
+// nearest spatial point in the Data class for FILT data. As with
+// getNearestDataValue2-mitp, a more optimised algorithm than
+// getNearestDataValue.
+double Domain::getNearestDataValue2_filt(Data *dptr, int index)
+{
+    int nr=0; 
+
+    double gx,gy,gz;
+    gx = xn[index];
+    gy = yn[index];
+    gz = zn[index];
+    
+    // what's our current radius
+    double rad=sqrt(gx*gx + gy*gy + gz*gz);
+
+    // find closest radial layer in Data::dptr nr
+    double dR=veryLarge;
+    double dataR=0.;
+    for ( int ir=0 ; ir<dptr->ndpth ; ir++ ){
+      dataR = dptr->minR + ir*(dptr->maxR - dptr->minR)/dptr->ndpth;
+      if (fabs(dataR - rad) < dR) {
+	dR = fabs(dataR - rad) ;
+	nr = dptr->ndpth - ir;  // reverse ordering.
+      }
+    }
+
+    double dataV;
+    dataV=0.;
+
+    double d2 = 1.E+99;
+    double xd,yd,zd;
+    double tmpd2;
+    // loop over all Data values within layer nr
+    for (int di=nr*dptr->nvalpershell; di<nr*dptr->nvalpershell + dptr->nvalpershell; di++ ){
+      xd=dptr->x[di] - xn[index];
+      yd=dptr->y[di] - yn[index];
+      zd=dptr->z[di] - zn[index];
+      tmpd2=xd*xd + yd*yd + zd*zd;
+      if ( tmpd2 < d2 ) {
+	d2 = tmpd2;
+	dataV = dptr->V[di];
+      }
+    }
+
+    return dataV;
+}
+
+////////////////////////////////////////
 // Domain::getValue
 //
 // Given the index of the geomorph grid, uses the 'interp' method to calculate
@@ -218,26 +269,29 @@ int Domain::getValue(Data * dptr, int index, int interp)
 {
   switch (interp) {
   case NEAREST:
-      // brute-force...
-      V[index] = getNearestDataValue(dptr,index);
-      //
-      
-      // a slightly more intelligent routine...
-      // V[index] = getNearestDataValue2(dptr,index);
-      
-      // the slightly more intelligent routine, plus GPU computation
-      //      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
-      //				      xn, yn, zn,
-      //				      dptr->x,  dptr->y,  dptr->z, dptr->V,
-      //				      index);
-    break;
+      if (dptr->intype == dptr->FILT) {
+	  // brute-force...
+//	  V[index] = getNearestDataValue(dptr,index);
+	  V[index] = getNearestDataValue2_filt(dptr,index);
+      }
+      if (dptr->intype == dptr->MITP) {
+	  // a slightly more intelligent routine...
+	  V[index] = getNearestDataValue2(dptr,index);
+	  break;
+	  // the slightly more intelligent routine, plus GPU computation
+	  //      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
+	  //				      xn, yn, zn,
+	  //				      dptr->x,  dptr->y,  dptr->z, dptr->V,
+	  //
+      }
+      break;
   case LINEAR:
-    //do something else;
-    break;
-  default:
-    break;
+      //do something else;
+      break;
+   default:
+       break;
   }
-  
+    
   return 0;
 }
 

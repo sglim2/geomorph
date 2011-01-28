@@ -59,7 +59,8 @@ bool Data::findBoundary()
 ////////////////////////////////////////
 // Data::findLayers 
 // As with Data::findBoundary(), an alernative method would be to calculate
-// these values as the data is read in.
+// these values as the data is read in. Also, this method isn't very robust,
+// and accurracy depends upon nbins.
 bool Data::findLayers()
 {
     nlayr = 0;
@@ -312,7 +313,7 @@ bool Data::filtRead()
   for (int dpth=filtinstart; dpth<=filtinend ; dpth+=(filtinend-filtinstart)/(filtinnumfiles-1) ) {
 
       sprintf(tmpinfile,"%s.%dkm.xyz",infile,dpth);
-      printf("%s\n",tmpinfile);
+//      printf("%s\n",tmpinfile);
  
       FILE * fptr=fopen(tmpinfile,"r");
       if (fptr==NULL){
@@ -338,6 +339,12 @@ bool Data::filtRead()
   y = new double[nval];
   z = new double[nval];
   V = new double[nval];
+
+  // find minR, maxR, ndpth, nvalpershell
+  minR = filtDepth2Radius(filtinend);
+  maxR = filtDepth2Radius(filtinstart);
+  ndpth = filtinnumfiles;
+  nvalpershell = file_nval;  // should be the same across files.
 
   int nval_counter = 0;
   
@@ -366,8 +373,6 @@ bool Data::filtRead()
       lat = -veryLarge;
       lng = -veryLarge;
       dpth= -veryLarge;
-      minR= +veryLarge;
-      maxR= -veryLarge;
       
       for ( int i = nval_counter ; i<nval_counter+file_nval ; i++ ){
 	  // Collect data
@@ -403,7 +408,7 @@ char* Data::intypeConverter()
 		break;
 	    case MITP : strcpy(buf, "MITP");
 		break;
-	    case FILT : strcpy(buf, "FILTP");
+	    case FILT : strcpy(buf, "FILT");
 		break;
 	    default: strcpy(buf, "UNDEF");
 	}
@@ -465,18 +470,19 @@ bool Data::getStats()
 
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");
-    printf("|  nvals      =  %12ld                  |\n"       , nval);
-    printf("|  nlayr      =  %12d                  |\n"        , nlayr);
-    printf("|  nlat       =  %12d                  |\n"        , nlat);
-    printf("|  nlng       =  %12d                  |\n"        , nlng);
-    printf("|  ndpth      =  %12d                  |\n"        , ndpth);
-    printf("|  minR       =  %12.8g                  |\n"      , minR);
-    printf("|  maxR       =  %12.8g                  |\n"      , maxR);
-    printf("|  V(mean)    =  %12.8g                  |\n"      , Vmean);
-    printf("|  Vmin       =  %12.8g                  |\n"      , Vmin);
-    printf("|  Vmax       =  %12.8g                  |\n"      , Vmax);
-    printf("|  a          =  %12.8g                  |\n"      , a);
-    printf("|  cmb        =  %12.8g                  |\n"      , cmb);
+    printf("|  nvals        =  %12ld                  |\n"       , nval);
+    printf("|  nlayr(~)     =  %12d                  |\n"        , nlayr);
+    printf("|  nlat         =  %12d                  |\n"        , nlat);
+    printf("|  nlng         =  %12d                  |\n"        , nlng);
+    printf("|  ndpth        =  %12d                  |\n"        , ndpth);
+    printf("|  nvalpershell =  %12d                  |\n"        , nvalpershell);
+    printf("|  minR         =  %12.8g                  |\n"      , minR);
+    printf("|  maxR         =  %12.8g                  |\n"      , maxR);
+    printf("|  V(mean)      =  %12.8g                  |\n"      , Vmean);
+    printf("|  Vmin         =  %12.8g                  |\n"      , Vmin);
+    printf("|  Vmax         =  %12.8g                  |\n"      , Vmax);
+    printf("|  a            =  %12.8g                  |\n"      , a);
+    printf("|  cmb          =  %12.8g                  |\n"      , cmb);
     printf("+----------------------------------------------+\n");
     
     

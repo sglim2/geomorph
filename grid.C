@@ -266,9 +266,8 @@ int Grid::suggestGrid(int npts)
 	_npts = (10*_mt*_mt + 2)*(_mt/2 + 1);
     }
     
-
-    printf("_mt=%d\n",_mt);
-    printf("_npts=%d\n",_npts);
+//    printf("_mt=%d\n",_mt);
+//    printf("_npts=%d\n",_npts);
     if (  npts - (_npts + _npts_old)/2 < 0  )  {
 	_mt=_mt_old;
     }
