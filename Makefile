@@ -5,7 +5,7 @@ include arch/arch.$(ARCH)
 OBJS	= $(OBJS1) $(OBJS2)
 RM	= rm -f
 
-.C.o: ; $(CXX) -c $(CXXFLAGS) $*.C
+.cpp.o: ; $(CXX) -c $(CXXFLAGS) $*.cpp
 .c.o: ; $(CC) -c $(CFLAGS) $*.c
 .f.o: ; $(FC) -c $(FFLAGS) $*.f
 
