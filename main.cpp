@@ -12,11 +12,11 @@
  *
  * Exmaple 1:
  * =========
- * $ > ./geomorph --mt 256 --nt 16 --nd 10 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis
+ * $ > ./geomorph --mt 256 --nt 16 --nd 10 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis --interp nearest2
  *
  * Exmaple 2:
  * =========
- * $ > ./geomorph --mt 32 --nt 16 --nd 10 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis
+ * $ > ./geomorph --mt 32 --nt 16 --nd 10 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis --interp nearest2 
  *
  */
 
@@ -68,6 +68,7 @@ bool gm_usage()
   printf(" --mt . . . . . . . \n");
   printf(" --nt . . . . . . . \n");
   printf(" --nd . . . . . . . \n");
+  printf(" --interp . . . . . interpolation routine [ nearest | nearest2 ]\n");
 
 
   return 0;
@@ -182,6 +183,22 @@ bool gm_processCommandLine(int argc, char* argv[])
       grid->nd=atoi(argv[i]);
     }
 
+    if (strcmp(argv[i], "--interp") == 0) {
+      i++;
+      if (strcmp(argv[i], "nearest") == 0) {
+        data->interp = data->NEAREST;
+      }else if (strcmp(argv[i], "nearest2") == 0) {
+        data->interp = data->NEAREST2;
+/*      }else if (strcmp(argv[i], "linear") == 0) {
+        data->interp = data->LINEAR;
+      }else if (strcmp(argv[i], "cubic") == 0) {
+        data->interp = data->CUBIC;   */
+      }else {
+        gm_usage();
+        exit(0);
+      }
+    }
+
   }
 
   printf("\nInput Arguments:\n");
@@ -195,6 +212,7 @@ bool gm_processCommandLine(int argc, char* argv[])
   printf(" mt          %d \n", grid->mt);
   printf(" nt          %d \n", grid->nt);
   printf(" nd          %d \n", grid->nd);
+  printf(" interp      %s(%d) \n", data->interpConverter(), data->interp);
   printf("\n");
 
   return 0;

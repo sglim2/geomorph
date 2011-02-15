@@ -18,8 +18,6 @@
 
 class Domain {
 public:
-
-    enum Type { NEAREST, LINEAR };
     
     int id,nr,mt;
     bool northern;
@@ -42,7 +40,7 @@ public:
 
     int    getValue(Data*, int, int );
     double getNearestDataValue(Data*, int);
-    double getNearestDataValue2(Data*, int);
+    double getNearestDataValue2_mitp(Data*, int);
     double getNearestDataValue2_filt(Data*, int);
 
     bool   importData(Data*);

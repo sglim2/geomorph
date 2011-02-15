@@ -443,6 +443,26 @@ char* Data::outtypeConverter()
 }
 
 ////////////////////////////////////////
+// outtypeConverter
+char* Data::interpConverter()
+{
+
+    char * buf = new char[16];
+    switch (this->interp) {
+	    case NEAREST : strcpy(buf, "NEAREST");
+		break;
+	    case NEAREST2 : strcpy(buf, "NEAREST2");
+		break;
+	    case LINEAR : strcpy(buf, "LINEAR");
+		break;
+	    case CUBIC : strcpy(buf, "CUBIC");
+		break;
+	    default: strcpy(buf, "Oops!");
+	}
+    return buf;
+}
+
+////////////////////////////////////////
 // getStats
 bool Data::getStats()
 {

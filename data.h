@@ -18,14 +18,16 @@
 class Data {
 public:
     
-    enum Type { UNDEF, MVIS, TERRA, MITP, FILT };
-    
+    enum { UNDEF, MVIS, TERRA, MITP, FILT };
+    enum { NEAREST, NEAREST2, LINEAR, CUBIC };
+
     char *    infile;
     char *    indir;  // GUI only
     char *    outfile;
     char *    outdir;  // GUI only
     int       intype;
     int       outtype;
+    int       interp;  // interpolation routine to be used
     int       filtinstart,filtinend,filtinnumfiles;
     int       filtoutstart,filtoutend,filtoutnumfiles;
     int       nlat,nlng,ndpth,nvalpershell;
@@ -52,6 +54,7 @@ public:
     
     char*  intypeConverter();
     char*  outtypeConverter();
+    char*  interpConverter();
     
     bool   getStats();
     

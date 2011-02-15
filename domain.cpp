@@ -164,7 +164,7 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 // Given the index of the geomorph grid, searches for the 'V' value of the
 // nearest spatial point in the Data class. A more optimised algorithm than
 // getNearestDataValue.
-double Domain::getNearestDataValue2(Data *dptr, int index)
+double Domain::getNearestDataValue2_mitp(Data *dptr, int index)
 {
     int nr=0; // our layer of interest in Data:dptr (or in fact either side of this!)
 
@@ -266,31 +266,32 @@ double Domain::getNearestDataValue2_filt(Data *dptr, int index)
 // its value from that contained in Data::x,y,z, and V.
 int Domain::getValue(Data * dptr, int index, int interp)
 {
-  switch (interp) {
-  case NEAREST:
-      if (dptr->intype == dptr->FILT) {
-	  // brute-force...
-//	  V[index] = getNearestDataValue(dptr,index);
-	  V[index] = getNearestDataValue2_filt(dptr,index);
-      }
-      if (dptr->intype == dptr->MITP) {
-	  // a slightly more intelligent routine...
-	  V[index] = getNearestDataValue2(dptr,index);
-	  break;
-	  // the slightly more intelligent routine, plus GPU computation
-	  //      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
-	  //				      xn, yn, zn,
-	  //				      dptr->x,  dptr->y,  dptr->z, dptr->V,
-	  //
-      }
-      break;
-  case LINEAR:
-      //do something else;
-      break;
-   default:
-       break;
+
+  if ( interp == dptr->NEAREST ){
+    // brute-force...
+    if (dptr->intype == dptr->FILT) {
+      V[index] = getNearestDataValue(dptr,index);
+    }
+    if (dptr->intype == dptr->MITP) {
+      V[index] = getNearestDataValue(dptr,index);
+    }
+  }else if ( interp == dptr->NEAREST2 ){
+    // a slightly more intelligent routine...
+    if (dptr->intype == dptr->FILT) {
+      V[index] = getNearestDataValue2_filt(dptr,index);
+    }
+    if (dptr->intype == dptr->MITP) {
+      V[index] = getNearestDataValue2_mitp(dptr,index);
+      // the slightly more intelligent routine, plus GPU computation
+      //      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
+      //				      xn, yn, zn,
+      //				      dptr->x,  dptr->y,  dptr->z, dptr->V,
+      //
+    }
+  }else if ( interp == dptr->LINEAR ) {
+  }else if ( interp == dptr->CUBIC ){
   }
-    
+  
   return 0;
 }
 
@@ -303,14 +304,14 @@ int Domain::getValue(Data * dptr, int index, int interp)
 bool Domain::importData(Data *dptr)
 {
     int index=0;
-    int interp=NEAREST;
+    //    int interp=NEAREST;
     
     for ( int ri=0 ; ri < nr ; ri++){
 	printf("......Layer %d\n",ri);
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
 	    for ( int i1 = 0 ; i1 < mt+1 ; i1++) {
 		index=idx(ri,i2,i1);
-		getValue(dptr, index, interp)	;
+		getValue(dptr, index, dptr->interp);
 	    }
 	}
     }
