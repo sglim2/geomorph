@@ -15,6 +15,12 @@
 #include <string.h>
 #include <math.h>
 
+// we need a forward declaration of the Grid class
+// due to a cycle of dependency.
+class Grid;
+
+#include "grid.h"
+
 class Data {
 public:
     
@@ -38,6 +44,7 @@ public:
     double    *x,*y,*z,*V;
     double    Vmean,Vmax,Vmin;
     double    a,cmb;
+    Grid      *mvis;
     
     Data ();
     Data (char *, int);
@@ -51,7 +58,10 @@ public:
     // FILT
     bool   filtRead ();
     double filtDepth2Radius(double);
-    
+
+    // MVIS
+    bool   mvisRead();
+
     char*  intypeConverter();
     char*  outtypeConverter();
     char*  interpConverter();

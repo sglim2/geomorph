@@ -99,7 +99,7 @@ bool Data::Read()
 	    return 1; //fail
 //	    break;  // unreachable!!
 	case MVIS :
-	    // do something
+	    return mvisRead();
 	    break;
 	case TERRA :
 	    // do something
@@ -144,6 +144,7 @@ double Data::filtDepth2Radius(double dpth)
     return mitpDepth2Radius(dpth);
  
 }
+
 ////////////////////////////////////////
 // mitpRead
 // --------
@@ -291,6 +292,33 @@ bool Data::mitpRead()
   }
 
   fclose(fptr);
+  return 0; //success
+}
+
+
+////////////////////////////////////////
+// mvisRead
+// --------
+//
+bool Data::mvisRead()
+{ 
+  // gridin is already created, but we need to generate the domains
+  mvis->genGrid(cmb);
+  
+  // for mvis input, our data isn;t kept in Data->x,y,z,V, but
+  // Data->mvis->domain[].
+  
+  
+  int ferror;
+
+
+  char buf[255]; 
+  char tmpinfile[64];
+  nval = 0;
+
+
+  
+
   return 0; //success
 }
 

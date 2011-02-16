@@ -17,6 +17,7 @@
 class Grid {
 public:
 
+    int       suffix;
     int       mt,nt,nd;
     int       nproc;
     int       nr;

@@ -29,6 +29,7 @@
 
 // globals
 Grid* grid=0;
+Grid* gridin=0;
 Data* data=0;
 
 // GUI already has an object called 'data'
@@ -87,6 +88,9 @@ bool gm_processCommandLine(int argc, char* argv[])
     --mt . . . . . . .
     --nt . . . . . . .
     --nd . . . . . . .
+    --mtin . . . . . .
+    --ntin . . . . . .
+    --ndin . . . . . .
    */
 
   if (!data){
@@ -170,6 +174,25 @@ bool gm_processCommandLine(int argc, char* argv[])
       data->filtoutnumfiles = atoi(argv[i]);
     }
 
+    if (strcmp(argv[i], "--mtin") == 0) {
+      i++;
+      data->mvis->mt=atoi(argv[i]);
+    }
+    if (strcmp(argv[i], "--ntin") == 0) {
+      i++;
+      data->mvis->nt=atoi(argv[i]);
+    }
+    if (strcmp(argv[i], "--ndin") == 0) {
+      i++;
+      data->mvis->nd=atoi(argv[i]);
+    }
+
+    if (strcmp(argv[i], "--suffixin") == 0) {
+      i++;
+      data->mvis->suffix=atoi(argv[i]);
+    }
+ 
+
     if (strcmp(argv[i], "--mt") == 0) {
       i++;
       grid->mt=atoi(argv[i]);
@@ -182,6 +205,12 @@ bool gm_processCommandLine(int argc, char* argv[])
       i++;
       grid->nd=atoi(argv[i]);
     }
+
+    if (strcmp(argv[i], "--suffix") == 0) {
+      i++;
+      grid->suffix=atoi(argv[i]);
+    }
+ 
 
     if (strcmp(argv[i], "--interp") == 0) {
       i++;
@@ -348,6 +377,7 @@ int main(int argc, char *argv[])
 
     grid = new Grid;
     data = new Data;
+    data->mvis = new Grid;
 
 #ifndef GEO_TUI_
     gdata= data;
