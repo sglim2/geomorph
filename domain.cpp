@@ -85,7 +85,8 @@ bool Domain::defineDomain(int _id, int _nr, int _mt)
     nr = _nr;
     mt = _mt;
     
-    id < 5 ? northern = true : northern = false;
+    // not needed??
+    //    id < 5 ? northern = true : northern = false;
 
     xn = new double[nr*(mt+1)*(mt+1)];
     yn = new double[nr*(mt+1)*(mt+1)];

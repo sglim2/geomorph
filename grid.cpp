@@ -190,15 +190,29 @@ bool Grid::exportMVIS(Data * dptr)
 	if (fptr==NULL){
 	}
 
-	// call each domain which is part of our 'process'  (if nd=10, this means all of them)
-	for (int i=0 ; i < idmax*nd/10 ; i++){
+	// call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
+	for (int i=0 ; i < nd ; i++){
 	    
-	    // call our domain export routine
+	  // call our domain export routine
+	  if ( nd == 10 ){
 	    if ( domains[i].exportMVIS(fptr, nproc, proc, nt) ){
 		printf("Error in Domain::exportMVIS()");
 	    }
-	}
+	  } // if nd == 10
 
+	  if ( nd == 5 ) {
+	    if ( proc < nproc/2 ){
+	      if ( domains[i].exportMVIS(fptr, nproc/2, proc, nt) ){
+		printf("Error in Domain::exportMVIS()");
+	      }
+	    }else{
+	      if ( domains[i+nd].exportMVIS(fptr, nproc/2, proc-nproc/2, nt) ){
+		printf("Error in Domain::exportMVIS()");
+	      }
+	    }
+	  } // if nd == 5
+
+	} // for i
 	// close file, ready for re-assigning to a new 'process'
 	fclose(fptr);	    
     }
