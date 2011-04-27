@@ -29,8 +29,10 @@ public:
 
     char *    infile;
     char *    indir;  // GUI only
+    bool      indirSet;  // GUI only
     char *    outfile;
     char *    outdir;  // GUI only
+    bool      outdirSet;  // GUI only
     int       intype;
     int       outtype;
     int       interp;  // interpolation routine to be used

@@ -6,6 +6,9 @@
  */
 
 
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,3 +33,6 @@ static double veryLarge=1E+99;
 static double verySmall=1E-99;
 static double quiteLarge=1E+5;
 static double quiteSmall=1E-5;
+
+
+#endif // MAIN_H

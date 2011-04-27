@@ -32,6 +32,16 @@ Grid* grid=0;
 Grid* gridin=0;
 Data* data=0;
 
+bool previewAvailable = false;  // GUI only
+bool gridAvailable = false;     // GUI only
+bool triangleAvailable = false; // GUI only
+int  previewLayer = 0;          // GUI only
+bool autoRotate = false;        // GUI only
+
+/*
+int previewWindow=0;
+preview * previewW=0;
+*/
 // GUI already has an object called 'data'
 Data * gdata=0;
 
@@ -334,23 +344,18 @@ void geo_process()
   // find best grid to match input data
   int my_mt = grid->suggestGrid(data->nval);
   printf("best matching mt value = %d\n", my_mt);
-//  if ( grid->mt != my_mt ) {
-//  printf("Overriding any user-specified mt value.\nUsing mt=%d\n", my_mt);
-//      grid->mt = my_mt;
-//  }
+
   if ( grid->mt == 0 ){
       grid->mt = my_mt;
   }else if ( grid->mt != my_mt ){
       printf("Warning: User-specified value on mt is not optimal. Try using mt=%d\n", my_mt);
   }
 
-  printf("Generating grid....\n");
   if (grid->genGrid(data->cmb)){
     printf("Error computing TERRA stats.\n");
   }
 
   // import Data::data to geomorph grid
-  printf("Converting Data....\n");
   if (grid->importData(data)){
     printf("Error importing Data into geomorph grid.\n");
   }
@@ -360,10 +365,8 @@ void geo_process()
 //    printf("Error writing Grid data.\n");
 //  }
 
-  printf("Exporting Data....\n");
   if (grid->exportGrid(data)){
     printf("Error exporting Data failed.\n");
-    //    return 1; // fail
   }
 
   // delete [] data;

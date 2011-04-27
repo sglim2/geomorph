@@ -24,7 +24,9 @@ public:
     
     double *xn,*yn,*zn;
     double *V;
-    
+
+    double Vmax,Vmin;
+
     Domain();
     Domain(int, bool);
     Domain(int, bool, int, int);

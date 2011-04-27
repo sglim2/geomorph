@@ -23,6 +23,9 @@ Data::Data()
 
   intype=UNDEF;
   outtype=UNDEF;
+  
+  indirSet = false;
+  outdirSet = false;
 
 }
 
@@ -222,6 +225,11 @@ bool Data::mitpRead()
   minR= +veryLarge;
   maxR= -veryLarge;
 
+  // initialize limits
+  nlat = 0;
+  nlng = 0;
+  ndpth = 0;
+
   for ( int i = 0 ; i < nval ; i++ ){
       ferror = fscanf(fptr,"%s", buf);
       if (atof(buf) > lat + quiteSmall ) {
@@ -249,7 +257,7 @@ bool Data::mitpRead()
   
   
   // define more arrays
-  lyrs = new double[ndpth];
+  //lyrs = new double[ndpth];
   // collect layers radii
   //  .... to be finished
 

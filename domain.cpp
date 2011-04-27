@@ -24,6 +24,8 @@
 Domain::Domain()
     : id(), northern(), xn(), mt(), nr()
 {
+    Vmin = veryLarge;
+    Vmax = verySmall;
 }
 
 ////////////////////////////////////////
@@ -39,6 +41,9 @@ Domain::Domain(int _id, bool _northern)
     
     id=_id;
     northern=_northern;
+
+    Vmin = veryLarge;
+    Vmax = verySmall;
 }
 
 ////////////////////////////////////////
@@ -56,6 +61,9 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
     northern=_northern;
     mt = _mt;
     nr = _nr;
+
+    Vmin = veryLarge;
+    Vmax = verySmall;
 
     xn = new double[nr*(mt+1)*(mt+1)];
     yn = new double[nr*(mt+1)*(mt+1)];
@@ -85,6 +93,9 @@ bool Domain::defineDomain(int _id, int _nr, int _mt)
     nr = _nr;
     mt = _mt;
     
+    // not needed??
+    //    id < 5 ? northern = true : northern = false;
+
     // not needed??
     //    id < 5 ? northern = true : northern = false;
 
@@ -125,7 +136,9 @@ int Domain::idx(int r, int i2, int i1)
   
   idx = rbase + i2base + i1base;
 
-  if (nerror!=0) printf("Domain::idx Error: ir = %d; i2 = %d; i1 = %d\n",r,i2,i1);
+  if (nerror!=0){
+      printf("Domain::idx Error: ir = %d; i2 = %d; i1 = %d\n",r,i2,i1);
+  }
 
   return idx;
 }
@@ -167,7 +180,7 @@ double Domain::getNearestDataValue(Data *dptr, int index)
 // getNearestDataValue.
 double Domain::getNearestDataValue2_mitp(Data *dptr, int index)
 {
-    int nr=0; // our layer of interest in Data:dptr (or in fact either side of this!)
+    int nr=0; // our layer of interest in Data:dptr
 
     double gx,gy,gz;
     gx = xn[index];
@@ -203,6 +216,8 @@ double Domain::getNearestDataValue2_mitp(Data *dptr, int index)
       if ( tmpd2 < d2 ) {
 	d2 = tmpd2;
 	dataV = dptr->V[di];
+        if ( dataV < Vmin ) Vmin = dataV;
+        if ( dataV > Vmax ) Vmax = dataV;
       }
     }
 
@@ -306,7 +321,7 @@ bool Domain::importData(Data *dptr)
 {
     int index=0;
     //    int interp=NEAREST;
-    
+
     for ( int ri=0 ; ri < nr ; ri++){
 	printf("......Layer %d\n",ri);
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
