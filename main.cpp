@@ -37,6 +37,7 @@ bool gridAvailable = false;     // GUI only
 bool triangleAvailable = false; // GUI only
 int  previewLayer = 0;          // GUI only
 bool autoRotate = false;        // GUI only
+bool radialAverage = false;     // GUI only
 
 /*
 int previewWindow=0;
