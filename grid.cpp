@@ -221,6 +221,63 @@ bool Grid::exportMVIS(Data * dptr)
 }
 
 ////////////////////////////////////////
+// Grid::exportTERRA
+//
+// exports data in desired format.
+//
+// Due to the necessary sequential output, this must be done in serial for
+// each process.
+//
+bool Grid::exportTERRA(Data * dptr)
+{
+    FILE * fptr;
+    char outfile[256];
+    
+    int  fail=0;
+
+    // we now cycle over 'processors'
+    for ( int proc=0 ; proc < nproc ; proc++ ){
+		
+	// open a file per 'process'
+        sprintf(outfile,"%s.%04d.%02d", dptr->outfile, proc,suffix);
+	printf("outfile = %s\n",outfile);
+        
+	// open file
+	fptr=fopen(outfile,"a");
+	if (fptr==NULL){
+	}
+
+	// call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
+	for (int i=0 ; i < nd ; i++){
+	    
+	    // call our domain export routine
+	    if ( nd == 10 ){
+		if ( domains[i].exportTERRA(dptr, fptr, nproc, proc, nt) ){
+		    printf("Error in Domain::exportTERRA()");
+		}
+	    } // if nd == 10
+	    
+	    if ( nd == 5 ) {
+		if ( proc < nproc/2 ){
+		    if ( domains[i].exportTERRA(dptr, fptr, nproc/2, proc, nt) ){
+			printf("Error in Domain::exportTERRA()");
+		    }
+		}else{
+		    if ( domains[i+nd].exportTERRA(dptr, fptr, nproc/2, proc-nproc/2, nt) ){
+			printf("Error in Domain::exportTERRA()");
+		    }
+		}
+	    } // if nd == 5
+	    
+	} // for i
+	// close file, ready for re-assigning to a new 'process'
+	fclose(fptr);	    
+    }
+    
+    return fail; 
+}
+
+////////////////////////////////////////
 // Grid::exportGrid
 //
 // exports data in desired format.

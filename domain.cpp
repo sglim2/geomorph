@@ -410,6 +410,66 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 }
 
 ////////////////////////////////////////
+// Domain::exportTERRA
+//
+// export Data::dptr in the TERRA format.
+// 
+bool Domain::exportTERRA(Data * dptr, FILE * fptr, int nproc, int proc, int nt)
+{
+   
+    int   index=0;
+    int   i1start,i1end,i2start,i2end;
+    div_t divresult;
+
+    divresult = div(proc, mt/nt);
+
+    i1start = nt * divresult.rem;
+    i1end   = i1start + nt;
+    
+    i2start = nt * divresult.quot ;
+    i2end   = i2start + nt;
+	
+    // write initial blurb
+    fprintf(fptr,"%5d,%5d\n",nr,nt);
+    fprintf(fptr,"CASE 001, in-type = %s\n",dptr->intypeConverter());
+    fprintf(fptr,"GEOMORPH-GENERATED CONVERSION\n");
+    fprintf(fptr,"VERSION -\n");
+    time_t rawtime;
+    time ( &rawtime );
+    fprintf(fptr,"%s",ctime(&rawtime));  // note no new-line - taken care of in next section
+    
+    // write radii of layers
+    for (int i=0 ; i <= nr ; i++){
+	if ( i%10 == 0 ) fprintf(fptr,"\n"); // print in columns of 10
+	fprintf(fptr,"%15.8f", dptr->maxR-i*(dptr->maxR-dptr->minR)/nr );
+    }
+    
+    // write propr array
+    for (int i=0 ; i < 20 ; i++){
+	if ( i%10 == 0 ) fprintf(fptr,"\n"); // print in columns of 10
+	fprintf(fptr,"%15.8f", 0. );
+    }
+
+    // cycle through our 'process' points
+    long int colcounter=0;
+    for ( int i2=i2start ; i2<=i2end ; i2++ ){
+	for ( int i1=i1start ; i1<=i1end ; i1++ ){
+
+	    if ( colcounter%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
+	    colcounter++;
+
+	    index = idx(0,i2,i1);
+	    for ( int ir=nr-1 ; ir>=0 ; ir-- ){
+		index = idx(ir,i2,i1);
+		fprintf(fptr,"%10.3E\n",V[index]);
+	    }
+	}
+    }
+    
+    return 0; // success
+}
+
+////////////////////////////////////////
 // Domain::getAngle3d
 //
 // Given two vectors Aand B, getAngle3d returns the angle A0B.

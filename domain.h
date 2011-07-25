@@ -49,6 +49,7 @@ public:
     bool   importData_gpu(Data*);
 
     bool   exportMVIS(FILE *, int, int, int);
+    bool   exportTERRA(Data *, FILE *, int, int, int);
 
     int    sqrti(int);
     bool   rotate3d(double*, double*, double*, 

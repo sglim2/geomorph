@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "domain.h"
 
@@ -37,6 +38,7 @@ public:
     bool   importData (Data*);
     bool   exportGrid (Data*);
     bool   exportMVIS (Data*);
+    bool   exportTERRA(Data*);
 
 };
 
