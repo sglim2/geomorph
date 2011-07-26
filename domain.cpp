@@ -414,7 +414,7 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 //
 // export Data::dptr in the TERRA format.
 // 
-bool Domain::exportTERRA(Data * dptr, FILE * fptr, int nproc, int proc, int nt)
+bool Domain::exportTERRA(FILE * fptr, int nproc, int proc, int nt, int ir, int tvp, long int &colcntr)
 {
    
     int   index=0;
@@ -428,44 +428,31 @@ bool Domain::exportTERRA(Data * dptr, FILE * fptr, int nproc, int proc, int nt)
     
     i2start = nt * divresult.quot ;
     i2end   = i2start + nt;
-	
-    // write initial blurb
-    fprintf(fptr,"%5d,%5d\n",nr,nt);
-    fprintf(fptr,"CASE 001, in-type = %s\n",dptr->intypeConverter());
-    fprintf(fptr,"GEOMORPH-GENERATED CONVERSION\n");
-    fprintf(fptr,"VERSION -\n");
-    time_t rawtime;
-    time ( &rawtime );
-    fprintf(fptr,"%s",ctime(&rawtime));  // note no new-line - taken care of in next section
-    
-    // write radii of layers
-    for (int i=0 ; i <= nr ; i++){
-	if ( i%10 == 0 ) fprintf(fptr,"\n"); // print in columns of 10
-	fprintf(fptr,"%15.8f", dptr->maxR-i*(dptr->maxR-dptr->minR)/nr );
-    }
-    
-    // write propr array
-    for (int i=0 ; i < 20 ; i++){
-	if ( i%10 == 0 ) fprintf(fptr,"\n"); // print in columns of 10
-	fprintf(fptr,"%15.8f", 0. );
-    }
 
-    // cycle through our 'process' points
-    long int colcounter=0;
     for ( int i2=i2start ; i2<=i2end ; i2++ ){
 	for ( int i1=i1start ; i1<=i1end ; i1++ ){
-
-	    if ( colcounter%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
-	    colcounter++;
-
-	    index = idx(0,i2,i1);
-	    for ( int ir=nr-1 ; ir>=0 ; ir-- ){
+	    
+	    if (tvp == 0) {
 		index = idx(ir,i2,i1);
-		fprintf(fptr,"%10.3E\n",V[index]);
+		fprintf(fptr,"%10.3f",V[index]);
+		if ( colcntr%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
+		colcntr++;
+	    }else if (tvp == 1) {
+		for ( int xyz=0 ; xyz<3 ; xyz++) {
+		    fprintf(fptr,"%10.3E",0.);
+		    if ( colcntr%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
+		    colcntr++;
+		}
+	    }else if (tvp == 2) {
+		fprintf(fptr,"%10.3E",0.);
+		if ( colcntr%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
+		colcntr++;
+	    }else {
+		return 1; // failure
 	    }
-	}
-    }
-    
+	} // i1
+    } // i2
+
     return 0; // success
 }
 

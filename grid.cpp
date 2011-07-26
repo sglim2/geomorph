@@ -7,7 +7,7 @@
 
 
 #include "grid.h"
-
+#include "main.h"
 /*
  * utilities
  */
@@ -246,34 +246,68 @@ bool Grid::exportTERRA(Data * dptr)
 	fptr=fopen(outfile,"a");
 	if (fptr==NULL){
 	}
+	
+	// get time
+	time_t rawtime;
+	time ( &rawtime );
 
-	// call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
-	for (int i=0 ; i < nd ; i++){
+	for ( int tvp=0 ; tvp<3 ; tvp++ ){ // temp/vel/pressure output
 	    
-	    // call our domain export routine
-	    if ( nd == 10 ){
-		if ( domains[i].exportTERRA(dptr, fptr, nproc, proc, nt) ){
-		    printf("Error in Domain::exportTERRA()");
-		}
-	    } // if nd == 10
+	    // write initial blurb
+	    fprintf(fptr,"%5d%5d\n",nr-1,nt);
+	    fprintf(fptr,"CASE 001, in-type = %s\n",dptr->intypeConverter());
+	    fprintf(fptr,"GEOMORPH-GENERATED CONVERSION\n");
+	    fprintf(fptr,"-\n");
+	    fprintf(fptr,"%s",ctime(&rawtime));  // new-line taken care of with ctime()
 	    
-	    if ( nd == 5 ) {
-		if ( proc < nproc/2 ){
-		    if ( domains[i].exportTERRA(dptr, fptr, nproc/2, proc, nt) ){
-			printf("Error in Domain::exportTERRA()");
-		    }
-		}else{
-		    if ( domains[i+nd].exportTERRA(dptr, fptr, nproc/2, proc-nproc/2, nt) ){
-			printf("Error in Domain::exportTERRA()");
-		    }
-		}
-	    } // if nd == 5
+	    // write radii of layers
+	    for (int i=1 ; i <= nr ; i++){
+		fprintf(fptr,"%15.8E", EarthRadKM*1000*(dptr->maxR-i*(dptr->maxR-dptr->minR)/(nr-1)) );
+		if ( i%10 == 0 || i==nr ) fprintf(fptr,"\n"); // print in columns of 10
+	    }
 	    
-	} // for i
+	    // write propr array
+	    for (int i=1 ; i <= 20 ; i++){
+		fprintf(fptr,"%15.8E", 0. );
+		if ( i%10 == 0 || i==20 ) fprintf(fptr,"\n"); // print in columns of 10
+	    }
+	    
+	    // cycle over layers
+	    long int colcntr=1;
+//	    for ( int ir=nr-1 ; ir>=0 ; ir-- ){
+	    for ( int ir=0 ; ir<nr ; ir++ ){
+		
+		// call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
+		for (int i=0 ; i < nd ; i++){
+		    
+		    // call our domain export routine
+		    if ( nd == 10 ){
+			if ( domains[i].exportTERRA(fptr, nproc, proc, nt, ir, tvp, colcntr) ){
+			    printf("Error in Domain::exportTERRA()");
+			}
+		    } // if nd == 10
+		    
+		    if ( nd == 5 ) {
+			if ( proc < nproc/2 ){
+			    if ( domains[i].exportTERRA(fptr, nproc/2, proc, nt, ir, tvp, colcntr) ){
+				printf("Error in Domain::exportTERRA()");
+			    }
+			}else{
+			    if ( domains[i+nd].exportTERRA(fptr, nproc/2, proc-nproc/2, nt, ir, tvp, colcntr) ){
+				printf("Error in Domain::exportTERRA()");
+			    }
+			}
+		    } // if nd == 5
+		    
+		} // for i (domain)
+	    } // ir
+	} // tvp
+	
 	// close file, ready for re-assigning to a new 'process'
 	fclose(fptr);	    
-    }
-    
+
+    } // proc
+
     return fail; 
 }
 
@@ -295,10 +329,10 @@ bool Grid::exportGrid(Data * dptr)
 	}
     }else
 	if ( dptr->outtype == dptr->TERRA ) {
-//	    if (exportTERRA(dptr) ){
-//		printf("Error in exportTERRA\n");
-//		return 1; // fail
-//	    }
+	    if (exportTERRA(dptr) ){
+		printf("Error in exportTERRA\n");
+		return 1; // fail
+	    }
 	}else 
 	    if ( dptr->outtype == dptr->MITP ) {
 //		if (exportMITP(dptr) ){
