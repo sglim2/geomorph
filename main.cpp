@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
     data->mvis = new Grid;
 
 #ifndef GEO_TUI_
-    gdata= data;
+    gdata = data;
 #endif
 
     // process command-line and fill some data objects
