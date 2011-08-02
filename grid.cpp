@@ -372,7 +372,7 @@ bool Grid::exportGrid(Data * dptr)
 ////////////////////////////////////////
 // Grid::suggestGrid
 //
-// A basic comparison of any given grid structire to the TERRA
+// A basic comparison of any given grid structure to the TERRA
 // grid. Returns the mt value of the closest matching TERRA grid
 // comparing the total number of grid points across the two grid
 // structures.

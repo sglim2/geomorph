@@ -100,10 +100,8 @@ bool Data::Read()
 	case UNDEF :
 	    printf("Error.Intype undefined");
 	    return 1; //fail
-//	    break;  // unreachable!!
 	case MVIS :
 	    return mvisRead();
-	    break;
 	case TERRA_CC :
 	    // do something
 	    break;
@@ -112,14 +110,11 @@ bool Data::Read()
 	    break;
 	case MITP :
 	    return mitpRead();
-//	    break; // unreachable!!
 	case FILT :
 	    return filtRead();
-//	    break; // unreachable!!
 	default :
-	    printf("Error.Intype undefined");
+	    printf("Error: intype undefined.");
 	    return 1; //fail
-//	    break;  // unreachable!!
     }
 
     return 0;    
@@ -308,16 +303,16 @@ bool Data::mitpRead()
 
 
 ////////////////////////////////////////
-// mvisRead
+// Dat::mvisRead()
 // --------
 //
 bool Data::mvisRead()
 { 
-  // gridin is already created, but we need to generate the domains
+  // mvis is already created, but we need to generate the domains
   mvis->genGrid(cmb);
   
-  // for mvis input, our data isn;t kept in Data->x,y,z,V, but
-  // Data->mvis->domain[].
+  // for mvis input, our data isn't kept in Data->x,y,z,V, but
+  // Data->mvis->domains[].
   
   
   int ferror;

@@ -24,7 +24,7 @@ class Grid;
 class Data {
 public:
     
-    enum { UNDEF, MVIS, TERRA, TERRA_CC, TERRA_CV , MITP, FILT };
+    enum { UNDEF, MVIS, TERRA_CC, TERRA_CV , MITP, FILT };
     enum { NEAREST, NEAREST2, LINEAR, CUBIC };
 
     char *    infile;

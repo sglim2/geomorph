@@ -21,6 +21,10 @@
  * Exmaple 3:
  * =========
  * ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
+ *
+ * Exmaple 4:
+ * =========
+ * ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c002 --intype mitp --outtype terra_cc --interp nearest2
  */
 
 #ifndef GEO_TUI_
