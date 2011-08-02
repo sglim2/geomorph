@@ -412,7 +412,7 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 ////////////////////////////////////////
 // Domain::exportTERRA
 //
-// export Data::dptr in the TERRA format.
+// export Data::dptr in the TERRA format (convection or circulation  model)
 // 
 bool Domain::exportTERRA(FILE * fptr, int nproc, int proc, int nt, int ir, int tvp, long int &colcntr)
 {

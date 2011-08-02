@@ -223,17 +223,21 @@ bool Grid::exportMVIS(Data * dptr)
 ////////////////////////////////////////
 // Grid::exportTERRA
 //
-// exports data in desired format.
+// exports data in desired format (TERRA Convection model, or Circulation model).
 //
 // Due to the necessary sequential output, this must be done in serial for
 // each process.
 //
-bool Grid::exportTERRA(Data * dptr)
+bool Grid::exportTERRA(Data * dptr, int terratype)
 {
     FILE * fptr;
     char outfile[256];
-    
+    int tvppmax;   // temp/vel/pressure/plate-history
     int  fail=0;
+
+    // terratype=0(default) - > convection model
+    // terratype=1 - > circulation model (i.e. with plate-histories)
+    terratype == 1 ? tvppmax=4 : tvppmax=3;
 
     // we now cycle over 'processors'
     for ( int proc=0 ; proc < nproc ; proc++ ){
@@ -250,8 +254,8 @@ bool Grid::exportTERRA(Data * dptr)
 	// get time
 	time_t rawtime;
 	time ( &rawtime );
-
-	for ( int tvp=0 ; tvp<3 ; tvp++ ){ // temp/vel/pressure output
+	
+	for ( int tvpp=0 ; tvpp<tvppmax ; tvpp++ ){ // temp/vel/pressure/plate-history output
 	    
 	    // write initial blurb
 	    fprintf(fptr,"%5d%5d\n",nr-1,nt);
@@ -271,37 +275,48 @@ bool Grid::exportTERRA(Data * dptr)
 		fprintf(fptr,"%15.8E", 0. );
 		if ( i%10 == 0 || i==20 ) fprintf(fptr,"\n"); // print in columns of 10
 	    }
-	    
-	    // cycle over layers
-	    long int colcntr=1;
-//	    for ( int ir=nr-1 ; ir>=0 ; ir-- ){
-	    for ( int ir=0 ; ir<nr ; ir++ ){
-		
-		// call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
-		for (int i=0 ; i < nd ; i++){
+
+
+	    if (tvpp != 3) { // i.e. not plate-histories
+
+		// cycle over layers
+		long int colcntr=1;
+//	        for ( int ir=nr-1 ; ir>=0 ; ir-- ){
+		for ( int ir=0 ; ir<nr ; ir++ ){
 		    
-		    // call our domain export routine
-		    if ( nd == 10 ){
-			if ( domains[i].exportTERRA(fptr, nproc, proc, nt, ir, tvp, colcntr) ){
-			    printf("Error in Domain::exportTERRA()");
-			}
-		    } // if nd == 10
-		    
-		    if ( nd == 5 ) {
-			if ( proc < nproc/2 ){
-			    if ( domains[i].exportTERRA(fptr, nproc/2, proc, nt, ir, tvp, colcntr) ){
+		    // call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
+		    for (int i=0 ; i < nd ; i++){
+			
+			// call our domain export routine
+			if ( nd == 10 ){
+			    if ( domains[i].exportTERRA(fptr, nproc, proc, nt, ir, tvpp, colcntr) ){
 				printf("Error in Domain::exportTERRA()");
 			    }
-			}else{
-			    if ( domains[i+nd].exportTERRA(fptr, nproc/2, proc-nproc/2, nt, ir, tvp, colcntr) ){
-				printf("Error in Domain::exportTERRA()");
+			} // if nd == 10
+			
+			if ( nd == 5 ) {
+			    if ( proc < nproc/2 ){
+				if ( domains[i].exportTERRA(fptr, nproc/2, proc, nt, ir, tvpp, colcntr) ){
+				    printf("Error in Domain::exportTERRA()");
+				}
+			    }else{
+				if ( domains[i+nd].exportTERRA(fptr, nproc/2, proc-nproc/2, nt, ir, tvpp, colcntr) ){
+				    printf("Error in Domain::exportTERRA()");
+				}
 			    }
-			}
-		    } // if nd == 5
-		    
-		} // for i (domain)
-	    } // ir
-	} // tvp
+			} // if nd == 5
+			
+		    } // for i (domain)
+		} // ir
+	    }else{ // tvpp != 3
+		long int colcntr2=1;
+		for (int i=1 ; i <= (nt+1)*(nt+1)*nd*1*2 ; i++){
+		    fprintf(fptr,"%10.3E", 0. );
+		    if ( colcntr2%15 == 0 ) fprintf(fptr,"\n"); // print in columns of 15
+		    colcntr2++;
+		} // for i
+	    }
+	} // tvpp
 	
 	// close file, ready for re-assigning to a new 'process'
 	fclose(fptr);	    
@@ -328,23 +343,29 @@ bool Grid::exportGrid(Data * dptr)
 	    return 1; // fail
 	}
     }else
-	if ( dptr->outtype == dptr->TERRA ) {
-	    if (exportTERRA(dptr) ){
-		printf("Error in exportTERRA\n");
+	if ( dptr->outtype == dptr->TERRA_CV ) {
+	    if (exportTERRA(dptr,0) ){
+		printf("Error in exportTERRA()\n");
 		return 1; // fail
 	    }
-	}else 
-	    if ( dptr->outtype == dptr->MITP ) {
+	}else
+	    if ( dptr->outtype == dptr->TERRA_CC ) {
+		if (exportTERRA(dptr,1) ){
+		    printf("Error in exportTERRA()\n");
+		    return 1; // fail
+		}
+	    }else 
+		if ( dptr->outtype == dptr->MITP ) {
 //		if (exportMITP(dptr) ){
 //		    printf("Error in exportMITP\n");
 //		    return 1; // fail
 //		}
-	    }else 
-		if ( dptr->outtype == dptr->UNDEF ) {
-		    return 1; // fail
 		}else 
-		    return 1; // fail
-
+		    if ( dptr->outtype == dptr->UNDEF ) {
+			return 1; // fail
+		    }else 
+			return 1; // fail
+    
     return 0; // success
 }
 
@@ -391,7 +412,7 @@ bool Grid::genGrid(double _cmb)
     nr    = mt/2+1;
     nproc = (mt/nt)*(mt/nt)*10/nd; 
     
-    printf("TERRA-grid Stats....\n");
+    printf("Grid Statistics....\n");
     printf("+----------------------------------------------+\n");
     printf("|  mt        =  %12d                   |\n"        , mt);
     printf("|  nt        =  %12d                   |\n"        , nt);;

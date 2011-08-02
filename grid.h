@@ -30,15 +30,15 @@ public:
     Grid();
     Grid(int, int, int);
     
-    bool   genGrid    (double);
-    int    suggestGrid(int);
-    int    xnProc     (int);
-    int    xnProc     (int, int, int, int, int);
-    int    idx        (int, int, int, int, int);
-    bool   importData (Data*);
-    bool   exportGrid (Data*);
-    bool   exportMVIS (Data*);
-    bool   exportTERRA(Data*);
+    bool   genGrid     (double);
+    int    suggestGrid (int);
+    int    xnProc      (int);
+    int    xnProc      (int, int, int, int, int);
+    int    idx         (int, int, int, int, int);
+    bool   importData  (Data*);
+    bool   exportGrid  (Data*);
+    bool   exportMVIS  (Data*);
+    bool   exportTERRA (Data*, int);
 
 };
 

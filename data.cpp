@@ -104,7 +104,10 @@ bool Data::Read()
 	case MVIS :
 	    return mvisRead();
 	    break;
-	case TERRA :
+	case TERRA_CC :
+	    // do something
+	    break;
+	case TERRA_CV :
 	    // do something
 	    break;
 	case MITP :
@@ -445,7 +448,9 @@ char* Data::intypeConverter()
 		break;
 	    case MVIS : strcpy(buf, "MVIS");
 		break;
-	    case TERRA: strcpy(buf, "TERRA");
+	    case TERRA_CC: strcpy(buf, "TERRA_CC");
+		break;
+	    case TERRA_CV: strcpy(buf, "TERRA_CV");
 		break;
 	    case MITP : strcpy(buf, "MITP");
 		break;
@@ -467,7 +472,9 @@ char* Data::outtypeConverter()
 		break;
 	    case MVIS : strcpy(buf, "MVIS");
 		break;
-	    case TERRA: strcpy(buf, "TERRA");
+	    case TERRA_CC: strcpy(buf, "TERRA_CC");
+		break;
+	    case TERRA_CV: strcpy(buf, "TERRA_CV");
 		break;
 	    case MITP : strcpy(buf, "MITP");
 		break;

@@ -18,6 +18,9 @@
  * =========
  * $ > ./geomorph --mt 32 --nt 16 --nd 10 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis --interp nearest2 
  *
+ * Exmaple 3:
+ * =========
+ * ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
  */
 
 #ifndef GEO_TUI_
@@ -73,8 +76,8 @@ bool gm_usage()
 
   printf("Available Commands:\n");
   printf(" --help . . . . . . print help-page and exit\n");
-  printf(" --intype . . . . . input type [ MVIS | TERRA | MITP ]\n");
-  printf(" --outtype. . . . . output type [ MVIS | TERRA | MITP ]\n");
+  printf(" --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP ]\n");
+  printf(" --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP ]\n");
   printf(" --infile,  -i. . . input filename\n");
   printf(" --outfile, -o. . . output filename base\n");
   printf(" --mt . . . . . . . \n");
@@ -92,8 +95,8 @@ bool gm_processCommandLine(int argc, char* argv[])
 {
   /*
     --help . . . . . . print help-page and exit
-    --intype . . . . . input type [ MVIS | TERRA | MITP ]
-    --outtype. . . . . output type [ MVIS | TERRA | MITP ]
+    --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP ]
+    --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP ]
     --infile,  -i. . . input filename
     --outfile, -o. . . output filename base
     --mt . . . . . . .
@@ -121,8 +124,10 @@ bool gm_processCommandLine(int argc, char* argv[])
       i++;
       if (strcmp(argv[i], "mvis") == 0) {
         data->intype = data->MVIS;
-      }else if (strcmp(argv[i], "terra") == 0) {
-        data->intype = data->TERRA;
+      }else if (strcmp(argv[i], "terra_cc") == 0) {
+        data->intype = data->TERRA_CC;
+      }else if (strcmp(argv[i], "terra_cv") == 0) {
+        data->intype = data->TERRA_CV;
       }else if (strcmp(argv[i], "mitp") == 0) {
         data->intype = data->MITP;
       }else if (strcmp(argv[i], "filt") == 0) {
@@ -136,8 +141,10 @@ bool gm_processCommandLine(int argc, char* argv[])
       i++;
       if (strcmp(argv[i], "mvis") == 0) {
         data->outtype = data->MVIS;
-      }else if (strcmp(argv[i], "terra") == 0) {
-        data->outtype = data->TERRA;
+      }else if (strcmp(argv[i], "terra_cc") == 0) {
+        data->outtype = data->TERRA_CC;
+      }else if (strcmp(argv[i], "terra_cv") == 0) {
+        data->outtype = data->TERRA_CV;
       }else if (strcmp(argv[i], "mitp") == 0) {
         data->outtype = data->MITP;
       }else if (strcmp(argv[i], "filt") == 0) {
@@ -353,7 +360,7 @@ void geo_process()
   }
 
   if (grid->genGrid(data->cmb)){
-    printf("Error computing TERRA stats.\n");
+    printf("Error computing grid statistics.\n");
   }
 
   // import Data::data to geomorph grid
