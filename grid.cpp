@@ -162,6 +162,62 @@ bool Grid::importData(Data * dptr)
 }
 
 ////////////////////////////////////////
+// Grid::importMVIS
+//
+// imports data from MVIS files.
+//
+bool Grid::importMVIS(char * dinfile, double cmb)
+{
+    FILE * fptr;
+    char infile[256];
+    
+    int  fail=0;
+
+    // we now cycle over 'processors' (or files).
+    for ( int proc=0 ; proc < nproc ; proc++ ){
+
+	// open a file per 'process'
+	strcpy(infile,dinfile);
+        sprintf(infile,"%s.%04d.%02d", infile, proc, suffix);
+	printf("infile = %s\n",infile);
+        
+	// open file
+	fptr=fopen(infile,"r");
+	if (fptr==NULL){
+	}
+
+	// call each domain which is part of our 'process'  
+        // (if nd=10, this means all of them; nd=5, 1 hemisphere only)
+	for (int i=0 ; i < nd ; i++){
+	    
+	  // call our domain export routine
+	  if ( nd == 10 ){
+	      if ( domains[i].importMVIS(fptr, nproc, proc, nt, cmb) ){
+		  printf("Error in Domain::importMVIS()");
+	      }
+	  } // if nd == 10
+	  
+	  if ( nd == 5 ) {
+	      if ( proc < nproc/2 ){
+		  if ( domains[i].importMVIS(fptr, nproc/2, proc, nt, cmb) ){
+		      printf("Error in Domain::importMVIS()");
+		  }
+	      }else{
+		  if ( domains[i+nd].importMVIS(fptr, nproc/2, proc-nproc/2, nt, cmb) ){
+		      printf("Error in Domain::importMVIS()");
+		  }
+	      }
+	  } // if nd == 5
+	  
+	} // for i
+	// close file, ready for re-assigning to a new 'process'
+	fclose(fptr);	    
+    }
+    
+    return fail; 
+}
+
+////////////////////////////////////////
 // Grid::exportMVIS
 //
 // exports data in desired format.
@@ -171,8 +227,6 @@ bool Grid::importData(Data * dptr)
 //
 bool Grid::exportMVIS(Data * dptr)
 {
-    // assuming nd=10...for now
-
     FILE * fptr;
     char outfile[256];
     
@@ -190,7 +244,8 @@ bool Grid::exportMVIS(Data * dptr)
 	if (fptr==NULL){
 	}
 
-	// call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
+	// Call each domain which is part of our 'process'.
+	// (if nd=10, this means all of them; nd=5, 1 hemisphere only)
 	for (int i=0 ; i < nd ; i++){
 	    
 	  // call our domain export routine

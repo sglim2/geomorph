@@ -48,6 +48,7 @@ public:
     bool   importData(Data*);
     bool   importData_gpu(Data*);
 
+    bool   importMVIS(FILE *, int, int, int, double);
     bool   exportMVIS(FILE *, int, int, int);
     bool   exportTERRA(FILE *, int, int, int, int, int, long int &);
 

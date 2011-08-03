@@ -36,6 +36,7 @@ public:
     int    xnProc      (int, int, int, int, int);
     int    idx         (int, int, int, int, int);
     bool   importData  (Data*);
+    bool   importMVIS  (char*, double);
     bool   exportGrid  (Data*);
     bool   exportMVIS  (Data*);
     bool   exportTERRA (Data*, int);

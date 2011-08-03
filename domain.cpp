@@ -299,12 +299,20 @@ int Domain::getValue(Data * dptr, int index, int interp)
     if (dptr->intype == dptr->MITP) {
       V[index] = getNearestDataValue2_mitp(dptr,index);
       // the slightly more intelligent routine, plus GPU computation
-      //      V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, dptr->nlat, dptr->nlng,
-      //				      xn, yn, zn,
-      //				      dptr->x,  dptr->y,  dptr->z, dptr->V,
+      //V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, 
+      //                                    dptr->nlat, dptr->nlng,
+      //				    xn, yn, zn,
+      //				    dptr->x,  dptr->y,  dptr->z, dptr->V,
       //
     }
   }else if ( interp == dptr->LINEAR ) {
+      if (   dptr->intype == dptr->FILT 
+	     || dptr->intype == dptr->MITP ) {
+	  printf("Error: Interpolation = LINEAR is not yet implemented for this input format.\n");
+	  return 1;
+      }
+      V[index] = getLinearDataValue_grid(dptr,index);
+      
   }else if ( interp == dptr->CUBIC ){
   }
   
@@ -372,6 +380,56 @@ int Domain::sqrti(int a)
     }
 
     return -1; // fail
+}
+
+////////////////////////////////////////
+// Domain::importMVIS
+//
+// import data from MVIS files
+// 
+bool Domain::importMVIS(FILE * fptr, int nproc, int proc, int nt, double cmb)
+{
+    
+    float buf;
+    int   index=0;
+    int   index1=0;
+    int   i1start,i1end,i2start,i2end;
+    div_t divresult;
+
+    divresult = div(proc, mt/nt);
+
+    i1start = nt * divresult.rem;
+    i1end   = i1start + nt;
+    
+    i2start = nt * divresult.quot ;
+    i2end   = i2start + nt;
+
+    // cycle through our 'process' points
+    for ( int i2=i2start ; i2<=i2end ; i2++ ){
+	for ( int i1=i1start ; i1<=i1end ; i1++ ){
+
+	    index1 = idx(0,i2,i1);
+	    fscanf(fptr,"%f",&buf);
+	    xn[index1] = buf;
+	    fscanf(fptr,"%f",&buf);
+	    yn[index1] = buf; 
+	    fscanf(fptr,"%f",&buf); 
+	    zn[index1] = buf;
+
+	    for ( int ir=nr-1 ; ir>=0 ; ir-- ){
+		index = idx(ir,i2,i1);
+		fscanf(fptr,"%f",&buf);
+		V[index] = buf;
+		
+		xn[index] = xn[index1] - xn[index1]*ir*(1-cmb)/(nr-1);
+		yn[index] = yn[index1] - yn[index1]*ir*(1-cmb)/(nr-1);
+		zn[index] = zn[index1] - zn[index1]*ir*(1-cmb)/(nr-1);
+
+	    }
+	}
+    }
+    
+    return 0; // success
 }
 
 ////////////////////////////////////////

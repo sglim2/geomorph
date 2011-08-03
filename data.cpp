@@ -308,12 +308,12 @@ bool Data::mitpRead()
 //
 bool Data::mvisRead()
 { 
-  // mvis is already created, but we need to generate the domains
+  // this->mvis is already created, but we need to generate the domains
   mvis->genGrid(cmb);
   
   // for mvis input, our data isn't kept in Data->x,y,z,V, but
-  // Data->mvis->domains[].
-  
+  // this->mvis->domains[].
+  mvis->importMVIS(infile, cmb);
   
   int ferror;
 
