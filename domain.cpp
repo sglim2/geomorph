@@ -276,6 +276,31 @@ double Domain::getNearestDataValue2_filt(Data *dptr, int index)
 }
 
 ////////////////////////////////////////
+// Domain::getLinearDataValue
+//
+// Given the index of the geomorph grid, searches for the 'V' value of the
+// nearest spatial point of the 'Data' data.
+int Domain::getLinearDataValue(Data *dptr)
+{
+  int index=0;
+  double * Vptr=V;
+
+  if ( dptr->mvis->mt == mt ) {
+    // straight copy
+    for ( int ri=0 ; ri < nr ; ri++){
+      for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
+	for ( int i1 = 0 ; i1 < mt+1 ; i1++) {
+	  index = idx(ri,i2,i1);
+	  Vptr[index] = dptr->mvis->domains[id].V[index];
+	}
+      }
+    } 
+  } // if mtin==mtout
+  
+  return 0;
+}
+
+////////////////////////////////////////
 // Domain::getValue
 //
 // Given the index of the geomorph grid, uses the 'interp' method to calculate
@@ -305,14 +330,7 @@ int Domain::getValue(Data * dptr, int index, int interp)
       //				    dptr->x,  dptr->y,  dptr->z, dptr->V,
       //
     }
-  }else if ( interp == dptr->LINEAR ) {
-      if (   dptr->intype == dptr->FILT 
-	     || dptr->intype == dptr->MITP ) {
-	  printf("Error: Interpolation = LINEAR is not yet implemented for this input format.\n");
-	  return 1;
-      }
-      V[index] = getLinearDataValue_grid(dptr,index);
-      
+  }else if ( interp == dptr->LINEAR ){          
   }else if ( interp == dptr->CUBIC ){
   }
   
@@ -328,16 +346,25 @@ int Domain::getValue(Data * dptr, int index, int interp)
 bool Domain::importData(Data *dptr)
 {
     int index=0;
-    //    int interp=NEAREST;
 
-    for ( int ri=0 ; ri < nr ; ri++){
+    // Here we decide which algorithm to use depending on input type. It moves
+    // data found in dptr to the current domain.
+
+    // ...Non-terra based grids
+    if ( dptr->intype == dptr->MITP || dptr->intype == dptr->FILT ) {
+
+      for ( int ri=0 ; ri < nr ; ri++){
 	printf("......Layer %d\n",ri);
 	for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
-	    for ( int i1 = 0 ; i1 < mt+1 ; i1++) {
-		index=idx(ri,i2,i1);
-		getValue(dptr, index, dptr->interp);
-	    }
+	  for ( int i1 = 0 ; i1 < mt+1 ; i1++) {
+	    index = idx(ri,i2,i1);
+	    getValue(dptr, index, dptr->interp);
+	  }
 	}
+      }
+    }else{
+      // ... must be intype == MVIS or TERRA.
+      getLinearDataValue(dptr);
     }
 
     return 0; // success

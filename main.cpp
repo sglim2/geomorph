@@ -20,11 +20,15 @@
  *
  * Exmaple 3:
  * =========
- * ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
+ * $ > ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
  *
  * Exmaple 4:
  * =========
- * ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c002 --intype mitp --outtype terra_cc --interp nearest2
+ * $ > ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c002 --intype mitp --outtype terra_cc --interp nearest2
+ *
+ * Exmaple 5:
+ * =========
+ * $ > ./geomorph --mt 16 --nt 8 --nd 10 --mtin 16 --ntin 8 --ndin 5 --infile mvis001 --outfile mvis002 --intype mvis --outtype mvis --interp linear
  */
 
 #ifndef GEO_TUI_
@@ -240,9 +244,9 @@ bool gm_processCommandLine(int argc, char* argv[])
         data->interp = data->NEAREST;
       }else if (strcmp(argv[i], "nearest2") == 0) {
         data->interp = data->NEAREST2;
-/*      }else if (strcmp(argv[i], "linear") == 0) {
+      }else if (strcmp(argv[i], "linear") == 0) {
         data->interp = data->LINEAR;
-      }else if (strcmp(argv[i], "cubic") == 0) {
+/*      }else if (strcmp(argv[i], "cubic") == 0) {
         data->interp = data->CUBIC;   */
       }else {
         gm_usage();

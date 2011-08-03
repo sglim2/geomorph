@@ -45,6 +45,8 @@ public:
     double getNearestDataValue2_mitp(Data*, int);
     double getNearestDataValue2_filt(Data*, int);
 
+    int    getLinearDataValue(Data*);
+
     bool   importData(Data*);
     bool   importData_gpu(Data*);
 

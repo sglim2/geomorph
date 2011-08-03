@@ -19,9 +19,10 @@
 Grid::Grid()
     : domains(), mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
 {
-    mt = 0;
-    idmax = 10;
-    domains = new Domain[idmax];
+  mt = 0;
+  idmax = 10;
+  domains = new Domain[idmax];
+  for (int i=0 ; i<idmax ; i++) domains[i].id=i;
 }
 
 
@@ -43,6 +44,7 @@ Grid::Grid(int _mt, int _nt, int _nd)
   nproc=pow((mt/nt),2)*10/nd;
   
   domains = new Domain[idmax];
+  for (int i=0 ; i<idmax ; i++) domains[i].id=i;
 }
 
 ////////////////////////////////////////
