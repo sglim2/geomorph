@@ -392,7 +392,25 @@ int Domain::getLinearDataValue(Data *dptr)
 	  }
 
       }
-  }
+  } // if mtin < mtout
+
+  if ( dptr->mvis->mt > mt ) {
+      ScaleFactor = dptr->mvis->mt / mt;
+
+      for ( int ri2=0 ; ri2 < nr ; ri2++) {
+	  int ri1 = ri2 * ScaleFactor;
+	  for ( int i22 = 0 ; i22 < mt+1 ; i22++) { 
+	      int i21 = i22 * ScaleFactor;
+	      for ( int i12 = 0 ; i12 < mt+1 ; i12++) { 
+		  int i11 = i12 * ScaleFactor;
+
+		  index1 = dptr->mvis->domains[id].idx(ri1,i21,i11);
+		  index2 = idx(ri2,i22,i12);
+		  V[index2] = dptr->mvis->domains[id].V[index1];
+	      }
+	  }
+      }
+  }// if mtin > mtout
 
   return 0;
 }
