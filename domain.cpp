@@ -278,25 +278,122 @@ double Domain::getNearestDataValue2_filt(Data *dptr, int index)
 ////////////////////////////////////////
 // Domain::getLinearDataValue
 //
-// Given the index of the geomorph grid, searches for the 'V' value of the
-// nearest spatial point of the 'Data' data.
+// Converts one grid to another, with up-scaling or down-scaling, if necessary.
+//
+// mtin = mtout -> 1. simple copy of grid
+//
+// mtin < mtout -> 1. straight copy of grid points into new grid (relevant
+//                    points only) 
+//                 2. cycle through each layer (having previously defined
+//                    points) on output grid, performing a bilinear
+//                    interpoloation of all undefined points on that layer.
+//                 3. Cycle through all adjacent layers with defined points,
+//                    performing a linearinterpolation between layers for all
+//                    layer points.
+//
+// mtin > mtout -> 1. copy a sub-set of input grid points to the new grid.
+//
 int Domain::getLinearDataValue(Data *dptr)
 {
-  int index=0;
+  int index1=0;
+  int index2=0;
+  int i22 = 0;
+  int i12 = 0;
+  int ri2 = 0;
   double * Vptr=V;
-
+  int ScaleFactor=mt/dptr->mvis->domains[id].mt;
+  
   if ( dptr->mvis->mt == mt ) {
-    // straight copy
-    for ( int ri=0 ; ri < nr ; ri++){
-      for ( int i2 = 0 ; i2 < mt+1 ; i2++) {
-	for ( int i1 = 0 ; i1 < mt+1 ; i1++) {
-	  index = idx(ri,i2,i1);
-	  Vptr[index] = dptr->mvis->domains[id].V[index];
-	}
-      }
-    } 
+      // straight copy
+      for ( int ri=0 ; ri < nr ; ri++) {
+	  for ( int i2 = 0 ; i2 < mt + 1 ; i2++) {
+	      for ( int i1 = 0 ; i1 < mt + 1 ; i1++) {
+		  index1 = dptr->mvis->domains[id].idx(ri,i2,i1);
+		  index2 = index1;
+		  Vptr[index2] = dptr->mvis->domains[id].V[index1];
+	      }
+	  }
+      } 
   } // if mtin==mtout
   
+  if ( dptr->mvis->mt <  mt ) {
+      // Up-scaling
+
+      // 1. Copy existing data...
+      for ( int ri1=0 ; ri1 < dptr->mvis->domains[id].nr ; ri1++) {
+	  for ( int i21 = 0 ; i21 < dptr->mvis->domains[id].mt + 1 ; i21++) {
+	      for ( int i11 = 0 ; i11 < dptr->mvis->domains[id].mt + 1 ; i11++) {
+		  index1 = dptr->mvis->domains[id].idx(ri1,i21,i11);
+		  ri2 = ri1 * ScaleFactor;
+		  i22 = i21 * ScaleFactor;
+		  i12 = i11 * ScaleFactor;
+		  index2 = idx(ri2,i22,i12);
+		  Vptr[index2] = dptr->mvis->domains[id].V[index1];
+	      }
+	  }
+      }
+
+      // 2. Cycle through each defined layer, bilinear-interpolating between
+      //    all existing points.
+      for ( int ri1=0 ; ri1 < dptr->mvis->domains[id].nr ; ri1++) {
+	  ri2 = ri1 * ScaleFactor;
+
+	  for ( int i21 = 0 ; i21 < dptr->mvis->domains[id].mt +1 ; i21++) {
+	      i22 = i21*ScaleFactor;
+
+	      for ( int i11 = 0 ; i11 < dptr->mvis->domains[id].mt ; i11++) {
+
+		  int A = i11 * ScaleFactor; // starting i1 point
+		  int B = (i11+1) * ScaleFactor; // ending i1 point 
+		  for ( i12 = A+1 ; i12 < B ; i12++) {
+		      index2 = idx(ri2,i22,i12);
+		      V[index2] = V[idx(ri2,i22,A)] + 
+          			  (i12-A) * 
+	        		  ( V[idx(ri2,i22,B)] - V[idx(ri2,i22,A)]) / ScaleFactor;
+		  } 
+	      }
+	  }
+
+	  for ( int i21 = 0 ; i21 < dptr->mvis->domains[id].mt ; i21++) {
+	      int A = i21 * ScaleFactor;
+	      int B = (i21+1) * ScaleFactor;
+	      
+	      for ( int i12 = 0 ; i12 < mt+1 ; i12++) { 
+		  
+		  for ( i22 = A+1 ; i22 < B ; i22++) {
+		      index2 = idx(ri2,i22,i12);
+		      V[index2] = V[idx(ri2,A,i12)] + 
+          			  (i22-A) * 
+	        		  ( V[idx(ri2,B,i12)] - V[idx(ri2,A,i12)]) / ScaleFactor;
+		      
+		  }
+	      }
+	  }
+      } // radial layers
+
+      // 3. Cycle through all adjacent layers with defined data-values. For
+      //    each point withon theses layers, interpolate lineraly for all
+      //    sandwiched layers.
+      for ( int ri1=0 ; ri1 < dptr->mvis->domains[id].nr - 1 ; ri1++) {
+	  int A = ri1 * ScaleFactor;
+	  int B = (ri1+1) * ScaleFactor;
+
+	  for ( int i22 = 0 ; i22 < mt+1 ; i22++) { 
+	      for ( int i12 = 0 ; i12 < mt+1 ; i12++) { 
+		  
+		  for ( ri2 = A+1 ; ri2 < B ; ri2++) {
+		      index2 = idx(ri2,i22,i12);
+		      V[index2] = V[idx(A,i22,i12)] + 
+          			  (ri2-A) * 
+			          ( V[idx(B,i22,i12)] - V[idx(A,i22,i12)]) / ScaleFactor;
+		      
+		  }
+	      }
+	  }
+
+      }
+  }
+
   return 0;
 }
 
