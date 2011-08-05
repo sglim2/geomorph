@@ -504,6 +504,29 @@ char* Data::interpConverter()
 // getStats
 bool Data::getStats()
 {
+    if ( intype == MITP || intype == FILT ){
+	return getStatsData();
+    }else{
+	return getStatsGrid();
+    }
+
+    return 0;
+}
+
+////////////////////////////////////////
+// getStatsData
+bool Data::getStatsGrid()
+{
+    nval = mvis->npts;
+    ndpth = mvis->nr;
+	
+    return 0;
+}
+
+////////////////////////////////////////
+// getStatsData
+bool Data::getStatsData()
+{
     double max = -veryLarge,
            min =  veryLarge;
 	    

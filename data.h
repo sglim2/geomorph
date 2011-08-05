@@ -69,6 +69,8 @@ public:
     char*  interpConverter();
     
     bool   getStats();
+    bool   getStatsData();
+    bool   getStatsGrid();
     
     bool   findBoundary();
     bool   findLayers();

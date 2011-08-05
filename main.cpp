@@ -91,8 +91,17 @@ bool gm_usage()
   printf(" --mt . . . . . . . \n");
   printf(" --nt . . . . . . . \n");
   printf(" --nd . . . . . . . \n");
-  printf(" --interp . . . . . interpolation routine [ nearest | nearest2 ]\n");
-
+  printf(" --mtin . . . . . . \n");
+  printf(" --ntin . . . . . . \n");
+  printf(" --ndin . . . . . . \n");
+  printf(" --suffix . . . . . \n");
+  printf(" --suffixin . . . . \n");
+  printf(" --interp . . . . . interpolation routine [ nearest | nearest2 | linear ]\n");
+  printf("\n");
+  printf("Inerpolation routines...\n");
+  printf("  nearest   - used with intype = MITP ot FILT \n");
+  printf("  nearest2  - used with intype = MITP ot FILT \n");
+  printf("  linear    - used with intype = MVIS \n");
 
   return 0;
 }
@@ -107,12 +116,14 @@ bool gm_processCommandLine(int argc, char* argv[])
     --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP ]
     --infile,  -i. . . input filename
     --outfile, -o. . . output filename base
-    --mt . . . . . . .
-    --nt . . . . . . .
-    --nd . . . . . . .
-    --mtin . . . . . .
-    --ntin . . . . . .
-    --ndin . . . . . .
+    --mt . . . . . . . output mt value
+    --nt . . . . . . . output nt value
+    --nd . . . . . . . output nd value
+    --mtin . . . . . . input mt value
+    --ntin . . . . . . input nt value
+    --ndin . . . . . . input nd value
+    --suffix . . . . . output suffix (for MVIS and TERRA) 
+    --suffixin . . . . input suffix (for MVIS and TERRA) 
    */
 
   if (!data){
@@ -267,6 +278,11 @@ bool gm_processCommandLine(int argc, char* argv[])
   printf(" mt          %d \n", grid->mt);
   printf(" nt          %d \n", grid->nt);
   printf(" nd          %d \n", grid->nd);
+  printf(" mtin        %d \n", data->mvis->mt);
+  printf(" ntin        %d \n", data->mvis->nt);
+  printf(" ndin        %d \n", data->mvis->nd);
+  printf(" suffix      %d \n", grid->suffix);
+  printf(" suffixin    %d \n", data->mvis->suffix);
   printf(" interp      %s(%d) \n", data->interpConverter(), data->interp);
   printf("\n");
 
