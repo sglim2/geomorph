@@ -315,16 +315,6 @@ bool Data::mvisRead()
   // this->mvis->domains[].
   mvis->importMVIS(infile, cmb);
   
-  int ferror;
-
-
-  char buf[255]; 
-  char tmpinfile[64];
-  nval = 0;
-
-
-  
-
   return 0; //success
 }
 

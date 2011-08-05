@@ -17,7 +17,7 @@
 ////////////////////////////////////////
 
 Grid::Grid()
-    : domains(), mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
+    : suffix(), mt(), nt(), nd(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
 {
   mt = 0;
   idmax = 10;
@@ -33,7 +33,7 @@ Grid::Grid()
 //  i.e # radial layers = nr+1
 //
 Grid::Grid(int _mt, int _nt, int _nd)
-  : domains(), mt(), nt(), nd(), nr(), idmax(), nproc(), rmax(), rmin()
+  : suffix(), mt(), nt(), nd(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
 {
   idmax = 10;
   mt=_mt;
@@ -55,52 +55,6 @@ Grid::Grid(int _mt, int _nt, int _nd)
 // methods
 ////////////////////////////////////////
 
-////////////////////////////////////////
-// Grid:xnProc
-//
-// given idx, returns TERRA processor number
-//   
-int Grid::xnProc(int idx)
-{
-  // not yet implemented (or needed!)
-  return idx;
-}
-
-////////////////////////////////////////
-// Grid:xnProc
-//
-// given:
-//   id.....diamond
-//   xyz....x=0,y=1,z=2
-//   i1.....i
-//   j1.....j
-//   r......radial layer  
-// returns the TERRA processor number.
-// Array xn has structure:
-//    xn[nr+1][id][mt+1][mt+1][xyz]
-//
-int Grid::xnProc(int r, int id, int j1, int i1, int xyz)
-{
-  
-  int xnproc=0;
-  
-  return xnproc;
-
-}
-
-////////////////////////////////////////
-// Grid::idx
-//
-// given:
-//   id.....diamond
-//   xyz....x=0,y=1,z=2
-//   i1.....i
-//   j1.....j
-//   r......radial layer  
-// returns the index value for array xn.
-// Array xn has structure:
-//    xn[nr+1][id][mt+1][mt+1][xyz]
-//
 int Grid::idx(int r, int id, int i2, int i1, int xyz)
 {
   int idmax  = 10;
@@ -194,18 +148,18 @@ bool Grid::importMVIS(char * dinfile, double cmb)
 	    
 	  // call our domain export routine
 	  if ( nd == 10 ){
-	      if ( domains[i].importMVIS(fptr, nproc, proc, nt, cmb) ){
+	      if ( domains[i].importMVIS(fptr, proc, nt, cmb) ){
 		  printf("Error in Domain::importMVIS()");
 	      }
 	  } // if nd == 10
 	  
 	  if ( nd == 5 ) {
 	      if ( proc < nproc/2 ){
-		  if ( domains[i].importMVIS(fptr, nproc/2, proc, nt, cmb) ){
+		  if ( domains[i].importMVIS(fptr, proc, nt, cmb) ){
 		      printf("Error in Domain::importMVIS()");
 		  }
 	      }else{
-		  if ( domains[i+nd].importMVIS(fptr, nproc/2, proc-nproc/2, nt, cmb) ){
+		  if ( domains[i+nd].importMVIS(fptr, proc-nproc/2, nt, cmb) ){
 		      printf("Error in Domain::importMVIS()");
 		  }
 	      }
@@ -252,18 +206,18 @@ bool Grid::exportMVIS(Data * dptr)
 	    
 	  // call our domain export routine
 	  if ( nd == 10 ){
-	    if ( domains[i].exportMVIS(fptr, nproc, proc, nt) ){
+	    if ( domains[i].exportMVIS(fptr, proc, nt) ){
 		printf("Error in Domain::exportMVIS()");
 	    }
 	  } // if nd == 10
 
 	  if ( nd == 5 ) {
 	    if ( proc < nproc/2 ){
-	      if ( domains[i].exportMVIS(fptr, nproc/2, proc, nt) ){
+	      if ( domains[i].exportMVIS(fptr, proc, nt) ){
 		printf("Error in Domain::exportMVIS()");
 	      }
 	    }else{
-	      if ( domains[i+nd].exportMVIS(fptr, nproc/2, proc-nproc/2, nt) ){
+	      if ( domains[i+nd].exportMVIS(fptr, proc-nproc/2, nt) ){
 		printf("Error in Domain::exportMVIS()");
 	      }
 	    }
@@ -346,18 +300,18 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
 			
 			// call our domain export routine
 			if ( nd == 10 ){
-			    if ( domains[i].exportTERRA(fptr, nproc, proc, nt, ir, tvpp, colcntr) ){
+			    if ( domains[i].exportTERRA(fptr, proc, nt, ir, tvpp, colcntr) ){
 				printf("Error in Domain::exportTERRA()");
 			    }
 			} // if nd == 10
 			
 			if ( nd == 5 ) {
 			    if ( proc < nproc/2 ){
-				if ( domains[i].exportTERRA(fptr, nproc/2, proc, nt, ir, tvpp, colcntr) ){
+				if ( domains[i].exportTERRA(fptr, proc, nt, ir, tvpp, colcntr) ){
 				    printf("Error in Domain::exportTERRA()");
 				}
 			    }else{
-				if ( domains[i+nd].exportTERRA(fptr, nproc/2, proc-nproc/2, nt, ir, tvpp, colcntr) ){
+				if ( domains[i+nd].exportTERRA(fptr, proc-nproc/2, nt, ir, tvpp, colcntr) ){
 				    printf("Error in Domain::exportTERRA()");
 				}
 			    }

@@ -19,7 +19,7 @@
 class Domain {
 public:
     
-    int id,nr,mt;
+    int  id,nr,mt;
     bool northern;
     
     double *xn,*yn,*zn;
@@ -50,9 +50,9 @@ public:
     bool   importData(Data*);
     bool   importData_gpu(Data*);
 
-    bool   importMVIS(FILE *, int, int, int, double);
-    bool   exportMVIS(FILE *, int, int, int);
-    bool   exportTERRA(FILE *, int, int, int, int, int, long int &);
+    bool   importMVIS(FILE *, int, int, double);
+    bool   exportMVIS(FILE *, int, int);
+    bool   exportTERRA(FILE *, int, int, int, int, long int &);
 
     int    sqrti(int);
     bool   rotate3d(double*, double*, double*, 

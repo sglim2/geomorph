@@ -32,8 +32,6 @@ public:
     
     bool   genGrid     (double);
     int    suggestGrid (int);
-    int    xnProc      (int);
-    int    xnProc      (int, int, int, int, int);
     int    idx         (int, int, int, int, int);
     bool   importData  (Data*);
     bool   importMVIS  (char*, double);

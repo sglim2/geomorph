@@ -22,7 +22,7 @@
 // 
 //
 Domain::Domain()
-    : id(), northern(), xn(), mt(), nr()
+    : id(), nr(), mt(), northern(), xn(), yn(), zn(), V(), Vmax(), Vmin()
 {
     Vmin = veryLarge;
     Vmax = verySmall;
@@ -33,7 +33,7 @@ Domain::Domain()
 // 
 //
 Domain::Domain(int _id, bool _northern)
-    : id(), northern(), xn(), mt(), nr()
+    : id(), nr(), mt(), northern(), xn(), yn(), zn(), V(), Vmax(), Vmin()
 {
     if ( _id >= 10 ) {
 	printf("Domain::Domain fail");
@@ -51,7 +51,7 @@ Domain::Domain(int _id, bool _northern)
 // 
 //
 Domain::Domain(int _id, bool _northern, int _mt, int _nr)
-  : id(), northern(), xn(), mt(), nr()
+  : id(), nr(), mt(), northern(), xn(), yn(), zn(), V(), Vmax(), Vmin()
 {
     if (_id >= 10) {
 	printf("Domain::Domain fail");
@@ -529,7 +529,7 @@ int Domain::sqrti(int a)
 //
 // import data from MVIS files
 // 
-bool Domain::importMVIS(FILE * fptr, int nproc, int proc, int nt, double cmb)
+bool Domain::importMVIS(FILE * fptr, int proc, int nt, double cmb)
 {
     
     float buf;
@@ -579,7 +579,7 @@ bool Domain::importMVIS(FILE * fptr, int nproc, int proc, int nt, double cmb)
 //
 // export Data::dptr in the MVIS format.
 // 
-bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
+bool Domain::exportMVIS(FILE * fptr, int proc, int nt)
 {
     
     int   index=0;
@@ -614,7 +614,7 @@ bool Domain::exportMVIS(FILE * fptr, int nproc, int proc, int nt)
 //
 // export Data::dptr in the TERRA format (convection or circulation  model)
 // 
-bool Domain::exportTERRA(FILE * fptr, int nproc, int proc, int nt, int ir, int tvp, long int &colcntr)
+bool Domain::exportTERRA(FILE * fptr, int proc, int nt, int ir, int tvp, long int &colcntr)
 {
    
     int   index=0;
