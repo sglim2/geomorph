@@ -40,7 +40,7 @@
 
 // globals
 Grid* grid=0;
-Grid* gridin=0;
+//Grid* gridin=0;
 Data* data=0;
 
 bool previewAvailable = false;  // GUI only
