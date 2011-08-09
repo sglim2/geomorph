@@ -40,7 +40,6 @@
 
 // globals
 Grid* grid=0;
-//Grid* gridin=0;
 Data* data=0;
 
 bool previewAvailable = false;  // GUI only
@@ -50,10 +49,6 @@ int  previewLayer = 0;          // GUI only
 bool autoRotate = false;        // GUI only
 bool radialAverage = false;     // GUI only
 
-/*
-int previewWindow=0;
-preview * previewW=0;
-*/
 // GUI already has an object called 'data'
 Data * gdata=0;
 
@@ -99,8 +94,8 @@ bool gm_usage()
   printf(" --interp . . . . . interpolation routine [ nearest | nearest2 | linear ]\n");
   printf("\n");
   printf("Inerpolation routines...\n");
-  printf("  nearest   - used with intype = MITP ot FILT \n");
-  printf("  nearest2  - used with intype = MITP ot FILT \n");
+  printf("  nearest   - used with intype = MITP or FILT \n");
+  printf("  nearest2  - used with intype = MITP or FILT \n");
   printf("  linear    - used with intype = MVIS \n");
 
   return 0;
@@ -176,12 +171,12 @@ bool gm_processCommandLine(int argc, char* argv[])
 
     if (strcmp(argv[i], "--infile") == 0) {
       i++;
-      data->infile = new char[strlen(argv[i])];
+      data->infile = new char[strlen(argv[i])+1];
       strcpy(data->infile,argv[i]);
     }
     if (strcmp(argv[i], "--outfile") == 0) {
       i++;
-      data->outfile = new char[strlen(argv[i])];
+      data->outfile = new char[strlen(argv[i])+1];
       strcpy(data->outfile,argv[i]);
     }
 

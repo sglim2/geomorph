@@ -23,7 +23,7 @@ public:
     bool northern;
     
     double *xn,*yn,*zn;
-    double *V;
+    double *V,P,vel;
 
     double Vmax,Vmin;
 

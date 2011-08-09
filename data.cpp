@@ -27,6 +27,10 @@ Data::Data()
   indirSet = false;
   outdirSet = false;
 
+  filtinstart    = 0;
+  filtinend      = 0;
+  filtinnumfiles = 0;
+  
 }
 
 ////////////////////////////////////////
