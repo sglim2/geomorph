@@ -33,6 +33,10 @@ Data::Data()
   filtinnumfiles = 0;
   nvalpershell   = 0;
 
+  // MITP data...
+  nlat = 0;
+  nlng = 0;
+
 
 }
 
