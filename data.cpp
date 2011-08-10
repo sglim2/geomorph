@@ -333,6 +333,23 @@ bool Data::mvisRead()
 
 
 ////////////////////////////////////////
+// Dat::terraRead()
+// --------
+//
+bool Data::terraRead()
+{ 
+  // this->mvis is already created, but we need to generate the domains
+  mvis->genGrid(cmb);
+  
+  // for mvis input, our data isn't kept in Data->x,y,z,V, but
+  // this->mvis->domains[].
+  mvis->importTERRA(infile, 0); // always terra_cc for now.
+  
+  return 0; //success
+}
+
+
+////////////////////////////////////////
 // filtRead
 // --------
 // Filt data consists of multiple files, each continaing a 

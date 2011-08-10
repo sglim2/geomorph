@@ -23,7 +23,7 @@ public:
     bool northern;
     
     double *xn,*yn,*zn;
-    double *V,P,vel;
+    double *V,*P,*vel;
 
     double Vmax,Vmin;
 
@@ -51,6 +51,7 @@ public:
     bool   importData_gpu(Data*);
 
     bool   importMVIS(FILE *, int, int, double);
+    bool   importTERRA(FILE *, int, int, int, int);
     bool   exportMVIS(FILE *, int, int);
     bool   exportTERRA(FILE *, int, int, int, int, long int &);
 

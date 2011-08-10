@@ -64,6 +64,9 @@ public:
     // MVIS
     bool   mvisRead();
 
+    // TERRA
+    bool   terraRead();
+
     char*  intypeConverter();
     char*  outtypeConverter();
     char*  interpConverter();

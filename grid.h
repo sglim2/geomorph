@@ -35,6 +35,7 @@ public:
     int    idx         (int, int, int, int, int);
     bool   importData  (Data*);
     bool   importMVIS  (char*, double);
+    bool   importTERRA (char*, int);
     bool   exportGrid  (Data*);
     bool   exportMVIS  (Data*);
     bool   exportTERRA (Data*, int);

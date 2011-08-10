@@ -69,6 +69,8 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
     yn = new double[nr*(mt+1)*(mt+1)];
     zn = new double[nr*(mt+1)*(mt+1)];
     V  = new double[nr*(mt+1)*(mt+1)];
+    vel= new double[nr*(mt+1)*(mt+1)*3];
+    P  = new double[nr*(mt+1)*(mt+1)];
 }
 
 
@@ -570,6 +572,50 @@ bool Domain::importMVIS(FILE * fptr, int proc, int nt, double cmb)
 	    }
 	}
     }
+    
+    return 0; // success
+}
+
+////////////////////////////////////////
+// Domain::importTERRA
+//
+// import Data::dptr in the TERRA format (convection or circulation  model)
+// 
+bool Domain::importTERRA(FILE * fptr, int proc, int nt, int ir, int tvp)
+{
+    float buf;
+    int   index=0;
+    int   i1start,i1end,i2start,i2end;
+    div_t divresult;
+
+    divresult = div(proc, mt/nt);
+
+    i1start = nt * divresult.rem;
+    i1end   = i1start + nt;
+    
+    i2start = nt * divresult.quot ;
+    i2end   = i2start + nt;
+
+    for ( int i2=i2start ; i2<=i2end ; i2++ ){
+      for ( int i1=i1start ; i1<=i1end ; i1++ ){
+	
+	if (tvp == 0) {
+	  index = idx(ir,i2,i1);
+	  fscanf(fptr,"%f",&buf);
+	  V[index] = buf;
+	}else if (tvp == 1) {
+	  for ( int xyz=0 ; xyz<3 ; xyz++) {
+	    fscanf(fptr,"%f",&buf);
+	    vel[3*index+xyz] = buf;
+	  }
+	}else if (tvp == 2) {
+	  fscanf(fptr,"%f",&buf);
+	  P[index] = buf;
+	}else {
+	  return 1; // failure
+	}
+      } // i1
+    } // i2
     
     return 0; // success
 }

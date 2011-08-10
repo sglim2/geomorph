@@ -232,6 +232,105 @@ bool Grid::exportMVIS(Data * dptr)
 }
 
 ////////////////////////////////////////
+// Grid::importTERRA
+//
+// imports data in desired format (TERRA Convection model, or Circulation model).
+//
+// Due to the necessary sequential input, this must be done in serial for
+// each process.
+//
+bool Grid::importTERRA(char * dinfile, int terratype)
+{
+    FILE * fptr;
+    char infile[256];
+    int  tvppmax;   // temp/vel/pressure/plate-history
+    int  fail=0;
+
+    // terratype=0(default) - > convection model
+    // terratype=1 - > circulation model (i.e. with plate-histories)
+    terratype == 1 ? tvppmax=4 : tvppmax=3;
+
+    // we now cycle over 'processors'
+    for ( int proc=0 ; proc < nproc ; proc++ ){
+      
+      // open a file per 'process'
+      strcpy(infile,dinfile);
+      sprintf(infile,"%s.%04d.%02d", infile, proc,suffix);
+      printf("infile = %s\n",infile);
+      
+      // open file
+      fptr=fopen(infile,"r");
+      if (fptr==NULL){
+      }
+      
+      for ( int tvpp=0 ; tvpp<tvppmax ; tvpp++ ){ // temp/vel/pressure/plate-history output
+	
+	// read initial blurb and throw away
+	char * tmpbuf = new char[256];
+	float buf;
+	for ( int i=0 ; i<5 ; i++){
+	  fgets(tmpbuf , 255 , fptr);
+	}
+	
+	// read radii of layers and throw away
+	for (int i=1 ; i <= nr ; i++){
+	  fscanf(fptr,"%f", &buf );
+	}
+	    
+	// read propr array and throw away
+	for (int i=1 ; i <= 20 ; i++){
+	  fscanf(fptr,"%f", &buf );
+	}
+	
+	if (tvpp != 3) { // i.e. not plate-histories
+	  
+	  // cycle over layers
+//        for ( int ir=nr-1 ; ir>=0 ; ir-- ){
+	  for ( int ir=0 ; ir<nr ; ir++ ){
+	    
+	    // call each domain which is part of our 'process'  (if nd=10, this means all of them; nd=5, 1 hemisphere only)
+	    for (int i=0 ; i < nd ; i++){
+	      
+	      // call our domain export routine
+	      if ( nd == 10 ){
+		if ( domains[i].importTERRA(fptr, proc, nt, ir, tvpp) ){
+		  printf("Error in Domain::importTERRA()");
+		}
+	      } // if nd == 10
+	      
+	      if ( nd == 5 ) {
+		if ( proc < nproc/2 ){
+		  if ( domains[i].importTERRA(fptr, proc, nt, ir, tvpp) ){
+		    printf("Error in Domain::importTERRA()");
+		  }
+		}else{
+		  if ( domains[i+nd].importTERRA(fptr, proc-nproc/2, nt, ir, tvpp) ){
+		    printf("Error in Domain::importTERRA()");
+		  }
+		}
+	      } // if nd == 5
+	      
+	    } // for i (domain)
+	  } // ir
+	}else{ 
+	  
+	  // read plate histories and throw away
+	  for (int i=1 ; i <= (nt+1)*(nt+1)*nd*1*2 ; i++){
+	    fscanf(fptr,"%f", &buf );
+	  } // for i
+	}
+      } // tvpp
+      
+      // close file, ready for re-assigning to a new 'process'
+      fclose(fptr);	    
+      
+    } // proc
+    
+    return fail; 
+} // importTERRA
+
+
+////////////////////////////////////////
 // Grid::exportTERRA
 //
 // exports data in desired format (TERRA Convection model, or Circulation model).
@@ -335,7 +434,7 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
     } // proc
 
     return fail; 
-}
+} // exportTERRA
 
 ////////////////////////////////////////
 // Grid::exportGrid
