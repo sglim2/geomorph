@@ -27,10 +27,13 @@ Data::Data()
   indirSet = false;
   outdirSet = false;
 
+  // FILT data...
   filtinstart    = 0;
   filtinend      = 0;
   filtinnumfiles = 0;
-  
+  nvalpershell   = 0;
+
+
 }
 
 ////////////////////////////////////////
@@ -68,6 +71,8 @@ bool Data::findBoundary()
 // As with Data::findBoundary(), an alernative method would be to calculate
 // these values as the data is read in. Also, this method isn't very robust,
 // and accurracy depends upon nbins.
+//
+// THIS ROUTINE IS INACCURATE AND SHOULD BE AVOIDED
 bool Data::findLayers()
 {
     nlayr = 0;
@@ -542,16 +547,16 @@ bool Data::getStatsData()
       return 1;
   }
   // find the number of layers
-  if (findLayers()){
-      printf("Error in Data::findLayers().");
-      return 1;
-  }
+  //  if (findLayers()){
+  //      printf("Error in Data::findLayers().");
+  //      return 1;
+  //  }
   
 
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");
     printf("|  nvals        =  %12ld                  |\n"       , nval);
-    printf("|  nlayr(~)     =  %12d                  |\n"        , nlayr);
+//    printf("|  nlayr(~)     =  %12d                  |\n"        , nlayr);
     printf("|  nlat         =  %12d                  |\n"        , nlat);
     printf("|  nlng         =  %12d                  |\n"        , nlng);
     printf("|  ndpth        =  %12d                  |\n"        , ndpth);
