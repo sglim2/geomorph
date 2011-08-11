@@ -261,6 +261,7 @@ bool Grid::importTERRA(char * dinfile, int terratype)
       // open file
       fptr=fopen(infile,"r");
       if (fptr==NULL){
+	  printf("Error opening file %s\n",infile);
       }
       
       for ( int tvpp=0 ; tvpp<tvppmax ; tvpp++ ){ // temp/vel/pressure/plate-history output
@@ -269,7 +270,7 @@ bool Grid::importTERRA(char * dinfile, int terratype)
 	char * tmpbuf = new char[256];
 	float buf;
 	for ( int i=0 ; i<5 ; i++){
-	  fgets(tmpbuf , 255 , fptr);
+	  fgets(tmpbuf , 256 , fptr);
 	}
 	
 	// read radii of layers and throw away

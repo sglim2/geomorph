@@ -105,6 +105,8 @@ bool Domain::defineDomain(int _id, int _nr, int _mt)
     yn = new double[nr*(mt+1)*(mt+1)];
     zn = new double[nr*(mt+1)*(mt+1)];
     V  = new double[nr*(mt+1)*(mt+1)];
+    vel= new double[nr*(mt+1)*(mt+1)*3];
+    P  = new double[nr*(mt+1)*(mt+1)];
 
     return 0;
 }

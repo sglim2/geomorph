@@ -116,10 +116,10 @@ bool Data::Read()
 	case MVIS :
 	    return mvisRead();
 	case TERRA_CC :
-	    // do something
+	    return terraRead();
 	    break;
 	case TERRA_CV :
-	    // do something
+	    return terraRead();
 	    break;
 	case MITP :
 	    return mitpRead();
