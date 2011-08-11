@@ -71,6 +71,11 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
     V  = new double[nr*(mt+1)*(mt+1)];
     vel= new double[nr*(mt+1)*(mt+1)*3];
     P  = new double[nr*(mt+1)*(mt+1)];
+    
+    // initialise
+    for ( int i=0 ; i<nr*(mt+1)*(mt+1) ; i++ ) { V[i]=0.; P[i]=0.;}
+    for ( int i=0 ; i<nr*(mt+1)*(mt+1)*3 ; i++ ) { vel[i]=0.;}
+
 }
 
 
@@ -107,6 +112,10 @@ bool Domain::defineDomain(int _id, int _nr, int _mt)
     V  = new double[nr*(mt+1)*(mt+1)];
     vel= new double[nr*(mt+1)*(mt+1)*3];
     P  = new double[nr*(mt+1)*(mt+1)];
+
+    // initialise
+    for ( int i=0 ; i<nr*(mt+1)*(mt+1) ; i++ ) { V[i]=0.; P[i]=0.;}
+    for ( int i=0 ; i<nr*(mt+1)*(mt+1)*3 ; i++ ) { vel[i]=0.;}
 
     return 0;
 }
@@ -308,6 +317,7 @@ int Domain::getLinearDataValue(Data *dptr)
   int ScaleFactor=mt/dptr->mvis->domains[id].mt;
   
   if ( dptr->mvis->mt == mt ) {
+      printf("No-Scaling...\n");
       // straight copy
       for ( int ri=0 ; ri < nr ; ri++) {
 	  for ( int i2 = 0 ; i2 < mt + 1 ; i2++) {
@@ -321,6 +331,7 @@ int Domain::getLinearDataValue(Data *dptr)
   } // if mtin==mtout
   
   if ( dptr->mvis->mt <  mt ) {
+      printf("Up-Scaling...\n");
       // Up-scaling
 
       // 1. Copy existing data...
@@ -399,6 +410,7 @@ int Domain::getLinearDataValue(Data *dptr)
   } // if mtin < mtout
 
   if ( dptr->mvis->mt > mt ) {
+      printf("Down-Scaling...\n");
       ScaleFactor = dptr->mvis->mt / mt;
 
       for ( int ri2=0 ; ri2 < nr ; ri2++) {
@@ -482,7 +494,7 @@ bool Domain::importData(Data *dptr)
 	}
       }
     }else{
-      // ... must be intype == MVIS or TERRA.
+      // ... must be intype == MVIS or TERRA_CC or TERRA_CV.
       getLinearDataValue(dptr);
     }
 
@@ -686,13 +698,15 @@ bool Domain::exportTERRA(FILE * fptr, int proc, int nt, int ir, int tvp, long in
 		if ( colcntr%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
 		colcntr++;
 	    }else if (tvp == 1) {
+//		index = idx(ir,i2,i1);
 		for ( int xyz=0 ; xyz<3 ; xyz++) {
-		    fprintf(fptr,"%10.3E",0.);
+		    fprintf(fptr,"%10.3E", 0.); // no interpolation routines for pressure as yet, so print zeroes.
 		    if ( colcntr%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
 		    colcntr++;
 		}
 	    }else if (tvp == 2) {
-		fprintf(fptr,"%10.3E",0.);
+//		index = idx(ir,i2,i1);
+		fprintf(fptr,"%10.3E", 0.); // no interpolation routines for pressure as yet, so print zeroes.
 		if ( colcntr%15 == 0 )  fprintf(fptr,"\n"); // print in columns of 15
 		colcntr++;
 	    }else {

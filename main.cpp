@@ -30,9 +30,13 @@
  * =========
  * $ > ./geomorph --mt 16 --nt 8 --nd 10 --mtin 16 --ntin 8 --ndin 5 --infile mvis001 --outfile mvis002 --intype mvis --outtype mvis --interp linear
  *
- * Exmaple 6 (Under Test):
+ * Exmaple 6:
  * =========
- * $ > ./geomorph --mt 16 --nt 8 --nd 10 --suffix 00 --mtin 16 --ntin 8 --ndin 10--suffixin 01 --infile c002 --outfile mvis001 --intype terra_cv --outtype mvis --interp linear
+ * $ > ./geomorph --mt 32 --nt 8 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --infile ../data/c002 --outfile mvis001 --intype terra_cv --outtype mvis --interp linear
+ *
+ * Exmaple 7:
+ * =========
+ * $ > ./geomorph --mt 64 --nt 16 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --infile ../data/c002 --outfile c003 --intype terra_cv --outtype terra_cv --interp linear
  */
 
 #ifndef GEO_TUI_
