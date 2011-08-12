@@ -20,15 +20,15 @@
  *
  * Exmaple 3:
  * =========
- * $ > ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
+ * $ > ./geomorph --mt 32 --nt 8 --nd 5 --suffix 01 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
  *
  * Exmaple 4:
  * =========
- * $ > ./geomorph --mt 32 --nt 8 --nd 5 --infile ../data/MITP08.txt --outfile c002 --intype mitp --outtype terra_cc --interp nearest2
+ * $ > ./geomorph --mt 32 --nt 8 --nd 5 --suffix 01 --infile ../data/MITP08.txt --outfile c002 --intype mitp --outtype terra_cc --interp nearest2
  *
  * Exmaple 5:
  * =========
- * $ > ./geomorph --mt 16 --nt 8 --nd 10 --mtin 16 --ntin 8 --ndin 5 --infile mvis001 --outfile mvis002 --intype mvis --outtype mvis --interp linear
+ * $ > ./geomorph --mt 16 --nt 8 --nd 10 --suffix 01 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --infile ../data/mvis002 --outfile mvis002 --intype mvis --outtype mvis --interp linear
  *
  * Exmaple 6:
  * =========
