@@ -316,6 +316,10 @@ int Domain::getLinearDataValue(Data *dptr)
   double * Vptr=V;
   int ScaleFactor=mt/dptr->mvis->domains[id].mt;
   
+  // get Statistics
+  Vmax = dptr->mvis->domains[id].Vmax;
+  Vmin = dptr->mvis->domains[id].Vmin;
+
   if ( dptr->mvis->mt == mt ) {
       printf("No-Scaling...\n");
       // straight copy

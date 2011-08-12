@@ -388,7 +388,7 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
 	    }
 
 
-	    if (tvpp != 3) { // i.e. not plate-histories
+	    if (tvpp != 3) { // i.e. no plate-histories
 
 		// cycle over layers
 		long int colcntr=1;

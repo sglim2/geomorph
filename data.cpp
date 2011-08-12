@@ -529,7 +529,7 @@ bool Data::getStats()
     }else{
 	return getStatsGrid();
     }
-
+    
     return 0;
 }
 
@@ -537,9 +537,43 @@ bool Data::getStats()
 // getStatsData
 bool Data::getStatsGrid()
 {
+    double max = -veryLarge,
+           min =  veryLarge;
+
     nval = mvis->npts;
     ndpth = mvis->nr;
 	
+    for ( int d=0 ; d<10 ; d++){
+	for ( int i=0; i<nval/10 ; i++){
+	    if ( mvis->domains[d].V[i] > max )  max=mvis->domains[d].V[i] ;
+	    if ( mvis->domains[d].V[i] < min )  min=mvis->domains[d].V[i] ;
+	    Vmean += mvis->domains[d].V[i];
+	}
+    }
+    Vmax   = max;
+    Vmin   = min;
+    Vmean /= nval;
+    for ( int d=0 ; d<10 ; d++){
+	mvis->domains[d].Vmax = max;
+	mvis->domains[d].Vmin = min;
+    }
+
+    printf("Input Stats....\n");
+    printf("+----------------------------------------------+\n");
+    printf("|  nvals        =  %12ld                  |\n"       , nval);
+    printf("|  nlat         =  %12d                  |\n"        , nlat);
+    printf("|  nlng         =  %12d                  |\n"        , nlng);
+    printf("|  ndpth        =  %12d                  |\n"        , ndpth);
+    printf("|  nvalpershell =  %12d                  |\n"        , nvalpershell);
+    printf("|  minR         =  %12.8g                  |\n"      , minR);
+    printf("|  maxR         =  %12.8g                  |\n"      , maxR);
+    printf("|  V(mean)      =  %12.8g                  |\n"      , Vmean);
+    printf("|  Vmin         =  %12.8g                  |\n"      , Vmin);
+    printf("|  Vmax         =  %12.8g                  |\n"      , Vmax);
+    printf("|  a            =  %12.8g                  |\n"      , a);
+    printf("|  cmb          =  %12.8g                  |\n"      , cmb);
+    printf("+----------------------------------------------+\n");
+
     return 0;
 }
 
