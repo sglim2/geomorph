@@ -20,6 +20,7 @@ public:
 
     int       suffix;
     int       mt,nt,nd;
+    bool      mtSet,ntSet,ndSet; // GUI only
     int       nproc;
     int       nr;
     int       idmax;

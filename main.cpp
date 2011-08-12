@@ -217,14 +217,17 @@ bool gm_processCommandLine(int argc, char* argv[])
     if (strcmp(argv[i], "--mtin") == 0) {
       i++;
       data->mvis->mt=atoi(argv[i]);
+      data->mvis->mtSet=true;
     }
     if (strcmp(argv[i], "--ntin") == 0) {
       i++;
       data->mvis->nt=atoi(argv[i]);
+      data->mvis->ntSet=true;
     }
     if (strcmp(argv[i], "--ndin") == 0) {
       i++;
       data->mvis->nd=atoi(argv[i]);
+      data->mvis->ndSet=true;
     }
 
     if (strcmp(argv[i], "--suffixin") == 0) {
@@ -236,14 +239,17 @@ bool gm_processCommandLine(int argc, char* argv[])
     if (strcmp(argv[i], "--mt") == 0) {
       i++;
       grid->mt=atoi(argv[i]);
+      grid->mtSet=true;
     }
     if (strcmp(argv[i], "--nt") == 0) {
       i++;
       grid->nt=atoi(argv[i]);
+      grid->ntSet=true;
     }
     if (strcmp(argv[i], "--nd") == 0) {
       i++;
       grid->nd=atoi(argv[i]);
+      grid->ndSet=true;
     }
 
     if (strcmp(argv[i], "--suffix") == 0) {
