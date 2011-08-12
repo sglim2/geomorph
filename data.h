@@ -24,7 +24,7 @@ class Grid;
 class Data {
 public:
     
-    enum { UNDEF, MVIS, TERRA_CC, TERRA_CV , MITP, FILT };
+    enum { MVIS, TERRA_CC, TERRA_CV , MITP, FILT, UNDEF };
     enum { NEAREST, NEAREST2, LINEAR, CUBIC };
 
     char *    infile;
@@ -34,8 +34,11 @@ public:
     char *    outdir;  // GUI only
     bool      outdirSet;  // GUI only
     int       intype;
+    bool      intypeSet;  // GUI only
     int       outtype;
+    bool      outtypeSet; // GUI only
     int       interp;  // interpolation routine to be used
+    bool      interpSet; // GUI only
     int       filtinstart,filtinend,filtinnumfiles;
     int       filtoutstart,filtoutend,filtoutnumfiles;
     int       nlat,nlng,ndpth,nvalpershell;

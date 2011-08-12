@@ -17,12 +17,13 @@
 ////////////////////////////////////////
 
 Grid::Grid()
-    : suffix(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
+  : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
 {
   mt = 0;
   mtSet=false;
   ntSet=false;
   ndSet=false;
+  suffixSet=false;
   idmax = 10;
   domains = new Domain[idmax];
   for (int i=0 ; i<idmax ; i++) domains[i].id=i;
@@ -36,9 +37,10 @@ Grid::Grid()
 //  i.e # radial layers = nr+1
 //
 Grid::Grid(int _mt, int _nt, int _nd)
-  : suffix(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
+  : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
 {
   idmax = 10;
+  suffixSet=false;
   mt=_mt;
   nt=_nt;
   nd=_nd;

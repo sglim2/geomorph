@@ -18,7 +18,7 @@
 
 
 Data::Data()
-  : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V()
+  : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V(), intypeSet(), outtypeSet(), interpSet()
 {
 
   intype=UNDEF;
@@ -37,6 +37,10 @@ Data::Data()
   nlat = 0;
   nlng = 0;
 
+  // GUI 
+  intypeSet = false;
+  outtypeSet = false;
+  interpSet = false;
 
 }
 

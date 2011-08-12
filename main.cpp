@@ -144,6 +144,7 @@ bool gm_processCommandLine(int argc, char* argv[])
 
     if (strcmp(argv[i], "--intype") == 0) {
       i++;
+      data->intypeSet=true;
       if (strcmp(argv[i], "mvis") == 0) {
         data->intype = data->MVIS;
       }else if (strcmp(argv[i], "terra_cc") == 0) {
@@ -161,6 +162,7 @@ bool gm_processCommandLine(int argc, char* argv[])
     }
     if (strcmp(argv[i], "--outtype") == 0) {
       i++;
+      data->outtypeSet=true;
       if (strcmp(argv[i], "mvis") == 0) {
         data->outtype = data->MVIS;
       }else if (strcmp(argv[i], "terra_cc") == 0) {
@@ -233,6 +235,7 @@ bool gm_processCommandLine(int argc, char* argv[])
     if (strcmp(argv[i], "--suffixin") == 0) {
       i++;
       data->mvis->suffix=atoi(argv[i]);
+      data->mvis->suffixSet=true;
     }
  
 
@@ -255,19 +258,19 @@ bool gm_processCommandLine(int argc, char* argv[])
     if (strcmp(argv[i], "--suffix") == 0) {
       i++;
       grid->suffix=atoi(argv[i]);
+      grid->suffixSet=true;
     }
  
 
     if (strcmp(argv[i], "--interp") == 0) {
       i++;
+      data->interpSet = true;
       if (strcmp(argv[i], "nearest") == 0) {
         data->interp = data->NEAREST;
       }else if (strcmp(argv[i], "nearest2") == 0) {
         data->interp = data->NEAREST2;
       }else if (strcmp(argv[i], "linear") == 0) {
         data->interp = data->LINEAR;
-/*      }else if (strcmp(argv[i], "cubic") == 0) {
-        data->interp = data->CUBIC;   */
       }else {
         gm_usage();
         exit(0);

@@ -19,6 +19,7 @@ class Grid {
 public:
 
     int       suffix;
+    bool      suffixSet; // GUI only
     int       mt,nt,nd;
     bool      mtSet,ntSet,ndSet; // GUI only
     int       nproc;
