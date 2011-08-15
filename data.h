@@ -28,9 +28,11 @@ public:
     enum { NEAREST, NEAREST2, LINEAR, CUBIC };
 
     char *    infile;
+    bool      infileSet; // GUI only
     char *    indir;  // GUI only
     bool      indirSet;  // GUI only
     char *    outfile;
+    bool      outfileSet; // GUI only
     char *    outdir;  // GUI only
     bool      outdirSet;  // GUI only
     int       intype;

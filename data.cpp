@@ -38,6 +38,8 @@ Data::Data()
   nlng = 0;
 
   // GUI 
+  infileSet = false;
+  outfileSet = false;
   intypeSet = false;
   outtypeSet = false;
   interpSet = false;

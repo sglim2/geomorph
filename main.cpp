@@ -183,11 +183,13 @@ bool gm_processCommandLine(int argc, char* argv[])
       i++;
       data->infile = new char[strlen(argv[i])+1];
       strcpy(data->infile,argv[i]);
+      data->infileSet=true;
     }
     if (strcmp(argv[i], "--outfile") == 0) {
       i++;
       data->outfile = new char[strlen(argv[i])+1];
       strcpy(data->outfile,argv[i]);
+      data->outfileSet=true;
     }
 
     if (strcmp(argv[i], "--filtinstart") == 0) {
