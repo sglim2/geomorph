@@ -42,6 +42,7 @@ public:
     int       interp;  // interpolation routine to be used
     bool      interpSet; // GUI only
     int       filtinstart,filtinend,filtinnumfiles;
+    bool      filtinstartSet,filtinendSet,filtinnumfilesSet;
     int       filtoutstart,filtoutend,filtoutnumfiles;
     int       nlat,nlng,ndpth,nvalpershell;
     double    minR,maxR;

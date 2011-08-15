@@ -282,6 +282,8 @@ double Domain::getNearestDataValue2_filt(Data *dptr, int index)
       if ( tmpd2 < d2 ) {
 	d2 = tmpd2;
 	dataV = dptr->V[di];
+        if ( dataV < Vmin ) Vmin = dataV;
+        if ( dataV > Vmax ) Vmax = dataV;
       }
     }
 

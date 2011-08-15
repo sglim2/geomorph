@@ -32,6 +32,9 @@ Data::Data()
   filtinend      = 0;
   filtinnumfiles = 0;
   nvalpershell   = 0;
+  filtinstartSet = false;
+  filtinendSet = false;
+  filtinnumfilesSet = false;
 
   // MITP data...
   nlat = 0;

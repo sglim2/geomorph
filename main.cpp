@@ -12,11 +12,11 @@
  *
  * Exmaple 1:
  * =========
- * $ > ./geomorph --mt 256 --nt 16 --nd 10 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis --interp nearest2
+ * $ > ./geomorph --mt 256 --nt 16 --nd 10 --suffix 01 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis --interp nearest2
  *
  * Exmaple 2:
  * =========
- * $ > ./geomorph --mt 32 --nt 16 --nd 10 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis --interp nearest2 
+ * $ > ./geomorph --mt 32 --nt 16 --nd 10 --suffix 01 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis --interp nearest2
  *
  * Exmaple 3:
  * =========
@@ -89,23 +89,34 @@ bool gm_usage()
   printf(" --help . . . . . . print help-page and exit\n");
   printf(" --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP ]\n");
   printf(" --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP ]\n");
-  printf(" --infile,  -i. . . input filename\n");
-  printf(" --outfile, -o. . . output filename base\n");
-  printf(" --mt . . . . . . . \n");
-  printf(" --nt . . . . . . . \n");
-  printf(" --nd . . . . . . . \n");
-  printf(" --mtin . . . . . . \n");
-  printf(" --ntin . . . . . . \n");
-  printf(" --ndin . . . . . . \n");
-  printf(" --suffix . . . . . \n");
-  printf(" --suffixin . . . . \n");
+  printf(" --infile . . . . . input filename\n");
+  printf(" --outfile. . . . . output filename base\n");
+  printf(" --mt . . . . . . . Desired MT value for output\n");
+  printf(" --nt . . . . . . . Desired NT value for output\n");
+  printf(" --nd . . . . . . . Desired ND value for output\n");
+  printf(" --mtin . . . . . . Input MT value for MVIS/TERRA input-types\n");
+  printf(" --ntin . . . . . . Input NT value for MVIS/TERRA input-types\n");
+  printf(" --ndin . . . . . . Input ND value for MVIS/TERRA input-types\n");
+  printf(" --suffix . . . . . Output file-name suffix for MVIS/TERRA output-types\n");
+  printf(" --suffixin . . . . Input file-name suffix for MVIS/TERRA input-types\n");
+  printf(" --filtinstart. . . FILT-type start depth (in km)\n");
+  printf(" --filtinend. . . . FILT-type end depth (in km)\n");
+  printf(" --filtinnum. . . . FILT-type number of data files\n");
   printf(" --interp . . . . . interpolation routine [ nearest | nearest2 | linear ]\n");
   printf("\n");
   printf("Inerpolation routines...\n");
   printf("  nearest   - used with intype = MITP or FILT \n");
   printf("  nearest2  - used with intype = MITP or FILT \n");
-  printf("  linear    - used with intype = MVIS \n");
-
+  printf("  linear    - used with intype = MVIS, TERRA_CV, or TERRA_CC \n");
+  printf("\n");
+  printf("\n");
+  printf("Example Usage...\n");
+  printf("\n");
+  printf("Converts MIT-P08 data to mvis format:\n");
+  printf("./geomorph --mt 256 --nt 16 --nd 10 --suffix 01 \\\n");
+  printf("           --infile ../data/MITP08.txt --intype mitp\\\n");
+  printf("           --outfile mvis001 --outtype mvis \\\n");
+  printf("           --interp nearest2\n");
   return 0;
 }
 
@@ -117,8 +128,8 @@ bool gm_processCommandLine(int argc, char* argv[])
     --help . . . . . . print help-page and exit
     --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP ]
     --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP ]
-    --infile,  -i. . . input filename
-    --outfile, -o. . . output filename base
+    --infile . . . . . input filename
+    --outfile. . . . . output filename base
     --mt . . . . . . . output mt value
     --nt . . . . . . . output nt value
     --nd . . . . . . . output nd value
@@ -127,6 +138,9 @@ bool gm_processCommandLine(int argc, char* argv[])
     --ndin . . . . . . input nd value
     --suffix . . . . . output suffix (for MVIS and TERRA) 
     --suffixin . . . . input suffix (for MVIS and TERRA) 
+    --filtinstart. . . FILT-type start depth (in km)
+    --filtinend. . . . FILT-type end depth (in km)
+    --filtinnum. . . . FILT-type number of data files
    */
 
   if (!data){
@@ -195,14 +209,17 @@ bool gm_processCommandLine(int argc, char* argv[])
     if (strcmp(argv[i], "--filtinstart") == 0) {
       i++;
       data->filtinstart = atoi(argv[i]);
+      data->filtinstartSet = true;
     }
     if (strcmp(argv[i], "--filtinend") == 0) {
       i++;
       data->filtinend = atoi(argv[i]);
+      data->filtinendSet = true;
     }
     if (strcmp(argv[i], "--filtinnum") == 0) {
       i++;
       data->filtinnumfiles = atoi(argv[i]);
+      data->filtinnumfilesSet = true;
     }
 
     if (strcmp(argv[i], "--filtoutstart") == 0) {
