@@ -28,15 +28,15 @@
  *
  * Exmaple 5:
  * =========
- * $ > ./geomorph --mt 16 --nt 8 --nd 10 --suffix 01 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --infile ../data/mvis002 --outfile mvis002 --intype mvis --outtype mvis --interp linear
+ * $ > ./geomorph --mt 16 --nt 8 --nd 10 --suffix 01 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/mvis002 --outfile mvis002 --intype mvis --outtype mvis --interp linear
  *
  * Exmaple 6:
  * =========
- * $ > ./geomorph --mt 32 --nt 8 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --infile ../data/c002 --outfile mvis001 --intype terra_cv --outtype mvis --interp linear
+ * $ > ./geomorph --mt 32 --nt 8 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/c002 --outfile mvis001 --intype terra_cv --outtype mvis --interp linear
  *
  * Exmaple 7:
  * =========
- * $ > ./geomorph --mt 64 --nt 16 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --infile ../data/c002 --outfile c003 --intype terra_cv --outtype terra_cv --interp linear
+ * $ > ./geomorph --mt 64 --nt 16 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/c002 --outfile c003 --intype terra_cv --outtype terra_cv --interp linear
  */
 
 #ifndef GEO_TUI_
@@ -97,6 +97,7 @@ bool gm_usage()
   printf(" --mtin . . . . . . Input MT value for MVIS/TERRA input-types\n");
   printf(" --ntin . . . . . . Input NT value for MVIS/TERRA input-types\n");
   printf(" --ndin . . . . . . Input ND value for MVIS/TERRA input-types\n");
+  printf(" --cmbin. . . . . . Core/Mantle boudary value for MVIS/TERRA input-types\n");
   printf(" --suffix . . . . . Output file-name suffix for MVIS/TERRA output-types\n");
   printf(" --suffixin . . . . Input file-name suffix for MVIS/TERRA input-types\n");
   printf(" --filtinstart. . . FILT-type start depth (in km)\n");
@@ -136,6 +137,7 @@ bool gm_processCommandLine(int argc, char* argv[])
     --mtin . . . . . . input mt value
     --ntin . . . . . . input nt value
     --ndin . . . . . . input nd value
+    --cmbin. . . . . . Core/Mantle boudary value for MVIS/TERRA input-types
     --suffix . . . . . output suffix (for MVIS and TERRA) 
     --suffixin . . . . input suffix (for MVIS and TERRA) 
     --filtinstart. . . FILT-type start depth (in km)
@@ -281,6 +283,12 @@ bool gm_processCommandLine(int argc, char* argv[])
     }
  
 
+    if (strcmp(argv[i], "--cmbin") == 0) {
+      i++;
+      data->cmb=atof(argv[i]);
+      data->cmbinSet=true;
+    }
+
     if (strcmp(argv[i], "--interp") == 0) {
       i++;
       data->interpSet = true;
@@ -312,6 +320,7 @@ bool gm_processCommandLine(int argc, char* argv[])
   printf(" mtin        %d \n", data->mvis->mt);
   printf(" ntin        %d \n", data->mvis->nt);
   printf(" ndin        %d \n", data->mvis->nd);
+  printf(" cmbin       %6.5f \n", data->cmb);
   printf(" suffix      %d \n", grid->suffix);
   printf(" suffixin    %d \n", data->mvis->suffix);
   printf(" interp      %s(%d) \n", data->interpConverter(), data->interp);

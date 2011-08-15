@@ -52,6 +52,7 @@ public:
     double    *x,*y,*z,*V;
     double    Vmean,Vmax,Vmin;
     double    a,cmb;
+    bool      cmbinSet;
     Grid      *mvis;
     
     Data ();

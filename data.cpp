@@ -47,6 +47,7 @@ Data::Data()
   outtypeSet = false;
   interpSet = false;
 
+  cmbinSet = false;
 }
 
 ////////////////////////////////////////
@@ -543,7 +544,7 @@ bool Data::getStats()
 }
 
 ////////////////////////////////////////
-// getStatsData
+// getStatsGrid
 bool Data::getStatsGrid()
 {
     double max = -veryLarge,
