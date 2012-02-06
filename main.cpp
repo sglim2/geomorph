@@ -470,8 +470,8 @@ int main(int argc, char *argv[])
 #else
     QApplication geo(argc, argv);
     GeomorphMainWindow geoWin;
-#ifdef WIN32
-    geoWin.setWindowIcon(QIcon("images/mantlevis2.ico"));
+#ifdef _WIN32
+    geoWin.setWindowIcon(QIcon("globe1.png"));
 #endif
     geoWin.show();
     return geo.exec();
