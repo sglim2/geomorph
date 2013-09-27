@@ -389,9 +389,13 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
 		if ( i%10 == 0 || i==nr ) fprintf(fptr,"\n"); // print in columns of 10
 	    }
 	    
-	    // write propr array
+	    // write proper array
 	    for (int i=1 ; i <= 20 ; i++){
-		fprintf(fptr,"%15.8E", 0. );
+		if ( i==5 ){
+                  fprintf(fptr,"%15.8E", 0.001);
+                }else{
+                  fprintf(fptr,"%15.8E", 0. );
+                }
 		if ( i%10 == 0 || i==20 ) fprintf(fptr,"\n"); // print in columns of 10
 	    }
 
