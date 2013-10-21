@@ -24,7 +24,7 @@ class Grid;
 class Data {
 public:
     
-    enum { MVIS, TERRA_CC, TERRA_CV , MITP, FILT, UNDEF };
+    enum { MVIS, TERRA_CC, TERRA_CV , MITP, FILT, GYPSUMP, GYPSUMS, UNDEF };
     enum { NEAREST, NEAREST2, LINEAR, CUBIC };
 
     char *    infile;
@@ -44,6 +44,9 @@ public:
     int       filtinstart,filtinend,filtinnumfiles;
     bool      filtinstartSet,filtinendSet,filtinnumfilesSet;
     int       filtoutstart,filtoutend,filtoutnumfiles;
+    int       gypsuminnumfiles;
+    char *    gypsumlatloninfile;
+    bool      gypsumlatloninfileSet;
     int       nlat,nlng,ndpth,nvalpershell;
     double    minR,maxR;
     double    * lyrs;

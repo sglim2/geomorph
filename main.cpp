@@ -87,8 +87,8 @@ bool gm_usage()
 
   printf("Available Commands:\n");
   printf(" --help . . . . . . print help-page and exit\n");
-  printf(" --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP ]\n");
-  printf(" --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP ]\n");
+  printf(" --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP | FILT | GYPSUMP | GYPSUMS ]\n");
+  printf(" --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV ]\n");
   printf(" --infile . . . . . input filename\n");
   printf(" --outfile. . . . . output filename base\n");
   printf(" --mt . . . . . . . Desired MT value for output\n");
@@ -103,6 +103,8 @@ bool gm_usage()
   printf(" --filtinstart. . . FILT-type start depth (in km)\n");
   printf(" --filtinend. . . . FILT-type end depth (in km)\n");
   printf(" --filtinnum. . . . FILT-type number of data files\n");
+  printf(" --gypsuminnum. . . GYPSUM-type number of data files\n");
+  printf(" --gypsumlatloninfile GYPSUM-type Lat/Lon definition file\n");
   printf(" --interp . . . . . interpolation routine [ nearest | nearest2 | linear ]\n");
   printf("\n");
   printf("Inerpolation routines...\n");
@@ -127,7 +129,7 @@ bool gm_processCommandLine(int argc, char* argv[])
 {
   /*
     --help . . . . . . print help-page and exit
-    --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP ]
+    --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP | FILT | GYPSUMP | GYPSUMS ]
     --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP ]
     --infile . . . . . input filename
     --outfile. . . . . output filename base
@@ -143,6 +145,8 @@ bool gm_processCommandLine(int argc, char* argv[])
     --filtinstart. . . FILT-type start depth (in km)
     --filtinend. . . . FILT-type end depth (in km)
     --filtinnum. . . . FILT-type number of data files
+    --gypsuminnum. . . GYPSUM-type number of data files
+    --gypsumlatloninfile GYPSUM-type Lat/Lon definition file
    */
 
   if (!data){
@@ -171,6 +175,10 @@ bool gm_processCommandLine(int argc, char* argv[])
         data->intype = data->MITP;
       }else if (strcmp(argv[i], "filt") == 0) {
         data->intype = data->FILT;
+      }else if (strcmp(argv[i], "gypsump") == 0) {
+        data->intype = data->GYPSUMP;
+      }else if (strcmp(argv[i], "gypsums") == 0) {
+        data->intype = data->GYPSUMS;
       }else {
         gm_usage();
         exit(0);
@@ -208,6 +216,7 @@ bool gm_processCommandLine(int argc, char* argv[])
       data->outfileSet=true;
     }
 
+
     if (strcmp(argv[i], "--filtinstart") == 0) {
       i++;
       data->filtinstart = atoi(argv[i]);
@@ -236,6 +245,19 @@ bool gm_processCommandLine(int argc, char* argv[])
       i++;
       data->filtoutnumfiles = atoi(argv[i]);
     }
+
+
+    if (strcmp(argv[i], "--gypsuminnum") == 0) {
+      i++;
+      data->gypsuminnumfiles = atoi(argv[i]);
+    }
+    if (strcmp(argv[i], "--gypsumlatloninfile") == 0) {
+      i++;
+      data->gypsumlatloninfile =  new char[strlen(argv[i])+1];
+      strcpy(data->gypsumlatloninfile,argv[i]);
+      data->gypsumlatloninfileSet=true;;
+    }
+
 
     if (strcmp(argv[i], "--mtin") == 0) {
       i++;
@@ -314,6 +336,8 @@ bool gm_processCommandLine(int argc, char* argv[])
   printf(" filtinstart %d \n", data->filtinstart);
   printf(" filtinend   %d \n", data->filtinend);
   printf(" filtinnum   %d \n", data->filtinnumfiles);
+  printf(" gypsuminnumfiles %d \n", data->gypsuminnumfiles);
+  printf(" gypsumlatloninfile %s \n", data->gypsumlatloninfile);
   printf(" mt          %d \n", grid->mt);
   printf(" nt          %d \n", grid->nt);
   printf(" nd          %d \n", grid->nd);
@@ -450,9 +474,9 @@ void geo_process()
 int main(int argc, char *argv[])
 {
 
-    grid = new Grid;
-    data = new Data;
-    data->mvis = new Grid;
+  grid = new Grid; // mantlevis/TERRA grid format - output data (correctly scaled)
+  data = new Data; // input data
+  data->mvis = new Grid;  // input data initial conversion to mantlevis/TERRA format (pre-scaled)
 
 #ifndef GEO_TUI_
     gdata = data;

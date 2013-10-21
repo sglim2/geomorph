@@ -135,6 +135,10 @@ bool Data::Read()
 	    return mitpRead();
 	case FILT :
 	    return filtRead();
+	case GYPSUMP :
+	    return gypsumRead();
+	case GYPSUMS :
+	    return gypsumRead();
 	default :
 	    printf("Error: intype undefined.");
 	    return 1; //fail
@@ -464,6 +468,62 @@ bool Data::filtRead()
 
 
 ////////////////////////////////////////
+//gypsumRead
+// --------
+// GYPSUM data consists of multiple files, each continaing a 
+// single layer of data.
+// You can have P- or S- data.
+// A secondary file definesthe latlon values.
+bool Data::gypsumRead(){
+
+  int ferror;
+
+  double * lat ;
+  double * lng ;
+  double * dpth;
+
+
+  // We know for gypsum how many layers there are:
+  dpth = new double[gypsuminnumfiles];
+
+  int file_nval=0; // number of words in file
+  char buf[255]; 
+  nval = 0; 
+
+  // Obtain latlon values  #######################
+  FILE * fptr=fopen(gypsumlatloninfile,"r");
+  if (fptr==NULL){
+    printf("Cannot open file %s for reading\n",gypsumlatloninfile);
+    return 1; //fail
+  }
+
+  while( fgets(buf,sizeof(buf),fptr) != NULL) {
+    file_nval++;
+  }
+
+  lat = new double[file_nval];
+  lon = new double[file_nval];
+
+  // move back to the beginning of the file
+  fclose(fptr);
+  fptr=fopen(gypsumlatloninfile,"r");
+  if (fptr==NULL){
+    return 1; //fail
+  }
+
+  for ( int i = 0 ; i<file_nval ; i++ ){
+    // Collect latlon data
+    ferror = fscanf(fptr,"%s", buf); lat[i] = atof (buf) * pi/180. ;
+    ferror = fscanf(fptr,"%s", buf); lon[i] = atof (buf) * pi/180. ;
+  }
+  // End of -  Obtain latlon values  #######################
+
+  // Collect file names
+  
+}
+
+
+////////////////////////////////////////
 // intypeConverter
 char* Data::intypeConverter()
 {
@@ -481,6 +541,10 @@ char* Data::intypeConverter()
 		break;
 	    case FILT : strcpy(buf, "FILT");
 		break;
+	    case GYPSUMP : strcpy(buf, "GYPSUMP");
+		break;
+	    case GYPSUMS : strcpy(buf, "GYPSUMS");
+     	        break;
 	    default: strcpy(buf, "UNDEF");
 	}
     return buf;
@@ -506,6 +570,7 @@ char* Data::outtypeConverter()
 	    case FILT : strcpy(buf, "FILT");
 		break;
 	    default: strcpy(buf, "UNDEF");
+		break;
 	}
     return buf;
 }
