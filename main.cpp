@@ -105,6 +105,7 @@ bool gm_usage()
   printf(" --filtinnum. . . . FILT-type number of data files\n");
   printf(" --gypsuminnum. . . GYPSUM-type number of data files\n");
   printf(" --gypsumlatloninfile GYPSUM-type Lat/Lon definition file\n");
+  printf(" --gypsumdepthinfile GYPSUM-type depth definition file\n");
   printf(" --interp . . . . . interpolation routine [ nearest | nearest2 | linear ]\n");
   printf("\n");
   printf("Inerpolation routines...\n");
@@ -147,6 +148,7 @@ bool gm_processCommandLine(int argc, char* argv[])
     --filtinnum. . . . FILT-type number of data files
     --gypsuminnum. . . GYPSUM-type number of data files
     --gypsumlatloninfile GYPSUM-type Lat/Lon definition file
+    --gypsumdepthinfile GYPSUM-type depth definition file
    */
 
   if (!data){
@@ -257,6 +259,12 @@ bool gm_processCommandLine(int argc, char* argv[])
       strcpy(data->gypsumlatloninfile,argv[i]);
       data->gypsumlatloninfileSet=true;;
     }
+    if (strcmp(argv[i], "--gypsumdepthinfile") == 0) {
+      i++;
+      data->gypsumdepthinfile =  new char[strlen(argv[i])+1];
+      strcpy(data->gypsumdepthinfile,argv[i]);
+      data->gypsumdepthinfileSet=true;;
+    }
 
 
     if (strcmp(argv[i], "--mtin") == 0) {
@@ -338,6 +346,7 @@ bool gm_processCommandLine(int argc, char* argv[])
   printf(" filtinnum   %d \n", data->filtinnumfiles);
   printf(" gypsuminnumfiles %d \n", data->gypsuminnumfiles);
   printf(" gypsumlatloninfile %s \n", data->gypsumlatloninfile);
+  printf(" gypsumdepthinfile %s \n", data->gypsumdepthinfile);
   printf(" mt          %d \n", grid->mt);
   printf(" nt          %d \n", grid->nt);
   printf(" nd          %d \n", grid->nd);

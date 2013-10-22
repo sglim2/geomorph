@@ -174,6 +174,18 @@ double Data::filtDepth2Radius(double dpth)
 }
 
 ////////////////////////////////////////
+// gypsumDepth2Radius
+// --------
+//
+//
+double Data::gypsumDepth2Radius(double dpth)
+{
+
+    return mitpDepth2Radius(dpth);
+ 
+}
+
+////////////////////////////////////////
 // mitpRead
 // --------
 //   input data:
@@ -472,26 +484,41 @@ bool Data::filtRead()
 // --------
 // GYPSUM data consists of multiple files, each continaing a 
 // single layer of data.
-// You can have P- or S- data.
-// A secondary file definesthe latlon values.
+// You can have P- or S- data. A secondary file defines the latlon 
+// values. A tertiary file defines the depth of the layers in km.
 bool Data::gypsumRead(){
 
   int ferror;
 
   double * lat ;
-  double * lng ;
+  double * lon ;
   double * dpth;
 
+  int file_nval=0; // number of lines in file
+  char buf[255]; 
+  char tmpinfile[64];
+  nval = 0; 
 
   // We know for gypsum how many layers there are:
   dpth = new double[gypsuminnumfiles];
 
-  int file_nval=0; // number of words in file
-  char buf[255]; 
-  nval = 0; 
+  // get layer depths #######################
+  FILE * fptr=fopen(gypsumdepthinfile,"r");
+  if (fptr==NULL){
+    printf("Cannot open file %s for reading\n",gypsumdepthinfile);
+    return 1; //fail
+  }  
+  
+  for ( int i = 0 ; i<gypsuminnumfiles ; i++ ){
+    // Collect latlon data
+    ferror = fscanf(fptr,"%s", buf); dpth[i] = atof (buf) ;
+  }
 
+  fclose(fptr);
+  // End of - get layer depths #######################
+ 
   // Obtain latlon values  #######################
-  FILE * fptr=fopen(gypsumlatloninfile,"r");
+  fptr=fopen(gypsumlatloninfile,"r");
   if (fptr==NULL){
     printf("Cannot open file %s for reading\n",gypsumlatloninfile);
     return 1; //fail
@@ -508,6 +535,7 @@ bool Data::gypsumRead(){
   fclose(fptr);
   fptr=fopen(gypsumlatloninfile,"r");
   if (fptr==NULL){
+    printf("Cannot open file %s for reading\n",gypsumlatloninfile);
     return 1; //fail
   }
 
@@ -516,10 +544,63 @@ bool Data::gypsumRead(){
     ferror = fscanf(fptr,"%s", buf); lat[i] = atof (buf) * pi/180. ;
     ferror = fscanf(fptr,"%s", buf); lon[i] = atof (buf) * pi/180. ;
   }
+  fclose(fptr);
   // End of -  Obtain latlon values  #######################
 
-  // Collect file names
   
+  // define arrays based on nval
+  nval = file_nval*gypsuminnumfiles;
+  x = new double[nval];
+  y = new double[nval];
+  z = new double[nval];
+  V = new double[nval];
+
+  // find minR, maxR, ndpth, nvalpershell
+  minR = gypsumDepth2Radius(dpth[gypsuminnumfiles-1]);
+  maxR = gypsumDepth2Radius(dpth[0]);
+  ndpth = gypsuminnumfiles;
+  nvalpershell = file_nval;  // should be equal across files.
+
+  //int nval_counter = 0;
+  
+  // Collect Data....
+  for (int f=0 ; f<ndpth ; f++ ) {
+      sprintf(tmpinfile,"%s.%02d.txt",infile,f+1);
+ 
+      fptr=fopen(tmpinfile,"r");
+      if (fptr==NULL){
+          printf("Cannot open file %s for reading\n",tmpinfile);
+	  return 1; //fail
+      }
+      /*
+      // find file_nval again...
+      file_nval=0;
+      while( fgets(buf,sizeof(buf),fptr) != NULL) {
+	  file_nval++;
+      } 
+      
+      // move to beginning of file
+      fclose(fptr);
+      fptr=fopen(tmpinfile,"r");
+      if (fptr==NULL){
+	  return 1; //fail
+      }
+      
+      lat = -veryLarge;
+      lng = -veryLarge;
+      dpth= -veryLarge;
+      */
+      for ( int i = 0 ; i<nvalpershell ; i++ ){
+	  // Collect data
+          ferror = fscanf(fptr,"%s", buf);  V[f*nvalpershell+i] = atof (buf) ;
+	  
+	  // Convert to xyz
+	  x[i] =   gypsumDepth2Radius(dpth[f]) * cos(lat[i]) * cos(lon[i]) ;
+	  z[i] =   gypsumDepth2Radius(dpth[f]) * sin(lat[i]) ;
+	  y[i] =   gypsumDepth2Radius(dpth[f]) * cos(lat[i]) * sin(lon[i]) ;
+      }
+      fclose(fptr);
+  } // for dpth
 }
 
 
@@ -599,7 +680,7 @@ char* Data::interpConverter()
 // getStats
 bool Data::getStats()
 {
-    if ( intype == MITP || intype == FILT ){
+  if ( intype == MITP || intype == FILT || intype == GYPSUMP || intype == GYPSUMS ){
 	return getStatsData();
     }else{
 	return getStatsGrid();
@@ -686,7 +767,6 @@ bool Data::getStatsData()
     printf("Input Stats....\n");
     printf("+----------------------------------------------+\n");
     printf("|  nvals        =  %12ld                  |\n"       , nval);
-//    printf("|  nlayr(~)     =  %12d                  |\n"        , nlayr);
     printf("|  nlat         =  %12d                  |\n"        , nlat);
     printf("|  nlng         =  %12d                  |\n"        , nlng);
     printf("|  ndpth        =  %12d                  |\n"        , ndpth);

@@ -447,12 +447,15 @@ int Domain::getValue(Data * dptr, int index, int interp)
 
   if ( interp == dptr->NEAREST ){
     // brute-force...
-    if (dptr->intype == dptr->FILT) {
-      V[index] = getNearestDataValue(dptr,index);
-    }
-    if (dptr->intype == dptr->MITP) {
-      V[index] = getNearestDataValue(dptr,index);
-    }
+    if (dptr->intype == dptr->FILT) {                     //
+      V[index] = getNearestDataValue(dptr,index);         //  What's this all about!?
+    }                                                     //
+    if (dptr->intype == dptr->MITP) {                     //    They all do the same thing.
+      V[index] = getNearestDataValue(dptr,index);         //    It must be a legacy of some thing
+    }                                                     //
+    else{                                                 //
+      V[index] = getNearestDataValue(dptr,index);         //
+    }                                                     //
   }else if ( interp == dptr->NEAREST2 ){
     // a slightly more intelligent routine...
     if (dptr->intype == dptr->FILT) {
@@ -488,7 +491,7 @@ bool Domain::importData(Data *dptr)
     // data found in dptr to the current domain.
 
     // ...Non-terra based grids
-    if ( dptr->intype == dptr->MITP || dptr->intype == dptr->FILT ) {
+    if ( dptr->intype == dptr->MITP || dptr->intype == dptr->FILT || dptr->intype == dptr->GYPSUMP || dptr->intype == dptr->GYPSUMS ) {
 
       for ( int ri=0 ; ri < nr ; ri++){
 	printf("......Layer %d\n",ri);

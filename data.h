@@ -46,7 +46,8 @@ public:
     int       filtoutstart,filtoutend,filtoutnumfiles;
     int       gypsuminnumfiles;
     char *    gypsumlatloninfile;
-    bool      gypsumlatloninfileSet;
+    char *    gypsumdepthinfile;
+    bool      gypsumlatloninfileSet,gypsumdepthinfileSet;
     int       nlat,nlng,ndpth,nvalpershell;
     double    minR,maxR;
     double    * lyrs;
@@ -70,6 +71,10 @@ public:
     // FILT
     bool   filtRead ();
     double filtDepth2Radius(double);
+
+    // GYPSUM
+    bool   gypsumRead ();
+    double gypsumDepth2Radius(double);
 
     // MVIS
     bool   mvisRead();
