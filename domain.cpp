@@ -171,6 +171,8 @@ double Domain::getNearestDataValue(Data *dptr, int index)
     double d2 = 1.E+99;
     double xd,yd,zd;
 
+    //printf("index=%d\n", index);
+
     // loop over all Data values
     for ( int di = 0 ; di < dptr->nval ; di++ ){
       xd=dptr->x[di] - xn[index];
@@ -179,6 +181,7 @@ double Domain::getNearestDataValue(Data *dptr, int index)
       if ( xd*xd + yd*yd + zd*zd < d2 ) {
 	d2 = xd*xd + yd*yd + zd*zd;
 	dataV = dptr->V[di];
+	//printf("d2=%5.3f V=%5.3f di=%d\n", d2,dataV,di);
       }
     }
 
@@ -453,7 +456,7 @@ int Domain::getValue(Data * dptr, int index, int interp)
     if (dptr->intype == dptr->MITP) {                     //    They all do the same thing.
       V[index] = getNearestDataValue(dptr,index);         //    It must be a legacy of some thing
     }                                                     //
-    else{                                                 //
+    else{                                                 // And if FILT, the routine is called twice!?
       V[index] = getNearestDataValue(dptr,index);         //
     }                                                     //
   }else if ( interp == dptr->NEAREST2 ){

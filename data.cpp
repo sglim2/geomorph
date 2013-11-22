@@ -125,6 +125,7 @@ bool Data::Read()
 	    return 1; //fail
 	case MVIS :
 	    return mvisRead();
+            break;
 	case TERRA_CC :
 	    return terraRead();
 	    break;
@@ -133,12 +134,16 @@ bool Data::Read()
 	    break;
 	case MITP :
 	    return mitpRead();
+	    break;
 	case FILT :
 	    return filtRead();
+	    break;
 	case GYPSUMP :
 	    return gypsumRead();
+	    break;
 	case GYPSUMS :
 	    return gypsumRead();
+	    break;
 	default :
 	    printf("Error: intype undefined.");
 	    return 1; //fail
@@ -482,10 +487,10 @@ bool Data::filtRead()
 ////////////////////////////////////////
 //gypsumRead
 // --------
-// GYPSUM data consists of multiple files, each continaing a 
+// GYPSUM data consists of multiple files, each contianing a 
 // single layer of data.
 // You can have P- or S- data. A secondary file defines the latlon 
-// values. A tertiary file defines the depth of the layers in km.
+// values. A third file defines the depth of the layers in km.
 bool Data::gypsumRead(){
 
   int ferror;
@@ -513,6 +518,8 @@ bool Data::gypsumRead(){
     // Collect latlon data
     ferror = fscanf(fptr,"%s", buf); dpth[i] = atof (buf) ;
   }
+
+  //printf("Depths: "); for (int i=0;i<gypsuminnumfiles;i++) printf("%6.2f ",dpth[i]);printf("\n");
 
   fclose(fptr);
   // End of - get layer depths #######################
@@ -572,35 +579,36 @@ bool Data::gypsumRead(){
           printf("Cannot open file %s for reading\n",tmpinfile);
 	  return 1; //fail
       }
-      /*
-      // find file_nval again...
-      file_nval=0;
-      while( fgets(buf,sizeof(buf),fptr) != NULL) {
-	  file_nval++;
-      } 
-      
-      // move to beginning of file
-      fclose(fptr);
-      fptr=fopen(tmpinfile,"r");
-      if (fptr==NULL){
-	  return 1; //fail
-      }
-      
-      lat = -veryLarge;
-      lng = -veryLarge;
-      dpth= -veryLarge;
-      */
+     
+      // test
+      //printf("Radii: f=%02d %6.2f\n",f,gypsumDepth2Radius(dpth[f]));
+
       for ( int i = 0 ; i<nvalpershell ; i++ ){
 	  // Collect data
           ferror = fscanf(fptr,"%s", buf);  V[f*nvalpershell+i] = atof (buf) ;
 	  
+	  //printf("%7.5f\n",V[f*nvalpershell+i]);
+          //if (i==0){ // test to make sure our data is shifting nicely along the layers
+	    //printf("f=%02d i=%05d V=%8.6f",f,i,V[f*nvalpershell+i]);
+	  //}
+
 	  // Convert to xyz
-	  x[i] =   gypsumDepth2Radius(dpth[f]) * cos(lat[i]) * cos(lon[i]) ;
-	  z[i] =   gypsumDepth2Radius(dpth[f]) * sin(lat[i]) ;
-	  y[i] =   gypsumDepth2Radius(dpth[f]) * cos(lat[i]) * sin(lon[i]) ;
+	  x[f*nvalpershell+i] =   gypsumDepth2Radius(dpth[f]) * cos(lat[i]) * cos(lon[i]) ;
+	  z[f*nvalpershell+i] =   gypsumDepth2Radius(dpth[f]) * sin(lat[i]) ;
+	  y[f*nvalpershell+i] =   gypsumDepth2Radius(dpth[f]) * cos(lat[i]) * sin(lon[i]) ;
+
+	  //printf("data xyz test  %7.5g  %7.5g  %7.5g  %7.5g  %7.5g  %7.5g  %7.5g  %7.5g\n",x[i],y[i],z[i],x[i]*x[i]+y[i]*y[i]+z[i]*z[i],lat[i],lon[i],sin(lat[i]),cos(lat[i]),sin(lon[i]),cos(lon[i]));
       }
       fclose(fptr);
   } // for dpth
+
+
+  printf("data xyz test x y z radius\n");
+  for (int ii=0;ii<nval;ii++){
+    printf("data xyz test %7.5g %7.5g %7.5g %7.5g\n",x[ii],y[ii],z[ii],x[ii]*x[ii]+y[ii]*y[ii]+z[ii]*z[ii]);
+  }
+
+  return 0; //success
 }
 
 
