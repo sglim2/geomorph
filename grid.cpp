@@ -17,6 +17,9 @@
 ////////////////////////////////////////
 
 Grid::Grid()
+/** 
+   Construction of class Grid, with no mt defined
+ */
   : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
 {
   mt = 0;
@@ -32,11 +35,11 @@ Grid::Grid()
 
 ////////////////////////////////////////
 // Grid::Grid
-// 
-// Assume nr=mt/2
-//  i.e # radial layers = nr+1
-//
 Grid::Grid(int _mt, int _nt, int _nd)
+/** 
+   Construction of class Grid, with mt,nt,nd defined
+   We assume nr=mt/2, giving the number of radial layers as nr+1. This is standard in TERRA models.
+*/
   : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
 {
   idmax = 10;
