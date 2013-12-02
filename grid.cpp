@@ -18,9 +18,9 @@
 
 Grid::Grid()
 /** 
-   Construction of class Grid, with no mt defined
+   Construction of class Grid, with no mt defined.
  */
-  : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
+  : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), domains()
 {
   mt = 0;
   mtSet=false;
@@ -37,10 +37,10 @@ Grid::Grid()
 // Grid::Grid
 Grid::Grid(int _mt, int _nt, int _nd)
 /** 
-   Construction of class Grid, with mt,nt,nd defined
+   Construction of class Grid, with mt,nt,nd defined.
    We assume nr=mt/2, giving the number of radial layers as nr+1. This is standard in TERRA models.
 */
-  : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), rmax(), rmin(), domains()
+  : suffix(), suffixSet(), mt(), nt(), nd(), mtSet(), ntSet(), ndSet(), nproc(),  nr(), idmax(), npts(), domains()
 {
   idmax = 10;
   suffixSet=false;
@@ -66,6 +66,21 @@ Grid::Grid(int _mt, int _nt, int _nd)
 // methods
 ////////////////////////////////////////
 
+////////////////////////////////////////
+// Grid::idx
+//
+/**
+  Each domain has one-dimensiional arrays which represent points in
+  3-dimensional space. This routine takes the 3-dimensional space parameters
+  and converts them into an index of the one-dimensional array.
+
+  \param r the radial layer index
+  \param id the domain index
+  \param i2 the first shell coordinate
+  \param i1 the second shell coordinate
+  \param xyz we are asking for either the x,y, or z index (1,2, or 3 respectively)
+  \return idx the one-demensional index representing the 3-d space.
+ */
 int Grid::idx(int r, int id, int i2, int i1, int xyz)
 {
   int idmax  = 10;
@@ -95,12 +110,16 @@ int Grid::idx(int r, int id, int i2, int i1, int xyz)
 
 ////////////////////////////////////////
 // Grid::importData
-//
-// imports Data::data into all domains.
-//
+/**
+ Imports Data::data into all domains.
+ \param dptr A pointer to the input data
+
+ return 0 for success, 1 for failure.
+*/
 bool Grid::importData(Data * dptr)
 {
     int _idmax = 10;
+    bool fail=false;
 
 #ifndef GEOMORPH_GPU
 #pragma omp parallel for
@@ -108,7 +127,8 @@ bool Grid::importData(Data * dptr)
 	printf("...Domain %d\n",i);
 	if (domains[i].importData(dptr)){
 	    printf("Error in Domain::importData()");
-	    //	    return 1; // fail
+            //      fail=true;
+            //      return fail;
 	}
     }
 
@@ -125,20 +145,23 @@ bool Grid::importData(Data * dptr)
     }
 #endif
     
-    return 0; // success
+    return fail; // success if false
 }
 
 ////////////////////////////////////////
 // Grid::importMVIS
-//
-// imports data from MVIS files.
-//
+/**
+ Imports data from MVIS files.
+ \param dinfile Basename of the mvis input file. Further parameters will be suffixed on to this file to make up the fill filename.
+ \param cmb The Core-Mantle boundary in Earth-Radius units.
+ \return fail Boolean return value, false for success, true for failure.
+*/
 bool Grid::importMVIS(char * dinfile, double cmb)
 {
     FILE * fptr;
     char infile[256];
     
-    int  fail=0;
+    bool  fail=false;
 
     // we now cycle over 'processors' (or files).
     for ( int proc=0 ; proc < nproc ; proc++ ){
@@ -186,12 +209,12 @@ bool Grid::importMVIS(char * dinfile, double cmb)
 
 ////////////////////////////////////////
 // Grid::exportMVIS
-//
-// exports data in desired format.
-//
-// Due to the necessary sequential output, this must be done in serial for
-// each process.
-//
+/**
+ Exports data in the desired format. Due to the necessary sequential output, this must be done in serial for
+ each process.
+ \param dptr A pointer to the input data.
+ \return fail Boolean return value, false for success, true for failure.
+*/
 bool Grid::exportMVIS(Data * dptr)
 {
     FILE * fptr;
@@ -244,12 +267,14 @@ bool Grid::exportMVIS(Data * dptr)
 
 ////////////////////////////////////////
 // Grid::importTERRA
-//
-// imports data in desired format (TERRA Convection model, or Circulation model).
-//
-// Due to the necessary sequential input, this must be done in serial for
-// each process.
-//
+/**
+ Imports data in desired format (TERRA Convection model, or Circulation
+ model).  Due to the necessary sequential input, this must be done in serial
+ for each process.
+ \param dinfile Basename of the TERRA input file. Further parameters will be suffixed on to this file to make up the fill filename.
+ \param terratype Distinction between TERRA types - Convection (CV, terratype=0, default) or Circulation (CC, terratype=1) model. 
+ \return fail Boolean return value, false for success, true for failure.
+*/
 bool Grid::importTERRA(char * dinfile, int terratype)
 {
     FILE * fptr;
@@ -344,12 +369,12 @@ bool Grid::importTERRA(char * dinfile, int terratype)
 
 ////////////////////////////////////////
 // Grid::exportTERRA
-//
-// exports data in desired format (TERRA Convection model, or Circulation model).
-//
-// Due to the necessary sequential output, this must be done in serial for
-// each process.
-//
+/**
+ Exports data in desired format (TERRA Convection model, or Circulation model).  Due to the necessary sequential output, this must be done in serial for each process.
+ \param dptr A pointer to the input data.
+ \param terratype Distinction between TERRA types - Convection (CV, terratype=0, default) or Circulation (CC, terratype=1) model. 
+ \return fail Boolean return value, false for success, true for failure.
+*/
 bool Grid::exportTERRA(Data * dptr, int terratype)
 {
     FILE * fptr;
@@ -454,55 +479,66 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
 
 ////////////////////////////////////////
 // Grid::exportGrid
-//
-// exports data in desired format.
-//
-// Note, we cannot use a switch statement here since it defies the standard
-// (and throws an error on pgi/gnu): 
-//    the -> operator is not allowed in an integral constant expression.
-//
+/**
+ Exports data in the desired format. 
+ \param dptr A pointer to the input data.
+ \return fail Boolean return value, false for success, true for failure.
+*/
 bool Grid::exportGrid(Data * dptr)
 {
+
+  bool fail=false;
+  /* Note, we cannot use a switch statement here since it defies the standard
+    (and throws an error on pgi/gnu):
+    the -> operator is not allowed in an integral constant expression.
+  */
     if ( dptr->outtype == dptr->MVIS ) {
 	if (exportMVIS(dptr) ){
 	    printf("Error in exportMVIS\n");
-	    return 1; // fail
+	    fail=true; // fail
+	    return fail;
 	}
     }else
 	if ( dptr->outtype == dptr->TERRA_CV ) {
 	    if (exportTERRA(dptr,0) ){
 		printf("Error in exportTERRA()\n");
-		return 1; // fail
+		fail=true; // fail
+		return fail;
 	    }
 	}else
 	    if ( dptr->outtype == dptr->TERRA_CC ) {
 		if (exportTERRA(dptr,1) ){
 		    printf("Error in exportTERRA()\n");
-		    return 1; // fail
+		    fail=true; // fail
+		    return fail;
 		}
 	    }else 
 		if ( dptr->outtype == dptr->MITP ) {
 //		if (exportMITP(dptr) ){
 //		    printf("Error in exportMITP\n");
-//		    return 1; // fail
+//                  fail=true; // fail
+//		    return fail;
 //		}
 		}else 
 		    if ( dptr->outtype == dptr->UNDEF ) {
-			return 1; // fail
+		      fail=true; // fail
+		      return fail;
 		    }else 
-			return 1; // fail
+		fail=true; // fail
+		return fail;
     
-    return 0; // success
+    return fail; // success it false
 }
 
 ////////////////////////////////////////
 // Grid::suggestGrid
-//
-// A basic comparison of any given grid structure to the TERRA
-// grid. Returns the mt value of the closest matching TERRA grid
-// comparing the total number of grid points across the two grid
-// structures.
-//
+/**
+ A basic comparison of any given grid structure to the TERRA grid. Returns the
+ mt value of the closest matching TERRA grid comparing the total number of
+ grid points across the two grid structures.
+ \param npts Total number of points of the comparison grid-structure.
+ \return _mt The closest matching TERRA-grid in terms of mt.
+*/
 int Grid::suggestGrid(int npts)
 {
     int _npts=0;
@@ -528,7 +564,11 @@ int Grid::suggestGrid(int npts)
 
 ////////////////////////////////////////
 // Grid::genGrid
-//
+/**
+ Defines each of the 10 domains of the TERRA grid-format based on pre-loaded mt,nt, and nd values.
+ \param _cmb Core-Mantle boundary in Earth-Radius units.
+ \return fail Boolean return value, false for success, true for failure.
+ */
 bool Grid::genGrid(double _cmb)
 {
     int fail = 0;

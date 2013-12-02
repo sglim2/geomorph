@@ -27,23 +27,29 @@ public:
     enum { MVIS, TERRA_CC, TERRA_CV , MITP, FILT, GYPSUMP, GYPSUMS, UNDEF };
     enum { NEAREST, NEAREST2, LINEAR, CUBIC };
 
-    char *    infile;
-    bool      infileSet; // GUI only
-    char *    indir;  // GUI only
-    bool      indirSet;  // GUI only
-    char *    outfile;
-    bool      outfileSet; // GUI only
-    char *    outdir;  // GUI only
-    bool      outdirSet;  // GUI only
-    int       intype;
-    bool      intypeSet;  // GUI only
-    int       outtype;
-    bool      outtypeSet; // GUI only
-    int       interp;  // interpolation routine to be used
-    bool      interpSet; // GUI only
-    int       filtinstart,filtinend,filtinnumfiles;
-    bool      filtinstartSet,filtinendSet,filtinnumfilesSet;
-    int       filtoutstart,filtoutend,filtoutnumfiles;
+    char *    infile;      /**< Base-name of input file */
+    bool      infileSet;   /**< GUI only. Set to true when infile has been set via the GUI */
+    char *    indir;       /**< GUI only. input base-name is split between path and file within the GUI */
+    bool      indirSet;    /**< GUI only. Set to true when indir has been set via the GUI */
+    char *    outfile;     /**< Base-name of output file */ 
+    bool      outfileSet;  /**< GUI only. Set to true when outfile has been set via the GUI */
+    char *    outdir;      /**< GUI only. output base-name is split between path and file within the GUI */
+    bool      outdirSet;   /**< GUI only. Set to true when outdir has been set via the GUI */
+    int       intype;      /**< input type - MVIS,TERRA_CV,FILT,etc... */
+    bool      intypeSet;   /**< GUI only. Set to true when intype has been set via the GUI */
+    int       outtype;     /**< output type - MVIS,TERRA_CV,etc... */
+    bool      outtypeSet;  /**< GUI only. Set to true when outtype has been set via the GUI */
+    int       interp;      /**< interpolation routine to be used */
+    bool      interpSet;   /**< GUI only. Set to true when interp has been set via the GUI */
+    int       filtinstart;
+    int       filtinend;
+    int       filtinnumfiles; 
+    bool      filtinstartSet;    /**< GUI only. Set to true when filtinstart has been set via the GUI */
+    bool      filtinendSet;      /**< GUI only. Set to true when filtinend has been set via the GUI */
+    bool      filtinnumfilesSet; /**< GUI only. Set to true when filtinnumfiles has been set via the GUI */
+    int       filtoutstart;
+    int       filtoutend;
+    int       filtoutnumfiles;
     int       gypsuminnumfiles;
     char *    gypsumlatloninfile;
     char *    gypsumdepthinfile;

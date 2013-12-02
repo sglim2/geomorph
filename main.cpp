@@ -7,37 +7,49 @@
  * | \___  / \____ \____/|__|_|__/\____/|__|  |   __/|___|__/ |
  * |/_____/                                   |__|            |
  * +==========================================================+
- *
- * A grid conversion tool for popular geodynamics and seismic tomography data
- *
- * Exmaple 1:
- * =========
- * $ > ./geomorph --mt 256 --nt 16 --nd 10 --suffix 01 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis --interp nearest2
- *
- * Exmaple 2:
- * =========
- * $ > ./geomorph --mt 32 --nt 16 --nd 10 --suffix 01 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis --interp nearest2
- *
- * Exmaple 3:
- * =========
- * $ > ./geomorph --mt 32 --nt 8 --nd 5 --suffix 01 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
- *
- * Exmaple 4:
- * =========
- * $ > ./geomorph --mt 32 --nt 8 --nd 5 --suffix 01 --infile ../data/MITP08.txt --outfile c002 --intype mitp --outtype terra_cc --interp nearest2
- *
- * Exmaple 5:
- * =========
- * $ > ./geomorph --mt 16 --nt 8 --nd 10 --suffix 01 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/mvis002 --outfile mvis002 --intype mvis --outtype mvis --interp linear
- *
- * Exmaple 6:
- * =========
- * $ > ./geomorph --mt 32 --nt 8 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/c002 --outfile mvis001 --intype terra_cv --outtype mvis --interp linear
- *
- * Exmaple 7:
- * =========
- * $ > ./geomorph --mt 64 --nt 16 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/c002 --outfile c003 --intype terra_cv --outtype terra_cv --interp linear
  */
+/**
+\brief
+Geomorph is a grid conversion tool for popular geodynamics and seismic tomography data.
+
+*/ 
+/**
+ \mainpage 
+  Geomorph can currently handle output in the MVIS, TERRA_CC and
+  TERRA_CV formats, and input in MVIS. TERRA_CC, TERRA_CV, MITP, FILT, and
+  GYSPSUM (special case) formats.
+*/
+/**
+  \page Examples 
+  Exmaple 1: Convert MITP-MVIS using optimised-searching nearest-neighbour 
+  \code
+  ./geomorph --mt 256 --nt 16 --nd 10 --suffix 01 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis --interp nearest2
+  \endcode
+  Exmaple 2: Convert FILT-MVIS using optimised-search neareast-neighbour
+  \code
+  ./geomorph --mt 32 --nt 16 --nd 10 --suffix 01 --infile ../data/Filt --outfile mvis001 --intype filt --filtinstart 50 --filtinend 2850 --filtinnum 57 --outtype mvis --interp nearest2
+  \endcode
+  Exmaple 3: Convert MITP-TERRA_CV using optimised-search neareast-neighbour
+  \code
+  ./geomorph --mt 32 --nt 8 --nd 5 --suffix 01 --infile ../data/MITP08.txt --outfile c001 --intype mitp --outtype terra_cv --interp nearest2
+  \endcode
+  Exmaple 4: Convert MITP-TARR_CC using optimised-search neareast-neighbour
+  \code
+  ./geomorph --mt 32 --nt 8 --nd 5 --suffix 01 --infile ../data/MITP08.txt --outfile c002 --intype mitp --outtype terra_cc --interp nearest2
+  \endcode
+  Exmaple 5: Convert MITP-MVIS using linear interpolation
+  \code
+  ./geomorph --mt 16 --nt 8 --nd 10 --suffix 01 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/mvis002 --outfile mvis002 --intype mvis --outtype mvis --interp linear
+  \endcode
+  Exmaple 6: Convert TERRA_CV-MVIS using linear interpolation
+  \code
+  ./geomorph --mt 32 --nt 8 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/c002 --outfile mvis001 --intype terra_cv --outtype mvis --interp linear
+  \endcode
+  Exmaple 7: Scale mt=32 to mt=64 TERRA_CV-TERRA_CV using linear intepolation 
+  \code
+  ./geomorph --mt 64 --nt 16 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/c002 --outfile c003 --intype terra_cv --outtype terra_cv --interp linear
+  \endcode
+*/
 
 #ifndef GEO_TUI_
 #include <QtGui/QApplication>
@@ -124,8 +136,9 @@ bool gm_usage()
   return 0;
 }
 
-////////////////////////////////////////
-// process the commandline arguments
+/**
+ Process the commandline arguments
+*/
 bool gm_processCommandLine(int argc, char* argv[])
 {
   /*
@@ -430,9 +443,14 @@ bool writeGrid()
     return 0; // success
 }
 
-////////////////////////////////////////
-// process
-//
+/**
+  Contains the process program flow:
+   Read data
+   Calculate statistics
+   Generate outpt grid
+   Convert input dato output grid
+   export grid to files
+*/ 
 void geo_process()
 {
 
@@ -465,21 +483,16 @@ void geo_process()
     printf("Error importing Data into geomorph grid.\n");
   }
 
-  // write a single shell (for use in matlab, or alternative)
-//  if (writeGrid()){
-//    printf("Error writing Grid data.\n");
-//  }
-
   if (grid->exportGrid(data)){
     printf("Error exporting Data failed.\n");
   }
 
-  // delete [] data;
-  // delete [] grid;
 }
 
 
-
+/**
+ * \param help The help page
+ */
 int main(int argc, char *argv[])
 {
 
