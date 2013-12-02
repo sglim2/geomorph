@@ -19,13 +19,20 @@
 class Domain {
 public:
     
-    int  id,nr,mt;
-    bool northern;
+    int  id;       /**< The domain id 0..9 */ 
+    int  nr;       /**< Number of radial divisions, number of layers = nr+1 */
+    int  mt;       /**< The mt value of the TERRA grid */
+    bool northern; /**< true for northern hemisphere, false for southern */
     
-    double *xn,*yn,*zn;
-    double *V,*P,*vel;
+    double *xn;  /**< The x-position of all grid points in the domain */
+    double *yn;  /**< The y-position of all grid points in the domain */
+    double *zn;  /**< The z-position of all grid points in the domain */
+    double *V;   /**< The value of the grid points in the domain */
+    double *P;   /**< Not yet implemented */
+    double *vel; /**< Not yet implemented */
 
-    double Vmax,Vmin;
+    double Vmax; /**< The max value of V in the domain */
+    double Vmin; /**< The minimum value of V in the domain */
 
     Domain();
     Domain(int, bool);

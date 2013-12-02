@@ -19,8 +19,15 @@
 
 ////////////////////////////////////////
 // Domain::Domain
-// 
-//
+/** 
+  Construction of class Domain. 
+
+  At its core, the Domain class contains the grid points and Values of 
+  the TERRA model in one domain. The full TERRA model is split into 10 domains.
+  The Domain id defines which domain we are currently in.
+ 
+  The Domain min and max values are temporarily defined
+ */
 Domain::Domain()
     : id(), nr(), mt(), northern(), xn(), yn(), zn(), V(), Vmax(), Vmin()
 {
@@ -30,8 +37,11 @@ Domain::Domain()
 
 ////////////////////////////////////////
 // Domain::Domain
-// 
-//
+/** 
+  Construction of class Domain with a Domain id and hemisphere defined. 
+
+  The Domain min and max values are temporarily defined  
+ */
 Domain::Domain(int _id, bool _northern)
     : id(), nr(), mt(), northern(), xn(), yn(), zn(), V(), Vmax(), Vmin()
 {
@@ -48,8 +58,15 @@ Domain::Domain(int _id, bool _northern)
 
 ////////////////////////////////////////
 // Domain::Domain
-// 
-//
+/**
+  Construction of class Domain with a Domain id, hemisphere, mt and nr defined. 
+
+  The Domain min and max values are temporarily defined. Arrays xn,yn,zn,V,vel, and P are defined. V,vel, and P are initialised to zero.
+  \param _id The domain id = 0..9
+  \param _northern True for northern hemisphere, false otherwise
+  \param _mt The mt value of the grid structure (common across all domains)
+  \param _nr The number of radial divisions in the grid structure. nlayers = nr+1
+ */
 Domain::Domain(int _id, bool _northern, int _mt, int _nr)
   : id(), nr(), mt(), northern(), xn(), yn(), zn(), V(), Vmax(), Vmin()
 {
@@ -75,15 +92,11 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
     // initialise
     for ( int i=0 ; i<nr*(mt+1)*(mt+1) ; i++ ) { V[i]=0.; P[i]=0.;}
     for ( int i=0 ; i<nr*(mt+1)*(mt+1)*3 ; i++ ) { vel[i]=0.;}
-
 }
-
 
 ////////////////////////////////////////
 // operators
 ////////////////////////////////////////
-
-
 
 ////////////////////////////////////////
 // methods
@@ -91,20 +104,17 @@ Domain::Domain(int _id, bool _northern, int _mt, int _nr)
 
 ////////////////////////////////////////
 // Domain::defineDomain
-//
-//
+/**
+ defineDomain defines arrays xn,yn,zn,V,vel, and P are defined. V,vel, and P are initialised to zero.
+ \param _id The domain id = 0..
+ \param _nr The number of radial divisions in the grid structure. nlayers = nr+1
+ \param _mt The mt value of the grid structure (common across all domains)
+ */
 bool Domain::defineDomain(int _id, int _nr, int _mt)
-{
-    
+{   
     id = _id;
     nr = _nr;
     mt = _mt;
-    
-    // not needed??
-    //    id < 5 ? northern = true : northern = false;
-
-    // not needed??
-    //    id < 5 ? northern = true : northern = false;
 
     xn = new double[nr*(mt+1)*(mt+1)];
     yn = new double[nr*(mt+1)*(mt+1)];
@@ -122,16 +132,16 @@ bool Domain::defineDomain(int _id, int _nr, int _mt)
 
 ////////////////////////////////////////
 // Domain::idx
-//
-// given:
-//   xyz....x=0,y=1,z=2
-//   i1.....domain indices
-//   i2.....domain indices
-//   r......radial layer  
-// returns the index value for array xn.
-// Array xn has structure:
-//    xn[nr][mt+1][mt+1][xyz]
-//
+/**
+  Each domain has one-dimensiional arrays which represent points in
+  3-dimensional space. The array structure is [nr][mt+1][mt+1][xyz].
+  This routine takes the 3-dimensional space parameters
+  and converts them into an index of the one-dimensional array.
+   \param r Radial layer
+   \param i2 Domain indices
+   \param i1 Domain indices
+   \return idx The index value for array.
+*/
 int Domain::idx(int r, int i2, int i1)
 {
   int nerror = 0;
@@ -139,7 +149,6 @@ int Domain::idx(int r, int i2, int i1)
   if (  r  > nr    || r     < 0 ) nerror=1; 
   if ( i2  > mt    || i2    < 0 ) nerror=1;
   if ( i1  > mt    || i1    < 0 ) nerror=1;
-
 
   int idx=0;
   
@@ -158,20 +167,20 @@ int Domain::idx(int r, int i2, int i1)
 
 ////////////////////////////////////////
 // Domain::getNearestDataValue
-//
-// Given the index of the geomorph grid, searches for the 'V' value of the
-// nearest spatial point of the 'Data' data.
+/**
+  Suppose that the geomorph grid and the Data grid are overlapped. Given the index of the geomorph grid, searches for the 'V' value of the nearest spatial point of the Data grid.
+  \param dptr A pointer to the input data
+  \param index The index of the geomorph grid point
+  \return dataV The value of the nearest neighbour 
+*/
 double Domain::getNearestDataValue(Data *dptr, int index)
 {
-  
     // search Data::x,y,z for nearest spatial point
     double dataV;
     dataV=0.;
 
     double d2 = 1.E+99;
     double xd,yd,zd;
-
-    //printf("index=%d\n", index);
 
     // loop over all Data values
     for ( int di = 0 ; di < dptr->nval ; di++ ){
@@ -181,19 +190,21 @@ double Domain::getNearestDataValue(Data *dptr, int index)
       if ( xd*xd + yd*yd + zd*zd < d2 ) {
 	d2 = xd*xd + yd*yd + zd*zd;
 	dataV = dptr->V[di];
-	//printf("d2=%5.3f V=%5.3f di=%d\n", d2,dataV,di);
       }
     }
-
     return dataV;
 }
 
 ////////////////////////////////////////
-// Domain::getNearestDataValue2
-//
-// Given the index of the geomorph grid, searches for the 'V' value of the
-// nearest spatial point in the Data class. A more optimised algorithm than
-// getNearestDataValue.
+// Domain::getNearestDataValue2_mitp
+/**
+  Suppose that the geomorph grid and the Data grid are overlapped. Given the index of the geomorph grid, searches for the 'V' value of the nearest spatial point of the Data grid. Optimised for MITP data.
+  \param dptr A pointer to the input data
+  \param index The index of the geomorph grid point
+  \return dataV The value of the nearest neighbour 
+  
+ A more optimised algorithm than getNearestDataValue
+*/
 double Domain::getNearestDataValue2_mitp(Data *dptr, int index)
 {
     int nr=0; // our layer of interest in Data:dptr
@@ -242,11 +253,14 @@ double Domain::getNearestDataValue2_mitp(Data *dptr, int index)
 
 ////////////////////////////////////////
 // Domain::getNearestDataValue2_filt
-//
-// Given the index of the geomorph grid, searches for the 'V' value of the
-// nearest spatial point in the Data class for FILT data. As with
-// getNearestDataValue2-mitp, a more optimised algorithm than
-// getNearestDataValue.
+/**
+   Suppose that the geomorph grid and the Data grid are overlapped. Given the index of the geomorph grid, searches for the 'V' value of the nearest spatial point of the Data grid. Optimised for FILT data.
+  \param dptr A pointer to the input data
+  \param index The index of the geomorph grid point
+  \return dataV The value of the nearest neighbour 
+  
+ A more optimised algorithm than getNearestDataValue
+*/
 double Domain::getNearestDataValue2_filt(Data *dptr, int index)
 {
     int nr=0; 
@@ -295,22 +309,23 @@ double Domain::getNearestDataValue2_filt(Data *dptr, int index)
 
 ////////////////////////////////////////
 // Domain::getLinearDataValue
-//
-// Converts one grid to another, with up-scaling or down-scaling, if necessary.
-//
-// mtin = mtout -> 1. simple copy of grid
-//
-// mtin < mtout -> 1. straight copy of grid points into new grid (relevant
-//                    points only) 
-//                 2. cycle through each layer (having previously defined
-//                    points) on output grid, performing a bilinear
-//                    interpoloation of all undefined points on that layer.
-//                 3. Cycle through all adjacent layers with defined points,
-//                    performing a linearinterpolation between layers for all
-//                    layer points.
-//
-// mtin > mtout -> 1. copy a sub-set of input grid points to the new grid.
-//
+/**
+ Converts one grid to another, with up-scaling or down-scaling if necessary.
+ mtin = mtout -> 1. simple copy of grid
+
+ mtin < mtout -> 1. straight copy of grid points into new grid (relevant
+                    points only) 
+                 2. cycle through each layer (having previously defined
+                    points) on output grid, performing a bilinear
+                    interpoloation of all undefined points on that layer.
+                 3. Cycle through all adjacent layers with defined points,
+                    performing a linearinterpolation between layers for all
+                    layer points.
+
+ mtin > mtout -> 1. copy a sub-set of input grid points to the new grid
+
+ \param dptr A pointer to the input data.
+*/
 int Domain::getLinearDataValue(Data *dptr)
 {
   int index1=0;
@@ -442,9 +457,13 @@ int Domain::getLinearDataValue(Data *dptr)
 
 ////////////////////////////////////////
 // Domain::getValue
-//
-// Given the index of the geomorph grid, uses the 'interp' method to calculate
-// its value from that contained in Data::x,y,z, and V.
+/**
+ Given the index of the geomorph grid, uses the 'interp' method to calculate
+ its value from that contained in Data::x,y,z, and V.
+ \param dptr A pointer to the input data
+ \param index The index of the geomorph grid
+ \param interp The interpolation method to be employed
+*/
 int Domain::getValue(Data * dptr, int index, int interp)
 {
 
@@ -482,10 +501,10 @@ int Domain::getValue(Data * dptr, int index, int interp)
 
 ////////////////////////////////////////
 // Domain::importData
-//
-// For each xn element, find the best match data value V using the defined
-// algorithm
-//
+/**
+  For each xn element, find the best match data value V using the defined
+  algorithm
+*/
 bool Domain::importData(Data *dptr)
 {
     int index=0;
@@ -515,9 +534,9 @@ bool Domain::importData(Data *dptr)
 
 ////////////////////////////////////////
 // Domain::importData_gpu
-//
-// A simple interfaceto the gpu-enabled code
-//
+/**
+ A simple interfaceto the gpu-enabled code - Not implemented
+*/
 bool Domain::importData_gpu(Data *dptr)
 {
 
@@ -532,10 +551,11 @@ bool Domain::importData_gpu(Data *dptr)
 
 ////////////////////////////////////////
 // Domain::sqrti
-//
-// Returns the (floored int) integer square root of 'a'.
-//   2 <= sqrt(a) <= 2^15
-//
+/**
+  Returns the (floored int) integer square root of 'a'. 2 <= sqrt(a) <= 2^15
+  \param a Value to be square-rooted.
+  \return i The square-root of a, -1 for failure.
+*/
 int Domain::sqrti(int a)
 {
     int i;
@@ -554,9 +574,9 @@ int Domain::sqrti(int a)
 
 ////////////////////////////////////////
 // Domain::importMVIS
-//
-// import data from MVIS files
-// 
+/**
+  import data from MVIS files
+*/ 
 bool Domain::importMVIS(FILE * fptr, int proc, int nt, double cmb)
 {
     
@@ -604,9 +624,15 @@ bool Domain::importMVIS(FILE * fptr, int proc, int nt, double cmb)
 
 ////////////////////////////////////////
 // Domain::importTERRA
-//
-// import Data::dptr in the TERRA format (convection or circulation  model)
-// 
+/**
+  import Data::dptr in the TERRA format (convection or circulation  model)
+ 
+  \param fptr Input file, in TERRA format.
+  \param proc 'Processor' number of the TERRA data file
+  \param nt nt value of the input TERRA data
+  \param ir ...to be confirmed...
+  \param tvp ...to be confirmed...
+*/ 
 bool Domain::importTERRA(FILE * fptr, int proc, int nt, int ir, int tvp)
 {
     float buf;
@@ -648,12 +674,15 @@ bool Domain::importTERRA(FILE * fptr, int proc, int nt, int ir, int tvp)
 
 ////////////////////////////////////////
 // Domain::exportMVIS
-//
-// export Data::dptr in the MVIS format.
-// 
+/**
+  export Data::dptr in the MVIS format.
+ 
+  \param fptr Output file for MVIS format
+  \param proc 'Processor' number of the TERRA data file
+  \param nt nt value of the input TERRA data
+*/ 
 bool Domain::exportMVIS(FILE * fptr, int proc, int nt)
-{
-    
+{   
     int   index=0;
     int   i1start,i1end,i2start,i2end;
     div_t divresult;
@@ -683,9 +712,16 @@ bool Domain::exportMVIS(FILE * fptr, int proc, int nt)
 
 ////////////////////////////////////////
 // Domain::exportTERRA
-//
-// export Data::dptr in the TERRA format (convection or circulation  model)
-// 
+/**
+ export Data::dptr in the TERRA format (convection or circulation  model)
+
+ \param fptr  Output file for MVIS format
+ \param proc 'Processor' number of the TERRA data file
+ \param nt ...to be confirmed...
+ \param ir ...to be confirmed...
+ \param tvp ...to be confirmed...
+ \param colcntr ...to be confirmed
+*/ 
 bool Domain::exportTERRA(FILE * fptr, int proc, int nt, int ir, int tvp, long int &colcntr)
 {
    
