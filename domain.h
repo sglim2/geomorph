@@ -1,11 +1,9 @@
-/*
- *
- * TERRA grid Definition - the Icosahedron Domain
- *
- * 
+/**
+ \file 
+
+ \brief
+  Domain class definition 
  */
-
-
 
 #ifndef _GEOMORPH_ICOSAHEDRON_H
 #define _GEOMORPH_ICOSAHEDRON_H

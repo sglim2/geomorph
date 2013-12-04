@@ -1,8 +1,8 @@
-/*
- *
- * Data Manipulation
- *
- * 
+/**
+ \file 
+
+ \brief
+  Data class definition 
  */
 
 #ifndef _GEOMORPH_DATA_H

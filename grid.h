@@ -1,10 +1,9 @@
- /*
- *
- * TERRA grid Definition
- *
- * 
- */
+/**
+ \file 
 
+ \brief
+  Grid class definition 
+ */
 
 #ifndef _GEOMORPH_GRID_H
 #define _GEOMORPH_GRID_H

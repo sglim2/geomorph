@@ -9,6 +9,8 @@
  * +==========================================================+
  */
 /**
+\file
+
 \brief
 Geomorph is a grid conversion tool for popular geodynamics and seismic tomography data.
 
@@ -73,7 +75,11 @@ bool radialAverage = false;     // GUI only
 Data * gdata=0;
 
 ////////////////////////////////////////
-// return the basename of a path
+/**
+  Return the basename of a path
+  \param path The full path
+  \return name The basename of the path
+*/
 static char* gm_basename(char* path)
 {
   char* name = &path[0];
@@ -91,7 +97,9 @@ static char* gm_basename(char* path)
 }
 
 ////////////////////////////////////////
-// print usage instructions
+/** 
+ Print usage instructions.
+*/
 bool gm_usage()
 {
 
@@ -136,6 +144,7 @@ bool gm_usage()
   return 0;
 }
 
+////////////////////////////////////////
 /**
  Process the commandline arguments
 */
@@ -443,6 +452,7 @@ bool writeGrid()
     return 0; // success
 }
 
+////////////////////////////////////////
 /**
   Contains the process program flow:
    Read data
@@ -489,8 +499,9 @@ void geo_process()
 
 }
 
-
+////////////////////////////////////////
 /**
+ The main function
  * \param help The help page
  */
 int main(int argc, char *argv[])
