@@ -1,17 +1,12 @@
-/*
- *
- * Data Manipulation within Domains
- *
- * 
+/**
+ \file
+ 
+  \brief
+  Domain class constructors/destructors, methods and operators. Manipulation of the geomorph grid and data within Domains 
  */
 
 #include "main.h"
 #include "domain.h"
-
-/*
- * utilities
- */
-
 
 ////////////////////////////////////////
 // construction/destruction

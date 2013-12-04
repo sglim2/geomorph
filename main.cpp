@@ -12,17 +12,45 @@
 \file
 
 \brief
-Geomorph is a grid conversion tool for popular geodynamics and seismic tomography data.
+Geomorph is a grid conversion tool for popular geodynamics and seismic tomography data. 
 
 */ 
 /**
  \mainpage 
-  Geomorph can currently handle output in the MVIS, TERRA_CC and
-  TERRA_CV formats, and input in MVIS. TERRA_CC, TERRA_CV, MITP, FILT, and
-  GYSPSUM (special case) formats.
-*/
-/**
-  \page Examples 
+
+  Geomorph is a grid conversion tool for popular geodynamics and seismic
+  tomography data. The geomorph grid structure is based on an icosahedron, and
+  has the same native grid-structure as the TERRA and MantleVis applications. This
+  grid is split into 10 domains, and each domain is defined by the code \ref Domain::grdgen2.
+  
+  \section thegeomorphgridstructure The Geomorph Grid Structure
+
+
+  \section othergridstructures Other Grid Structures
+
+  Input grids:
+  GeoMorph can handle various input grid structures: TERRA_CC, TERRA_CV, MVIS, MITP, FILT, GYPSUMS, GYPSUMP.
+  
+  Output grids:  
+  GeoMorph output is limited to grids structure identical to its native format: MVIS, TERRA_CC, and TERRA_CV
+
+  MVIS: MantleVis format
+ 
+  TERRA_CV: TERRA Convection model
+ 
+  TERRA_CC: TERRA Circulation model
+
+  MITP: Based on the MIT-P08 data format
+
+  FILT: FILT data-format
+
+  GYPSUMS: GypSum S-wave model
+ 
+  GYPSUMP: GypSum P-wabe model
+  
+  \section examples Examples
+  A list of command-line examples:
+
   Exmaple 1: Convert MITP-MVIS using optimised-searching nearest-neighbour 
   \code
   ./geomorph --mt 256 --nt 16 --nd 10 --suffix 01 --infile ../data/MITP08.txt --outfile mvis001 --intype mitp --outtype mvis --interp nearest2
@@ -50,6 +78,10 @@ Geomorph is a grid conversion tool for popular geodynamics and seismic tomograph
   Exmaple 7: Scale mt=32 to mt=64 TERRA_CV-TERRA_CV using linear intepolation 
   \code
   ./geomorph --mt 64 --nt 16 --nd 10 --suffix 00 --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 --infile ../data/c002 --outfile c003 --intype terra_cv --outtype terra_cv --interp linear
+  \endcode
+  Example 8: Convert GYPSUMP-MVIS using brute-force nearest-neighbour
+  \code
+  ./geomorph --mt 64 --nt 16 --nd 10 --suffix 01 --gypsuminnum 22 --gypsumlatloninfile ../data/Grid.LatsLons.1deg.txt --gypsumdepthinfile ../data/Grid.dpths.txt --infile ../data/Grid.GyPSuM.P --intype gypsump --outfile mvis001 --outtype mvis --interp nearest --cmbin 2775.0
   \endcode
 */
 
@@ -502,7 +534,6 @@ void geo_process()
 ////////////////////////////////////////
 /**
  The main function
- * \param help The help page
  */
 int main(int argc, char *argv[])
 {

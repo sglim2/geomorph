@@ -1,16 +1,13 @@
-/*
- *
- * Data Manipulation
- *
- * 
+/**
+ \file
+ 
+  \brief
+  Grid class constructors/destructors, methods and operators. The geomorph native grid structure. 
  */
-
 
 #include "grid.h"
 #include "main.h"
-/*
- * utilities
- */
+
 
 ////////////////////////////////////////
 // construction/destruction

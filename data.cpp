@@ -1,16 +1,13 @@
-/*
- *
- * Data Manipulation
- *
- * 
+/**
+ \file
+ 
+  \brief
+  Data class constructors/destructors, methods and operators. A flexible input grid structure. 
  */
 
 #include "main.h"
 #include "data.h"
 
-/*
- * utilities
- */
 
 ////////////////////////////////////////
 // construction/destruction
