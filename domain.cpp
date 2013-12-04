@@ -768,9 +768,15 @@ bool Domain::exportTERRA(FILE * fptr, int proc, int nt, int ir, int tvp, long in
 
 ////////////////////////////////////////
 // Domain::getAngle3d
-//
-// Given two vectors Aand B, getAngle3d returns the angle A0B.
-//
+/**
+ Given two vectors A and B, getAngle3d returns the angle A0B.
+ \param ax X-component of vector A
+ \param ay Y-component of vector A
+ \param az Z-component of vector A
+ \param bx X-component of vector B
+ \param by Y-component of vector B
+ \param bz Z-component of vector B
+*/
 double Domain::getAngle3d(double ax, double ay, double az, double bx, double by, double bz)
 {
     double maga = sqrt( ax*ax + ay*ay + az*az);
@@ -781,11 +787,19 @@ double Domain::getAngle3d(double ax, double ay, double az, double bx, double by,
 
 ////////////////////////////////////////
 // Domain::rotate3d
-//
-// Given the point to be rotated, the rotation axis _x,_y_z, and the rotation
-// angle, rotates the point about the axis by phi radians. The resulting point
-// is returned in px,py,pz.
-//  Assumes the input point (px^2 + py^2 +  pz^2) = 1.
+/**
+ Given the point to be rotated p, the rotation axis rx,ry,rz, and the rotation
+ angle phi, rotates the point about the axis by phi radians. The resulting point
+ is returned in px,py,pz.
+  Assumes the input point (px^2 + py^2 +  pz^2) = 1.
+ \param rx X-component of the rotation axis
+ \param ry Y-component of the rotation axis
+ \param rz Z-component of the rotation axis
+ \param px X-component of the point to be rotated, overwritten by the X-component of the rotated point
+ \param py Y-component of the point to be rotated, overwritten by the Y-component of the rotated point
+ \param pz Z-component of the point to be rotated, overwritten by the Z-component of the rotated point
+ \param phi Angle of rotation in radians
+*/
 bool Domain::rotate3d(double *px, double *py, double *pz, double rx, double ry, double rz, double phi)
 {
   double R[3][3], A[3], B[3];
@@ -830,9 +844,12 @@ bool Domain::rotate3d(double *px, double *py, double *pz, double rx, double ry, 
 
 ////////////////////////////////////////
 // Domain::normalise
-//
-// Returns the dot product of the vectors p1 x p2
-//
+/**
+ Normalise a vector. 
+ \param ax X-xomponent of the vector to be normalised, overwritten by the X-component of the normalised vector
+ \param ay Y-xomponent of the vector to be normalised, overwritten by the Y-component of the normalised vector
+ \param az Z-xomponent of the vector to be normalised, overwritten by the Z-component of the normalised vector
+*/
 bool Domain::normalise(double *ax, double *ay, double *az)
 {
     double maga = sqrt(ax[0]*ax[0] + ay[0]*ay[0] + az[0]*az[0]);
@@ -845,9 +862,15 @@ bool Domain::normalise(double *ax, double *ay, double *az)
 
 ////////////////////////////////////////
 // Domain::dotProduct
-//
-// Returns the dot product of the vectors p1 x p2
-//
+/**
+ Returns the dot product of the vectors p1 x p2
+  \param p1x X-component of vector p1
+  \param p1y Y-component of vector p1
+  \param p1z Z-component of vector p1
+  \param p2x X-component of vector p2
+  \param p2y Y-component of vector p2
+  \param p2z Z-component of vector p2
+*/
 double Domain::dotProduct(double p1x, double p1y, double p1z, double p2x, double p2y, double p2z)
 {
     return p1x*p2x + p1y*p2y + p1z*p2z; 
@@ -855,9 +878,15 @@ double Domain::dotProduct(double p1x, double p1y, double p1z, double p2x, double
 
 ////////////////////////////////////////
 // Domain::crossProduct
-//
-// Overwrites p2* with the cross-product of  p1 x p2
-//
+/**
+  Returns the cross-product of  p1 x p2. p2 is overwritten with the new vector.
+  \param p1x X-component of vector p1
+  \param p1y Y-component of vector p1
+  \param p1z Z-component of vector p1
+  \param p2x X-component of vector p2
+  \param p2y Y-component of vector p2
+  \param p2z Z-component of vector p2
+*/
 bool Domain::crossProduct(double p1x, double p1y, double p1z, double *p2x, double *p2y, double *p2z)
 {
     double ax,ay,az;
@@ -875,8 +904,10 @@ bool Domain::crossProduct(double p1x, double p1y, double p1z, double *p2x, doubl
 
 ////////////////////////////////////////
 // Domain::grdgen
-//
-//
+/**
+  Generates the geomorph Grid based on an icosahedral grid. Defines the x,y,z coordinates of each point in the Domain
+  \param cmb The Core-Mantle Boundary in Earth-Radius units. 
+ */
 bool Domain::grdgen(double cmb)
 {
     
@@ -1144,14 +1175,25 @@ bool Domain::grdgen(double cmb)
 
 ////////////////////////////////////////
 // Domain::midpt
-//
-//
+/**
+  Finds the normalised sum of two vectors?? 
+ \param x X-component of the returned vector
+ \param y Y-component of the returned vector
+ \param z Z-component of the returned vector
+ \param x1 X-component of the first vector
+ \param y1 Y-component of the first vector
+ \param z1 Z-component of the first vector
+ \param x2 X-component of the second vector
+ \param y2 y-component of the second vector
+ \param z2 z-component of the second vector
+ 
+ */
 bool Domain::midpt(double *x, double *y, double *z,
 		   double x1, double y1, double z1,
 		   double x2, double y2, double z2)
 {
   x[0] = x1 + x2;
-  y[0] = y1 + y2;;
+  y[0] = y1 + y2;
   z[0] = z1 + z2;
 
   double norm = 1./sqrt(x[0]*x[0] + y[0]*y[0] + z[0]*z[0]);
@@ -1166,9 +1208,11 @@ bool Domain::midpt(double *x, double *y, double *z,
 
 ////////////////////////////////////////
 // Domain::grdgen2
-//
-// Should be used over grdgen().
-//
+/**
+ Should be used over grdgen().
+ Generates the geomorph Grid based on an icosahedral grid. Defines the x,y,z coordinates of each point in the Domain
+  \param cmb The Core-Mantle Boundary in Earth-Radius units.
+*/
 bool Domain::grdgen2(double cmb)
 {
     

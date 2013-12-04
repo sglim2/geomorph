@@ -16,7 +16,12 @@
 // construction/destruction
 ////////////////////////////////////////
 
-
+/**
+ Construction of class Data
+ 
+ The Data class will hold the input data of any input type and move it 
+ into a geomorph grid within the class. 
+ */
 Data::Data()
   : infile(), outfile(), intype(), outtype(), nval(), x(), y(), z(), V(), intypeSet(), outtypeSet(), interpSet()
 {
@@ -60,9 +65,12 @@ Data::Data()
 
 ////////////////////////////////////////
 // Data::findBoundary
-// An alternative (and faster) method would be to calculate these values as
-// the data is read in. That way we share a loop over nval, and (for mitp data
-// at least) is in the native format (i.e. no sqrt necessary).
+/** 
+ Finds the rdial boundaries, cmb and a.
+ An alternative (and faster) method would be to calculate these values as
+ the data is read in. That way we share a loop over nval, and (for mitp data
+ at least) is in the native format (i.e. no sqrt necessary).
+*/
 bool Data::findBoundary()
 {
   double tmpcmb=0.;
@@ -82,11 +90,13 @@ bool Data::findBoundary()
 
 ////////////////////////////////////////
 // Data::findLayers 
-// As with Data::findBoundary(), an alernative method would be to calculate
-// these values as the data is read in. Also, this method isn't very robust,
-// and accurracy depends upon nbins.
-//
-// THIS ROUTINE IS INACCURATE AND SHOULD BE AVOIDED
+/**
+ As with Data::findBoundary(), an alernative method would be to calculate
+ these values as the data is read in. Also, this method isn't very robust,
+ and accurracy depends upon nbins.
+
+ THIS ROUTINE IS INACCURATE AND SHOULD BE AVOIDED!
+*/
 bool Data::findLayers()
 {
     nlayr = 0;
@@ -103,20 +113,20 @@ bool Data::findLayers()
 	bins[ int(floor(nbins*(rad-cmb)/(a-cmb))) ]++;
     }
     
-    
     for ( int n=0 ; n<nbins ; n++) {
 //      printf("%d\t%d\n",n,bins[n]);
 	if (bins[n] > 10){
 	    nlayr++;
 	}
     }
-    
     return 0;
 }
 
-
 ////////////////////////////////////////
-// Read
+// Data::Read
+/**
+  Function controlling the read functions, depending on input type
+ */
 bool Data::Read()
 {
     switch (intype) {
@@ -148,77 +158,72 @@ bool Data::Read()
 	    printf("Error: intype undefined.");
 	    return 1; //fail
     }
-
     return 0;    
 }
 
 
 ////////////////////////////////////////
-// mitpDepth2Radius
-// --------
-//
-//
+// Data::mitpDepth2Radius
+/**
+ Given a depth, returns a radius for MITP data
+ \param dpth The mitp depth
+ */
 double Data::mitpDepth2Radius(double dpth)
 {
-
  return (EarthRadKM - dpth) / EarthRadKM;
- 
 }
 
-
 ////////////////////////////////////////
-// filtDepth2Radius
-// --------
-//
-//
+// Data::filtDepth2Radius
+/**
+ Given a depth, returns a radius for FILT data
+ \param dpth The mitp depth
+ */
 double Data::filtDepth2Radius(double dpth)
 {
-
     return mitpDepth2Radius(dpth);
- 
 }
 
 ////////////////////////////////////////
 // gypsumDepth2Radius
-// --------
-//
-//
+/**
+ Given a depth, returns a radius for GYPSUM data
+ \param dpth The mitp depth
+ */
 double Data::gypsumDepth2Radius(double dpth)
 {
-
     return mitpDepth2Radius(dpth);
- 
 }
 
 ////////////////////////////////////////
 // mitpRead
-// --------
-//   input data:
-//     lat  ( degrees: -90  :  90 )
-//     lng  ( degrees:   0  : 360 )
-//     dpth ( km  (0=crust) )
-//
-//   Convert on input to:
-//     lat  ( degrees:  -90 :  90 )
-//     lng  ( degrees: -180 : 180 )
-//     dpth ( EarthRadii  (0=centre) )
-//
-//   Convert to x,y,z (Earth Radius units) using formulae:
-//    x = - cos(lat) * cos(lng)
-//    y =   sin(lat) 
-//    z =   cos(lat) * sin(lng)
-//
-//
-// Input data is expected to be in the format:
-//  line1: 
-//    headers
-//  subsequent lines: 
-//    data in the order: 
-//      Lat Long Depth Value
-//  Sort order is:
-//    increasing  Depth; 
-//    increasing  Long;
-//    then increasing  Lat.
+/**
+  Reads MITP data.
+  
+  The MITP data has lat values in the range ( degrees: -90  :  90 ),
+  lng values in the range ( degrees:   0  : 360 )
+  and dpth as km  (0=crust)
+
+  Convert on input to lat  ( degrees:  -90 :  90 ),
+  lng  ( degrees: -180 : 180 ), and 
+  dpth ( EarthRadii  (0=centre) )
+
+  Convert to x,y,z (Earth Radius units) using formulae:
+    x = - cos(lat) * cos(lng)
+    y =   sin(lat) 
+    z =   cos(lat) * sin(lng)
+
+ Input data is expected to be in the format:
+  line1: 
+    headers
+  subsequent lines: 
+    data in the order: 
+      Lat Long Depth Value
+  Sort order is:
+    increasing  Depth; 
+    increasing  Long;
+    then increasing  Lat.
+*/
 bool Data::mitpRead()
 { 
   int ferror;
@@ -348,8 +353,9 @@ bool Data::mitpRead()
 
 ////////////////////////////////////////
 // Dat::mvisRead()
-// --------
-//
+/**
+  Reads in MVIS data
+ */
 bool Data::mvisRead()
 { 
   // this->mvis is already created, but we need to generate the domains
@@ -362,11 +368,11 @@ bool Data::mvisRead()
   return 0; //success
 }
 
-
 ////////////////////////////////////////
-// Dat::terraRead()
-// --------
-//
+// Data::terraRead()
+/**
+ Reads in TERRA data
+ */
 bool Data::terraRead()
 { 
   // this->mvis is already created, but we need to generate the domains
@@ -379,12 +385,13 @@ bool Data::terraRead()
   return 0; //success
 }
 
-
 ////////////////////////////////////////
-// filtRead
-// --------
-// Filt data consists of multiple files, each continaing a 
-// single layer of data.
+// Data::filtRead
+/**
+ Reads in FLIT data.
+ 
+ Filt data consists of multiple files, each containing a single layer of data.
+*/
 bool Data::filtRead()
 { 
 
@@ -485,12 +492,15 @@ bool Data::filtRead()
 
 
 ////////////////////////////////////////
-//gypsumRead
-// --------
-// GYPSUM data consists of multiple files, each contianing a 
-// single layer of data.
-// You can have P- or S- data. A secondary file defines the latlon 
-// values. A third file defines the depth of the layers in km.
+// Data::gypsumRead
+/**
+ Reagds in GYPSUM data.
+
+ GYPSUM data consists of multiple files, each contianing a 
+ single layer of data.
+ You can have P- or S- data. A secondary file defines the latlon 
+ values. A third file defines the depth of the layers in km.
+*/
 bool Data::gypsumRead(){
 
   int ferror;
@@ -613,7 +623,11 @@ bool Data::gypsumRead(){
 
 
 ////////////////////////////////////////
-// intypeConverter
+// Data::intypeConverter
+/**
+ Defines the input data type. 
+ \return buf character string describing the input type
+ */
 char* Data::intypeConverter()
 {
     char * buf = new char[16];
@@ -640,7 +654,11 @@ char* Data::intypeConverter()
 }
 
 ////////////////////////////////////////
-// outtypeConverter
+// Data::outtypeConverter
+/**
+ Defines the output data type. 
+ \return buf character string describing the output type
+ */
 char* Data::outtypeConverter()
 {
 
@@ -665,7 +683,11 @@ char* Data::outtypeConverter()
 }
 
 ////////////////////////////////////////
-// outtypeConverter
+// Data::interpConverter
+/**
+ Defines the interpolation routine to be used during conversion. 
+ \return buf character string describing the interp selection
+ */
 char* Data::interpConverter()
 {
 
@@ -685,7 +707,10 @@ char* Data::interpConverter()
 }
 
 ////////////////////////////////////////
-// getStats
+// Data::getStats
+/**
+ Redirects to various functions based on input type 
+ */
 bool Data::getStats()
 {
   if ( intype == MITP || intype == FILT || intype == GYPSUMP || intype == GYPSUMS ){
@@ -698,7 +723,10 @@ bool Data::getStats()
 }
 
 ////////////////////////////////////////
-// getStatsGrid
+// Data::getStatsGrid
+/**
+  Outputs input statistics to stdout 
+ */
 bool Data::getStatsGrid()
 {
     double max = -veryLarge,
@@ -742,7 +770,10 @@ bool Data::getStatsGrid()
 }
 
 ////////////////////////////////////////
-// getStatsData
+//Data:: getStatsData
+/**
+ Prints out statistical data
+ */
 bool Data::getStatsData()
 {
     double max = -veryLarge,

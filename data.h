@@ -5,8 +5,6 @@
  * 
  */
 
-
-
 #ifndef _GEOMORPH_DATA_H
 #define _GEOMORPH_DATA_H
 
@@ -41,29 +39,40 @@ public:
     bool      outtypeSet;  /**< GUI only. Set to true when outtype has been set via the GUI */
     int       interp;      /**< interpolation routine to be used */
     bool      interpSet;   /**< GUI only. Set to true when interp has been set via the GUI */
-    int       filtinstart;
-    int       filtinend;
-    int       filtinnumfiles; 
+    int       filtinstart;       /**< The start depth of the FILT input data */
+    int       filtinend;         /**< The end depth of the FILT input data */
+    int       filtinnumfiles;    /**< The number of datafiles for the FILT input data */
     bool      filtinstartSet;    /**< GUI only. Set to true when filtinstart has been set via the GUI */
     bool      filtinendSet;      /**< GUI only. Set to true when filtinend has been set via the GUI */
     bool      filtinnumfilesSet; /**< GUI only. Set to true when filtinnumfiles has been set via the GUI */
-    int       filtoutstart;
-    int       filtoutend;
-    int       filtoutnumfiles;
-    int       gypsuminnumfiles;
-    char *    gypsumlatloninfile;
-    char *    gypsumdepthinfile;
-    bool      gypsumlatloninfileSet,gypsumdepthinfileSet;
-    int       nlat,nlng,ndpth,nvalpershell;
-    double    minR,maxR;
-    double    * lyrs;
-    long int  nval;
-    int       nlayr;
-    double    *x,*y,*z,*V;
-    double    Vmean,Vmax,Vmin;
-    double    a,cmb;
-    bool      cmbinSet;
-    Grid      *mvis;
+    int       filtoutstart;      /**< The start depth of the FILT output - not implemented */
+    int       filtoutend;        /**< The end depth of the FILT output - not implemented */
+    int       filtoutnumfiles;   /**< The number of outfiles used for FILT output - not implemeted */
+    int       gypsuminnumfiles;   /**< The number of files containing the gypsum data-set */
+    char *    gypsumlatloninfile; /**< The path of the gyspum lat-lon file */
+    char *    gypsumdepthinfile;  /**< The path of the gypsum depth file */
+    bool      gypsumlatloninfileSet; /**< GUI only. Set to true when gypsumlatloninfile has been set via the GUI - not implemented*/
+    bool      gypsumdepthinfileSet;  /**< GUI only. Set to true when gypsumdepthinfile has been set via the GUI - not implemented*/
+    int       nlat;             /**< The number of latitude points in the input data */
+    int       nlng;             /**< The number of longitude points in the input data */
+    int       ndpth;            /**< The number of depth points in the input data */
+    int       nvalpershell;     /**< The number of values per shell in the input data - usually nlat x nlng */
+    double    minR;             /**< The minimum radius found in the input data*/
+    double    maxR;             /**< The maximum radius found in the input data */
+    double    * lyrs;           /**< The pointer to the input data lyrs */
+    long int  nval;             /**< The number of grid-points in the input data */
+    int       nlayr;            /**<  The number of radial layers in the input data */
+    double    *x;               /**< The x-coordinates of the input data */
+    double    *y;               /**< The y-coordinates of the input data */
+    double    *z;               /**< The z-corrdinates of the input data */
+    double    *V;               /**< The values of the input data */
+    double    Vmean;            /**< The statistical mean on the input values */
+    double    Vmax;             /**< The maximum value of the input data */
+    double    Vmin;             /**< The minimum value of the input data */
+    double    a;                /**< The surface Radius */
+    double    cmb;              /**< The Core-Mantle boundary in Earth-Radius units */
+    bool      cmbinSet;         /**< GUI only. Set to true when cmb has been set via the GUI */
+    Grid      *mvis;            /**< The geomorph grid definition*/
     
     Data ();
     Data (char *, int);
