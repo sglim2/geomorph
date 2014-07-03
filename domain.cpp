@@ -757,7 +757,6 @@ bool Domain::exportTERRA(FILE * fptr, int proc, int nt, int ir, int tvp, long in
 	    }
 	} // i1
     } // i2
-
     return 0; // success
 }
 

@@ -464,6 +464,7 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
 		    colcntr2++;
 		} // for i
 	    }
+	    fprintf(fptr,"\n");
 	} // tvpp
 	
 	// close file, ready for re-assigning to a new 'process'
