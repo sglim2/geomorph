@@ -414,7 +414,7 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
 		if ( i%10 == 0 || i==nr ) fprintf(fptr,"\n"); // print in columns of 10
 	    }
 	    
-	    // write proper array
+	    // write propr array
 	    for (int i=1 ; i <= 20 ; i++){
 		if ( i==5 ){
                   fprintf(fptr,"%15.8E", 0.001);
@@ -464,7 +464,7 @@ bool Grid::exportTERRA(Data * dptr, int terratype)
 		    colcntr2++;
 		} // for i
 	    }
-	    fprintf(fptr,"\n");
+	    if (tvpp!=1) fprintf(fptr,"\n");
 	} // tvpp
 	
 	// close file, ready for re-assigning to a new 'process'
