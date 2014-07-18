@@ -1,0 +1,186 @@
+	
+GeoMorph User Guide - Web Notes
+===============================
+
+A Geodynamics Data Conversion Tool.
+Introduction
+
+GeoMorph is a grid conversion application used primarily for geodynamic and seismic tomography data. Its native grid-structure is inherited from the TERRA and MantleVis grid, and is primarily designed for the conversion to, or from, this format. It is the aim that the converted data be available to input into TERRA, or used within the MantleVis visualisation program. The currently supported conversion routines are shown in the conversion matrix, the data labels being explained in the table below.
+
+ 
+In \ Out 	MITP 	FILT 	MVIS 	TERRA_CV 	TERRA_CC
+MITP 	  	  	✓ 	✓ 	✓
+FILT 	  	  	✓ 	✓ 	✓
+MVIS 	  	  	✓ 	✓
+	✓
+TERRA_CV 	  	  	✓
+	✓
+	✓
+TERRA_CC 	  	  	✓
+	✓
+	✓
+
+ 
+
+    MITP: Data format based on the P wave global tomographic model of Li et al., 2008 [1].
+    FILT: Data format based on the S40RTS model by Jeroen Ritsema et al. 2011 [2].
+    MVIS: 'MantleVis' scalar data obtained from the TERRA. MantleVis is a distributed visualisation package designed specifically for viewing scalar and vector data obtained by TERRA. Vector data is currently not supported by geomorph.
+    TERRA_CV: 'c-file' convection data obtained from TERRA [3].
+    TERRA_CC: 'c-file' circulation data obtained from TERRA [3].
+
+Build Instructions
+
+Geomorph is supported under Linux, Mac OSX and Windows operating systems, and tested under OpenSuSE 11.4 (64-bit), Mac OSX Snow Leopard and Windows 7 (32-bit).
+Linux Build Instructions
+
+Check out the latest svn snapshot from the geomorph repository
+
+ svn co https://terra.geol.cf.ac.uk/svn/geomorph geomorph-svn 
+
+Geomorph can be built in either of two ways - a command-line build, or with a graphical user-interface. The GUI build is tested with Qt4.7 and higher. Qt can usually be obtained from your Linux distribution's standard applcation repositories, or is available through macports on OSX. Follow the instructions below for your desired choice of build.
+Command-line Build (Linux/Mac)
+
+The command-line build has no GUI, and all process commands are done via the command-line.  Change directory to the src folder and make:
+
+cd geomorph-svn/trunk/src 
+make ARCH=[ GNU | GNU_DEBUG | PGI | INTEL | INTEL_DEBUG ] 
+
+After completion, you should find the goemorph executable in the current directory.
+GUI build (Linux)
+
+Change directory to the trunk folder. The GUI build is all encompassing, and the command-line build is not necessary for the GUI to work.
+
+ cd geomorph-svn/trunk 
+
+A recent version of Qt and qmake are needed for successful compilation. Run:
+
+qmake 
+
+make
+
+The executable geomorphGUI should be available in the current folder.
+GUI build (Mac OSX)
+
+A pre-compiled version of geomorph is available from the author. Alternatively, geomorph (GUI version) can be built from source using qtcreator, or from the command-line:
+
+qmake -makefile geomorphGUI.pro -spec macx-g++
+
+make
+
+Windows 7
+
+A pre-compiled binary can be supplied on request.
+
+ 
+
+ 
+Usage
+
+Geomorph comes in two flavours, a command-line based code, or one built with a graphical user-interface. Available arguments for the command-line version are:
+
+Available Console Command-Line Arguments:
+ --help . . . . . . print help-page and exit
+ --intype . . . . . input type [ MVIS | TERRA_CC | TERRA_CV | MITP | FILT ]
+ --outtype. . . . . output type [ MVIS | TERRA_CC | TERRA_CV | MITP  | FILT ]
+ --infile . . . . . input filename
+ --outfile. . . . . output filename base
+ --mt . . . . . . . Desired MT value for output
+ --nt . . . . . . . Desired NT value for output
+ --nd . . . . . . . Desired ND value for output
+ --mtin . . . . . . Input MT value for MVIS/TERRA input-types
+ --ntin . . . . . . Input NT value for MVIS/TERRA input-types
+ --ndin . . . . . . Input ND value for MVIS/TERRA input-types
+ --cmbin. . . . . . Core/Mantle boudary value for MVIS/TERRA input-types
+ --suffix . . . . . Output file-name suffix for MVIS/TERRA output-types
+ --suffixin . . . . Input file-name suffix for MVIS/TERRA input-types
+ --filtinstart. . . FILT-type start depth (in km)
+ --filtinend. . . . FILT-type end depth (in km)
+ --filtinnum. . . . FILT-type number of data files
+ --interp . . . . . interpolation routine [ nearest | nearest2 | linear ]
+
+Inerpolation routines...
+  nearest   - used with intype = MITP or FILT 
+  nearest2  - used with intype = MITP or FILT 
+  linear    - used with intype = MVIS/TERRA_CV/TERRA_CC
+
+Some usage examples for the command-line version of geomorph are provided:
+
+MITP to MVIS:
+
+./geomorph --mt 128 --nt 16 --nd 10 --suffix 01 --infile ../data/MITP08.txt \
+                   --outfile mvis001 --intype mitp --outtype mvis \
+                   --interp nearest2
+
+FILT data to MVIS:
+
+./geomorph --mt 128 --nt 16 --nd 10 --infile ../data/Filt \
+                   --outfile mvis001 --intype filt \ 
+                   --filtinstart 50 --filtinend 2850 --filtinnum 57  \
+                   --outtype mvis \
+                   --interp nearest2
+
+TERRA_CV (mt32 nt8 nd10) up-scaled to TERRA_CV (mt128 nt16 nd5):
+
+./geomorph --mt 128 --nt 16 --nd 5 --suffix 00 \
+                   --mtin 32 --ntin 8 --ndin 10 --suffixin 01 --cmbin 0.54940 \
+                   --infile ../data/c002 --outfile c003 \
+                   --intype terra_cv --outtype terra_cv \
+                   --interp linear
+
+GUI Usage
+
+For the GUI version parameters are usually chosen from the on-screen options, but options can still be given at the command-line, which will subsequently populate the on-screen parameters.
+
+Usage is fairly straight-forward - select and choose all available parameters before processing the data by clicking on 'Continue'.
+
+Once the data has been exported to the desired format, you are able to view a preview of the data using the 'Preview' button. A preview is generated within the viewing screen. The preview is fairly basic and is not meant to be a replacement for visualisation within mantlevis, but instead a quick visual check to make sure the imported data looks correct.
+
+The preview consists of radial shells of the imported data, plotted one at a time. The slider to the right of the viewing screen controls the depth of the shell being plotted. For your convenience a depth gauge is shown below the preview.
+
+The viewing angle of the preview plot is managed with the right-mouse button and mouse movement.
+
+An auto-rotate feature is also available.
+
+For some data, it is desirable to visualise the data with each shell's average taken out. To achieve this effect, check the 'Radial Average' box, and the plot will switch to this view.
+Converting MITP Data
+
+MITP data should be a file consisting of 4 columns of data in the following format:
+
+Lat   Long  Depth(km)    dVp 
+
+The first line should include column headings, and the data should start on line 2 of the MITP file. Columns should be sorted as Depth(primary), Long(secondary), and Lat(tertiary). Having this fixed sort order improves efficiency of the conversion. For MITP data sorted in this manner, you should use the NEAREST2 conversion algorithm. If your data is not sorted as described, you will need to use the much slower NEAREST conversion algorithm. The LINEAR interpolation algorithm should not be used for converting MITP data.
+Converting FILT Data
+
+FILT data should consist of multiple files, each file dedicated to data on one radial shell. The naming of each file should include the depth in kilometres:
+
+$FILT.{%d}km.xyz 
+
+where {%d} is the depth in kilometres, and $FILT is the base filename. Valid conversion algorithms are NEAREST and NEAREST2, with NEAREST2 being the more efficient.
+Data Conversion Algorithms
+
+A number of data conversion algorithms are available when migrating one data-type to another. These are discussed in the following sections.
+Nearest-Neighbour - nearest
+
+The nearest interpolation algorithm is simple: for each geomorph grid-point, the input grid is searched for the closest matching spatial point, and its value is copied to the goemorph grid. This is also known as piecewise constant interpolation. In the nearest algorithm the input data is searched along the radial, latitude, and longitude dimensions for the closest matching spatial points.
+Nearest-Neighbour (improved) -  nearest2
+
+The nearest2 interpolation algorithm is another piecewise constant interpolation method, except it is slightly more intelligent in that it calculates the radial layer of the input data, and skips directly to this radial layer in the input array. The result is that the remaining search algorithm only needs to cycle through latitude and longitude, and cuts the search time down by a factor equal to the number of radial layers.
+Linear
+
+The linear interpolation algorithm is currently restricted to MVIS and TERRA input-types only. Up-, Down-, or No-scaling is available, and decided with the input and output MT values. The algorithm used for each scaling is highlighted below.
+
+No-Scaling: For similar input and output grid resolutions, the output grid is a simple copy of the input grid.
+
+Down-Scaling: A sub-set of the input grid is copied to the output grid.
+
+Up-Scaling: Firstly, the input grid is copied to the output grid. This leaves undefined values on the grid-points on some of the layers on the output grid, and some layers with no defined grid-point values at all:  Secondly, loop over each layer on the output grid with defined points (skipping those layers which have yet to be defined), performing a bilinear interpoloation of all undefined points on that layer; Thirdly, cycle through all adjacent layers with defined points, performing a linear interpolation between these layers, for all layer points.
+Licensing
+
+To be confirmed..
+References
+
+    C. Li, R. D. van der Hilst, E. R. Engdahl, and S. Burdick (2008), A new global model for P wave speed variations in Earth's mantle, Geochem. Geophys. Geosyst., 9, Q05018, doi:10.1029/2007GC001806.
+    Ritsema, J., Deuss, A., van Heijst, H. J. and Woodhouse, J. H. (2011), S40RTS: a degree-40 shear-velocity model for the mantle from new Rayleigh wave dispersion, teleseismic traveltime and normal-mode splitting function measurements. Geophysical Journal International, 184: 1223–1236. doi: 10.1111/j.1365-246X.2010.04884.x
+    Baumgardner, John R. (1985), Three-dimensional treatment of convective flow in the earth's mantle. Journal of Statistical Physics, 39: 501-511. doi: 10.1007/BF01008348
+
+
