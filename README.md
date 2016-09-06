@@ -11,7 +11,7 @@ git clone https://github.com/sglim2/geomorph
 cd geomorph/src
 make ARCH=GNU
 ```
-If compiling on OSX used ```make ARCH-OSX``` instead
+If compiling on OSX used ```make ARCH=OSX``` instead.
 
 
 ## Input/Output grids
