@@ -11,11 +11,7 @@ RM	= rm -f
 
 all: $(EXEC)
 
-# for some reason, the automatic variables don;t work on .cu files
-domain_gpu.o:
-	$(CC) -c $(CFLAGS) domain_gpu.cu
-
-$(EXEC): $(OBJS) 
+$(EXEC): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(INC) $(OBJS) $(LIBS) 
 
 .PHONY : clean
@@ -28,9 +24,10 @@ arch. :
 	@echo " You need to compile with an ARCH file"
 	@echo " make ARCH=[]"
 	@echo " Options include:"
-	@echo " [ GNU   | GNU_GPU ]"
-	@echo " [ INTEL | INTEL_GPU ]"
-	@echo " [ PGI   | PGI_GPU ]"
+	@echo " [ GNU ]"
+	@echo " [ OSX ]"
+	@echo " [ INTEL]"
+	@echo " [ PGI ]"
 	@echo " [ DEBUG ]"
 	@/dev/null/abort >& /dev/null
 

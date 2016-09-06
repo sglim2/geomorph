@@ -480,12 +480,6 @@ int Domain::getValue(Data * dptr, int index, int interp)
     }
     if (dptr->intype == dptr->MITP) {
       V[index] = getNearestDataValue2_mitp(dptr,index);
-      // the slightly more intelligent routine, plus GPU computation
-      //V[index] = getNearestDataValue2_gpu(dptr->ndpth, dptr->minR, dptr->maxR, 
-      //                                    dptr->nlat, dptr->nlng,
-      //				    xn, yn, zn,
-      //				    dptr->x,  dptr->y,  dptr->z, dptr->V,
-      //
     }
   }else if ( interp == dptr->LINEAR ){          
   }else if ( interp == dptr->CUBIC ){
@@ -524,23 +518,6 @@ bool Domain::importData(Data *dptr)
       getLinearDataValue(dptr);
     }
 
-    return 0; // success
-}
-
-////////////////////////////////////////
-// Domain::importData_gpu
-/**
- A simple interfaceto the gpu-enabled code - Not implemented
-*/
-bool Domain::importData_gpu(Data *dptr)
-{
-
-  importData_c_gpu(nr,mt,
-		   dptr->ndpth, dptr->minR, dptr->maxR, 
-		   dptr->nlat, dptr->nlng,
-		   xn, yn, zn, V,
-		   dptr->x,  dptr->y,  dptr->z, dptr->V);
-  
     return 0; // success
 }
 

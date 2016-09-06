@@ -1,17 +1,15 @@
 # ============================================
-# PGI Compiler Suite; no GPU support.
+# PGI Compiler Suite
 #
 #
 # ============================================
 LIBS	= 
 
-OBJS2	= dummy.o
 CFLAGS	= -O3 -fastsse -DGEO_TUI_
 CXXFLAGS= -O3 -fastsse -DGEO_TUI_
 LDFLAGS	= 
 
 CXX	= pgCC
 CC	= pgcc
-GPUCC	= $(CC)
 FC	= pgf90
 

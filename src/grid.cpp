@@ -118,7 +118,6 @@ bool Grid::importData(Data * dptr)
     int _idmax = 10;
     bool fail=false;
 
-#ifndef GEOMORPH_GPU
 #pragma omp parallel for
     for (int i=0 ; i<_idmax ; i++){
 	printf("...Domain %d\n",i);
@@ -129,19 +128,6 @@ bool Grid::importData(Data * dptr)
 	}
     }
 
-#else
-    // if we're using the GPU we need to avoid moving in and out of the GPU
-    // unit. For each domain, we move onto the GPU and stay there - for all
-    // points in the domain.
-    
-    for (int i=0 ; i<_idmax ; i++){
-	printf("...Domain %d\n",i);
-	if (domains[i].importData_gpu(dptr)){
-	    printf("Error in Domain::importData_gpu()");
-	}
-    }
-#endif
-    
     return fail; // success if false
 }
 

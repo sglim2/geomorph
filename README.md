@@ -5,6 +5,14 @@ Geomorph is a grid conversion tool for popular geodynamics and seismic
 tomography data. The geomorph grid structure is based on an icosahedron, and
 has the same native grid-structure as the TERRA and MantleVis applications.
 
+## Building
+```
+git clone https://github.com/sglim2/geomorph
+cd geomorph/src
+make ARCH=GNU
+```
+If compiling on OSX used ```make ARCH-OSX``` instead
+
 
 ## Input/Output grids
 GeoMorph can handle various input grid structures: TERRA_CC, TERRA_CV, MVIS, MITP, FILT, GYPSUMS, GYPSUMP.

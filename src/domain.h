@@ -53,7 +53,6 @@ public:
     int    getLinearDataValue(Data*);
 
     bool   importData(Data*);
-    bool   importData_gpu(Data*);
 
     bool   importMVIS(FILE *, int, int, double);
     bool   importTERRA(FILE *, int, int, int, int);
@@ -72,17 +71,5 @@ public:
     bool   normalise(double *, double *, double *);
 
 };
-
-extern"C" {
-  //    double getNearestDataValue2_gpu(int, double, double, int, int, 
-  //				  double *, double *, double *,
-  //				  double *, double *, double *, double *,
-  //				  int);
-  
-    bool importData_c_gpu(int, int, 
-			  int, double, double, int, int, 
-			  double *, double *, double *, double *,
-			  double *, double *, double *, double *);
-}
 
 #endif

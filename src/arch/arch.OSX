@@ -1,13 +1,13 @@
 # ============================================
-# GNU Compiler Collection
+# clang on OSX
 #
 #
 # ============================================
 LIBS	= 
 
-CFLAGS	= -g -O0 -DGEO_TUI_
-CXXFLAGS= -g -O0 -DGEO_TUI_
-LDFLAGS	= -g 
+CFLAGS	= -O3 -ansi -pedantic -funroll-loops -DGEO_TUI_
+CXXFLAGS= -O3 -ansi -pedantic -funroll-loops -DGEO_TUI_
+LDFLAGS	=  
 
 CXX	= g++
 CC	= gcc
